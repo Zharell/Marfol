@@ -1,10 +1,9 @@
-package MainActivity;
+package mainActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-
-import com.example.marfol.R;
+import com.tfg.marfol.R;
 
 
 public class IndexActivity extends AppCompatActivity {
