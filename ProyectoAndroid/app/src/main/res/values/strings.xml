@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Marfol</string>
     <string name="button_intro">¡ A \nPagar !</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="entrar">Entrar</string>
+    <string name="logout">Logout</string>
+    <string name="registrarse">Registrarse</string>
 </resources>

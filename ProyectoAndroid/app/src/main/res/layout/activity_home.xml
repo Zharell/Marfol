@@ -5,56 +5,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_style"
-    tools:context="mainActivity.IndexActivity">
+    tools:context="login.HomeActivity">
 
-    <!-- Tittle APP -->
     <TextView
-        android:id="@+id/tvTittleIndex"
-        android:layout_width="120dp"
-        android:layout_height="40dp"
-        android:gravity="center"
-        android:text="@string/button_intro"
+        android:id="@+id/etEmailHome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:hint="@string/prompt_email"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02"
+        app:layout_constraintVertical_bias="0.478" />
 
-        />
-
-    <!-- Menu APP -->
-    <ImageView
-        android:id="@+id/ivMenuIndex"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
+    <TextView
+        android:id="@+id/etProviderHome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:hint="Provider"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02"
-        tools:srcCompat="@tools:sample/avatars"
-
-        />
-
-    <!-- Login App -->
-    <ImageView
-        android:id="@+id/ivLoginIndex"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.96"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02"
-        tools:srcCompat="@tools:sample/avatars"
-
-        />
+        app:layout_constraintVertical_bias="0.559" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnApIndex"
         android:layout_width="280dp"
         android:layout_height="250dp"
         android:background="@drawable/button_index"
@@ -66,26 +47,23 @@
         android:textStyle="bold|italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.32"
-
+        app:layout_constraintVertical_bias="0.062"
         />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-
+    <Button
+        android:id="@+id/btnLogoutHome"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="@string/logout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.7"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-
-        />
+        app:layout_constraintVertical_bias="0.723" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "941591089123",
+    "project_id": "marfol-6305a",
+    "storage_bucket": "marfol-6305a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:941591089123:android:67e14e7a904913004b5ad6",
+        "android_client_info": {
+          "package_name": "com.tfg.marfol"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "941591089123-h1tber93kuecs1sb1ncc5stnliig5k4m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1JbQNg7WkFD4zGdVr1Y-RkaWtluXStKE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "941591089123-h1tber93kuecs1sb1ncc5stnliig5k4m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
