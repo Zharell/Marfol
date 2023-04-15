@@ -6,4 +6,6 @@
     <string name="entrar">Entrar</string>
     <string name="logout">Logout</string>
     <string name="registrarse">Registrarse</string>
+    <string name="participantes">Participantes</string>
+    <string name="volver">Volver</string>
 </resources>
