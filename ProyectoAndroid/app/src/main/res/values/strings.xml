@@ -6,4 +6,6 @@
     <string name="entrar">Entrar</string>
     <string name="logout">Logout</string>
     <string name="registrarse">Registrarse</string>
+    <string name="google">Google</string>
+    <string name="prefs_file">com.tfg.marfol.PREFERENCE_FILE_KEY</string>
 </resources>

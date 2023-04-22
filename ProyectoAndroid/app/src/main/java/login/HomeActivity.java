@@ -1,6 +1,9 @@
 package login;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -8,12 +11,14 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.tfg.marfol.R;
 enum ProviderType{
-    BASIC
+    BASIC,
+    GOOGLE
 }
 public class HomeActivity extends AppCompatActivity {
     Button btnLogoutHome;
     TextView etEmailHome;
     TextView etProviderHome;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +32,16 @@ public class HomeActivity extends AppCompatActivity {
         //setup
         setup(email,provider);
 
+        // Guardado de datos
+        SharedPreferences prefAux = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefs = prefAux.edit();
+        prefs.putString("email",email);
+        prefs.putString("provider",provider);
+        prefs.apply();
+
+
+
+
     }
 
     private void setup(String email, String provider) {
@@ -34,6 +49,11 @@ public class HomeActivity extends AppCompatActivity {
         etEmailHome.setText(email);
         etProviderHome.setText(provider);
         btnLogoutHome.setOnClickListener(v -> {
+            //Borrado de datos
+            SharedPreferences prefAux = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
+            SharedPreferences.Editor prefs = prefAux.edit();
+            prefs.clear();
+            prefs.apply();
             FirebaseAuth.getInstance()
                     .signOut();
             onBackPressed();
