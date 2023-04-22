@@ -114,10 +114,10 @@ public class AuthActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode,Intent data){
         super.onActivityResult(requestCode,resultCode,data);
         if(requestCode == GOOGLE_SIGN_IN){
-            GoogleSignInAccount account = null;
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
-                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-                account = task.getResult(ApiException.class);
+
+                GoogleSignInAccount account = task.getResult(ApiException.class);
                 if(account != null){
                     final String email=account.getEmail();
                     AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
@@ -134,7 +134,7 @@ public class AuthActivity extends AppCompatActivity {
 
                 }
             } catch (ApiException e) {
-                // Manejar la excepción
+                showAlert();
             }
 
 
