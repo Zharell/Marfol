@@ -8,4 +8,9 @@
     <string name="registrarse">Registrarse</string>
     <string name="participantes">Participantes</string>
     <string name="volver">Volver</string>
+    <string name="desea_volver">Perderás los participantes</string>
+    <string name="confirmacion_volver">¿Estás seguro de que deseas volver?</string>
+    <string name="atencion_msg">Atención</string>
+    <string name="pop_confirmacion">CONFIRMAR</string>
+    <string name="pop_cancelar">CANCELAR</string>
 </resources>

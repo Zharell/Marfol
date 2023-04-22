@@ -62,7 +62,7 @@ public class IndexActivity extends AppCompatActivity {
     //Método que al pulsar el botón de volver te pregunta si deseas cerrar la app
     @Override
     public void onBackPressed() {
-        
+
         finishAffinity();
 
     }

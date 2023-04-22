@@ -11,4 +11,6 @@
     <color name="colorBackground">#FFDD87</color>
     <color name="redBorder">#960000</color>
     <color name="yellowMargin">#E2CD32</color>
+    <color name="redTitle">#FF0000</color>
+
 </resources>
