@@ -9,7 +9,7 @@
     >
 
     <TextView
-        android:id="@+id/dialog_title"
+        android:id="@+id/tvTitlePopup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -20,7 +20,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/dialog_message2"
+        android:id="@+id/tvMessage1Popup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -29,7 +29,7 @@
         android:textSize="17sp" />
 
     <TextView
-        android:id="@+id/dialog_message"
+        android:id="@+id/tvMessage2Popup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -48,7 +48,7 @@
         >
 
         <Button
-            android:id="@+id/btnCancelarParticipantes"
+            android:id="@+id/btnCancelarPopup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
@@ -61,7 +61,7 @@
             />
 
         <Button
-            android:id="@+id/btnConfirmarParticipantes"
+            android:id="@+id/btnConfirmarPopup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

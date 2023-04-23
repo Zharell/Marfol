@@ -12,5 +12,6 @@
     <color name="redBorder">#960000</color>
     <color name="yellowMargin">#E2CD32</color>
     <color name="redTitle">#FF0000</color>
-
+    <color name="redLight">#e35454</color>
+    <color name="redSLight">#e53333</color>
 </resources>

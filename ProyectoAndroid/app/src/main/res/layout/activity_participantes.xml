@@ -9,7 +9,7 @@
 
     <!-- Title Actividad -->
     <TextView
-        android:id="@+id/tvTittleParticipantes"
+        android:id="@+id/tvTitleParticipantes"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:fontFamily="serif"
@@ -19,7 +19,7 @@
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.54"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.02"
@@ -62,15 +62,15 @@
         />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvPartiParticipantes"
-        android:layout_width="300dp"
-        android:layout_height="500dp"
+        android:id="@+id/rvPersonaParticipantes"
+        android:layout_width="350dp"
+        android:layout_height="580dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.55"
+        app:layout_constraintVertical_bias="0.5"
 
         />
 

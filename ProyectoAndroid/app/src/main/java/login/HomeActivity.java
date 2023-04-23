@@ -3,6 +3,7 @@ package login;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
@@ -10,6 +11,9 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.tfg.marfol.R;
+
+import mainActivity.IndexActivity;
+
 enum ProviderType{
     BASIC,
     GOOGLE
@@ -59,4 +63,6 @@ public class HomeActivity extends AppCompatActivity {
             onBackPressed();
         });
     }
+
+
 }
