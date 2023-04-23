@@ -20,6 +20,9 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.tfg.marfol.R;
+
+import mainActivity.IndexActivity;
+
 public class AuthActivity extends AppCompatActivity {
     Button btnRegistrarseLogin;
     Button btnGoogleLogin;
@@ -140,4 +143,15 @@ public class AuthActivity extends AppCompatActivity {
 
         }
     }
+
+    //Método que al pulsar el botón de volver redirige a la pantalla Index
+    // (Se debe añadir Launcher Result) Por si el usuario pulsa sin querer volver
+    // No pierda los participantes añadidos
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, IndexActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
 }

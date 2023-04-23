@@ -15,15 +15,14 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name="mainActivity.ParticipantesActivity"
+            android:exported="false" />
+        <activity
             android:name="login.HomeActivity"
             android:exported="false" />
         <activity
             android:name="login.AuthActivity"
-            android:exported="true">
-
-        </activity>
-
-
+            android:exported="true"></activity>
         <activity
             android:name="mainActivity.IndexActivity"
             android:exported="true">
