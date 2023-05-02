@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -25,7 +26,7 @@ import mainActivity.IndexActivity;
 
 public class AuthActivity extends AppCompatActivity {
     Button btnRegistrarseLogin;
-    Button btnGoogleLogin;
+    ImageButton btnGoogleLogin;
     Button btnEntrarLogin;
     EditText etEmailLogin;
     EditText etPasswordLogin;
@@ -55,25 +56,17 @@ public class AuthActivity extends AppCompatActivity {
             showHome(email,ProviderType.valueOf(provider));
         }
     }
-
+    //Este metodo crea un usuario con el correo pasandole las cajas y conectándose con firebase
     private void setup() {
         String titulo= "Autentificación";
         //Registro
         btnRegistrarseLogin.setOnClickListener(v ->{
-            if (!(etEmailLogin.getText().equals("")&&etPasswordLogin.equals(""))){
-                FirebaseAuth.getInstance()
-                        .createUserWithEmailAndPassword(etEmailLogin.getText().toString(),
-                        etPasswordLogin.getText().toString()).addOnCompleteListener(it->{
-                        if(it.isSuccessful()){
-                            showHome(it.getResult().getUser().getEmail(),ProviderType.BASIC);
-                        }else{
-                            showAlert();
-                        }
-                        });
-            }
+            Intent intent = new Intent(this, RegistroActivity.class);
+            startActivity(intent);
         });
+        //Este metodo se conecta con la BD firebase y comprueba si el usuario y la contraseña existen, si son correctos se loguea
         btnEntrarLogin.setOnClickListener(v ->{
-            if (!(etEmailLogin.getText().equals("")&&etPasswordLogin.equals(""))){
+            if (!(etEmailLogin.getText().toString().equals("")||etPasswordLogin.getText().toString().equals(""))){
                 FirebaseAuth.getInstance()
                         .signInWithEmailAndPassword(etEmailLogin.getText().toString(),
                                 etPasswordLogin.getText().toString()).addOnCompleteListener(it->{
@@ -111,6 +104,7 @@ public class AuthActivity extends AppCompatActivity {
         homeIntent.putExtra("EMAIL",email);
         homeIntent.putExtra("PROVIDER",provider.name());
         startActivity(homeIntent);
+        finish();
 
     }
     @Override

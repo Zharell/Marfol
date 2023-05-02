@@ -15,6 +15,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name="login.RegistroActivity"
+            android:exported="false" />
+        <activity
             android:name="mainActivity.ParticipantesActivity"
             android:exported="false" />
         <activity
@@ -22,7 +25,7 @@
             android:exported="false" />
         <activity
             android:name="login.AuthActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name="mainActivity.IndexActivity"
             android:exported="true">
