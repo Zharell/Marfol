@@ -25,7 +25,7 @@ public class PersonaAdapter extends RecyclerView.Adapter<PersonaAdapter.PersonaA
 
     //añadirPersona siempre se añade en la posición 0 ya que su función es redirigir a otra actividad distinta
     //Tiene la ruta URI de su imagen por defecto
-    Persona anadirPersona = new Persona("Añadir Persona", "" ,"android.resource://com.tfg.marfol/2131230972" , new ArrayList<>());
+    Persona anadirPersona = new Persona("Añadir Persona", "", "android.resource://com.tfg.marfol/"+R.drawable.add_icon , new ArrayList<>());
 
     private onItemClickListener mListener;
 

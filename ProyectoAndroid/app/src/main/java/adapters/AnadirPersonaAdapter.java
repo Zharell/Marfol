@@ -22,7 +22,7 @@ public class AnadirPersonaAdapter extends RecyclerView.Adapter<AnadirPersonaAdap
     private List<Plato> resultsPlato = new ArrayList<>();
 
     //añadirPlato siempre se añade en la posición 0 ya que su función es redirigir a otra actividad distinta
-    Plato anadirPlato = new Plato("", "" ,0, 0, "android.resource://com.tfg.marfol/2131230972",false);
+    Plato anadirPlato = new Plato("", "" ,0, 0, "android.resource://com.tfg.marfol/"+R.drawable.add_icon,false);
 
     private PersonaAdapter.onItemClickListener mListener;
 

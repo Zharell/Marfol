@@ -15,12 +15,10 @@
     <string name="atencion_msg">Atención</string>
     <string name="pop_confirmacion">CONFIRMAR</string>
     <string name="pop_cancelar">CANCELAR</string>
-<<<<<<< HEAD
     <string name="anadir_participante">Añadir \nComensal</string>
     <string name="etnombreanadir_participante">Nombre:</string>
     <string name="etdescripcionanadir_participante">Descripción:</string>
     <string name="tvlistaplatosanadir_participante">Platos</string>
-=======
     <string name="title_activity_registro">RegistroActivity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -31,5 +29,5 @@
     <string name="enviar">Enviar</string>
     <string name="olvidada">¿Contraseña olvidada?</string>
     <string name="contraseñaOlvidada">Correo registrado</string>
->>>>>>> b32826fa467172b3c16f009ba0931998565a1cdd
+
 </resources>
