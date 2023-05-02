@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -30,6 +31,8 @@ public class AuthActivity extends AppCompatActivity {
     Button btnEntrarLogin;
     EditText etEmailLogin;
     EditText etPasswordLogin;
+
+    TextView tvContrasenaOlvidada;
     private final int GOOGLE_SIGN_IN = 100;
 
     @Override
@@ -42,6 +45,8 @@ public class AuthActivity extends AppCompatActivity {
         etEmailLogin=findViewById(R.id.etEmailLogin);
         etPasswordLogin=findViewById(R.id.etPasswordLogin);
         btnGoogleLogin=findViewById(R.id.btnGoogleLogin);
+        tvContrasenaOlvidada=findViewById(R.id.tvContrasenaOlvidada);
+
         //Setup
         setup();
         session();
@@ -88,6 +93,10 @@ public class AuthActivity extends AppCompatActivity {
             googleClient.signOut();
             startActivityForResult(googleClient.getSignInIntent(),GOOGLE_SIGN_IN);
 
+        });
+        tvContrasenaOlvidada.setOnClickListener(v -> {
+            Intent recover = new Intent(this, RecoverActivity.class);
+            startActivity(recover);
         });
 
     }
