@@ -2,18 +2,19 @@ package entities;
 
 public class Plato {
 
-    private String nombre, descripcion;
+    private String nombre, descripcion, urlImage;
 
     //Precio --> Precio Original del plato
     //PrecioFinal --> Precio final si se ha compartido puede variar
     private double precio, precioFinal;
     private boolean compartido;
 
-    public Plato (String nombre, String descripcion, double precio,double precioFinal , boolean compartido) {
+    public Plato (String nombre, String descripcion, double precio,double precioFinal,String urlImage , boolean compartido) {
         this.nombre=nombre;
         this.descripcion=descripcion;
         this.precio=precio;
         this.precioFinal=precioFinal;
+        this.urlImage=urlImage;
         this.compartido=compartido;
     }
 
@@ -48,4 +49,8 @@ public class Plato {
     public boolean isCompartido() { return compartido; }
 
     public void setCompartido(boolean compartido) { this.compartido = compartido; }
+
+    public String getUrlImage() { return urlImage; }
+
+    public void setUrlImage(String urlImage) { this.urlImage = urlImage; }
 }

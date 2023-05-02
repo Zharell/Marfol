@@ -4,7 +4,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
@@ -12,8 +11,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
+
 import android.os.Bundle;
-import android.view.View;
+
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 import adapters.PersonaAdapter;
 import entities.Persona;
-import entities.Plato;
+import mainActivity.crud.AnadirParticipanteActivity;
 
 public class ParticipantesActivity extends AppCompatActivity implements PersonaAdapter.onItemClickListener {
 
@@ -34,7 +34,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private Dialog puVolverParticipantes;
     private Button btnCancelarParticipantes, btnConfirmarParticipantes;
     private Intent volverIndex;
-    private RecyclerView rvPersonaPersonajes;
+    private RecyclerView rvPersonaParticipantes;
     private PersonaAdapter personaAdapter;
     private ActivityResultLauncher resultLauncher;
     private ArrayList<Persona> comensales;
@@ -52,6 +52,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
+
 
         //Laucher Result - Se debe añadir el switch(code) que dependiendo de que actividad vuelva, haga una u otra cosa
         resultLauncher = registerForActivityResult(
@@ -89,10 +90,10 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     public void asignarId () {
 
         //Asigna Ids a los elementos de la actividad
-        ivMenuParticipantes = findViewById(R.id.ivMenuParticipantes);
-        ivLoginParticipantes = findViewById(R.id.ivLoginParticipantes);
-        rvPersonaPersonajes = findViewById(R.id.rvPersonaParticipantes);
-        tvTitleParticipantes = findViewById(R.id.tvTitleParticipantes);
+        ivMenuParticipantes = findViewById(R.id.ivMenuAnadirParticipante);
+        ivLoginParticipantes = findViewById(R.id.ivLoginAnadirParticipante);
+        rvPersonaParticipantes = findViewById(R.id.rvPersonaParticipantes);
+        tvTitleParticipantes = findViewById(R.id.tvTitleAnadirParticipante);
 
         //Asigna IDs de los elementos del popup
         puVolverParticipantes = new Dialog(this);
@@ -141,9 +142,9 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         comensales = new ArrayList<>();
 
         //Prepara el Adapter para su uso
-        rvPersonaPersonajes.setLayoutManager(new GridLayoutManager(this,2));
+        rvPersonaParticipantes.setLayoutManager(new GridLayoutManager(this,2));
         personaAdapter = new PersonaAdapter();
-        rvPersonaPersonajes.setAdapter(personaAdapter);
+        rvPersonaParticipantes.setAdapter(personaAdapter);
         personaAdapter.setmListener(this);
 
         //Añade el contenido al adapter, si está vacío el propio Adapter añade el " Añadir Persona "
@@ -154,12 +155,18 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     @Override
     public void onItemClick(int position) {
 
+        //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
         if (position>0) {
-            Toast.makeText(this,"Pulsaste el campo: "+String.valueOf(position),Toast.LENGTH_SHORT).show();
-        } else {
-            //Toast.makeText(this,"Campo añadir: "+String.valueOf(position),Toast.LENGTH_SHORT).show();
 
-            //ArrayList creado para probar adapter
+
+            Toast.makeText(this,"Pulsaste el campo: "+String.valueOf(position),Toast.LENGTH_SHORT).show();
+
+        } else {
+
+            Intent intent = new Intent(this, AnadirParticipanteActivity.class);
+            startActivity(intent);
+
+            /*
             ArrayList <Plato> platosComensales = new ArrayList<>();
             platosComensales.add(new Plato("Cachopo","filete empanado",10,10, false));
             comensales.add(new Persona("Juan", "Le gusta comer", "no hay URL", platosComensales));
@@ -182,6 +189,8 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
             //Añade el contenido al adapter, si está vacío el propio Adapter añade el " Añadir Persona "
             personaAdapter.setResultsPersona(comensales);
+            */
+
 
         }
 

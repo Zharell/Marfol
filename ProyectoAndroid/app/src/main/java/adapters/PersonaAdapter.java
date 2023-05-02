@@ -1,5 +1,6 @@
 package adapters;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.tfg.marfol.R;
 
 import java.util.ArrayList;
@@ -22,7 +24,9 @@ public class PersonaAdapter extends RecyclerView.Adapter<PersonaAdapter.PersonaA
     private List<Persona> resultsPersona = new ArrayList<>();
 
     //añadirPersona siempre se añade en la posición 0 ya que su función es redirigir a otra actividad distinta
-    Persona anadirPersona = new Persona("Añadir Persona", "" ,"Añadir URLImagen" , new ArrayList<>());
+    //Tiene la ruta URI de su imagen por defecto
+    Persona anadirPersona = new Persona("Añadir Persona", "" ,"android.resource://com.tfg.marfol/2131230972" , new ArrayList<>());
+
     private onItemClickListener mListener;
 
     @NonNull
@@ -37,7 +41,11 @@ public class PersonaAdapter extends RecyclerView.Adapter<PersonaAdapter.PersonaA
     @Override
     public void onBindViewHolder(@NonNull PersonaAdapterResultHolder holder, int position) {
 
+        //Insertamos para cada persona en el Recycler su nombre
         holder.tvPersonaRow.setText(resultsPersona.get(position).getNombre());
+
+        //Insertamos para cada persona en el Recycler su imagen
+        holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
 
         //Método onclick
         holder.itemView.setOnClickListener(new View.OnClickListener() {

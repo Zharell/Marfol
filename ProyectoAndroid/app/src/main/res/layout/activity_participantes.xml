@@ -9,7 +9,7 @@
 
     <!-- Title Actividad -->
     <TextView
-        android:id="@+id/tvTitleParticipantes"
+        android:id="@+id/tvTitleAnadirParticipante"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:fontFamily="serif"
@@ -28,7 +28,7 @@
 
     <!-- Menu APP -->
     <ImageView
-        android:id="@+id/ivMenuParticipantes"
+        android:id="@+id/ivMenuAnadirParticipante"
         android:layout_width="60dp"
         android:layout_height="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -44,7 +44,7 @@
     <!-- Login App -->
     <ImageView
 
-        android:id="@+id/ivLoginParticipantes"
+        android:id="@+id/ivLoginAnadirParticipante"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="@drawable/login_style"

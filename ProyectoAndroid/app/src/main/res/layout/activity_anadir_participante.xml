@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_style"
+    tools:context="mainActivity.crud.AnadirParticipanteActivity">
+
+    <!-- Title Actividad -->
+    <TextView
+        android:id="@+id/tvTitleAnadirParticipante"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:fontFamily="serif"
+        android:gravity="center"
+        android:text="@string/anadir_participante"
+        android:textColor="@color/redBorder"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+
+        />
+
+
+
+    <!-- Menu APP -->
+    <ImageView
+        android:id="@+id/ivMenuAnadirParticipante"
+        android:layout_width="60dp"
+        android:layout_height="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.04"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.02"
+        android:src="@android:drawable/ic_menu_sort_by_size"
+
+        />
+
+    <!-- Login App -->
+    <ImageView
+        android:id="@+id/ivLoginAnadirParticipante"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/login_style"
+        android:src="@drawable/nologinimg"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.96"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.02"
+
+        />
+
+    <EditText
+        android:id="@+id/etNombreAnadirParticipante"
+        android:layout_width="320dp"
+        android:layout_height="50dp"
+        android:fontFamily="serif"
+        android:gravity="center"
+        android:hint="@string/etnombreanadir_participante"
+        android:textColor="@color/redTitle"
+        android:textColorHint="@color/redSLight"
+        android:background="@drawable/editext_index"
+        android:padding="10dp"
+
+        android:textSize="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.13"
+        android:maxLength="16"
+        />
+
+    <EditText
+        android:id="@+id/etDescripcionAnadirParticipante"
+        android:layout_width="320dp"
+        android:layout_height="100dp"
+        android:fontFamily="serif"
+        android:gravity="top|left"
+        android:hint="@string/etdescripcionanadir_participante"
+        android:textColor="@color/redTitle"
+        android:textColorHint="@color/redSLight"
+        android:background="@drawable/editext_index"
+        android:padding="10dp"
+        android:paddingStart="15dp"
+        android:maxLength="80"
+
+
+        android:textSize="22dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.22"
+        />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.41"
+        />
+
+    <EditText
+        android:id="@+id/tvListaPlatosAnadirParticipante"
+        android:layout_width="320dp"
+        android:layout_height="50dp"
+        android:fontFamily="serif"
+        android:gravity="center"
+        android:text="@string/tvlistaplatosanadir_participante"
+        android:textColor="@color/redTitle"
+        android:textColorHint="@color/redSLight"
+        android:background="@drawable/editext_index"
+        android:padding="10dp"
+        android:textSize="25dp"
+        android:maxLength="16"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.55"
+
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPlatosAnadirParticipante"
+        android:layout_width="280dp"
+        android:layout_height="250dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.863"
+
+        />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
