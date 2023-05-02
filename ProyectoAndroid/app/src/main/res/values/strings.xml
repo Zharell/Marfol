@@ -29,5 +29,6 @@
     <string name="enviar">Enviar</string>
     <string name="olvidada">¿Contraseña olvidada?</string>
     <string name="contraseñaOlvidada">Correo registrado</string>
-
+    <string name="continuar_platos">Continuar</string>
+    <string name="tvrow_participante">Platos y Bebidas</string>
 </resources>

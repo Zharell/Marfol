@@ -6,22 +6,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tfg.marfol.R;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import adapters.AnadirPersonaAdapter;
 import entities.Plato;
 
-public class AnadirParticipanteActivity extends AppCompatActivity {
+public class AnadirParticipanteActivity extends AppCompatActivity implements AnadirPersonaAdapter.onItemClickListener {
 
     private RecyclerView rvPlatosAnadirParticipante;
     private TextView tvTitleAnadirP, etNombreAnadirP, etDescAnadirP, tvSubTitP;
+    private Button btnContinuarAnadirP;
     private ImageView ivLoginAnadirParticipante;
 
     private AnadirPersonaAdapter anadirPAdapter;
@@ -63,6 +67,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity {
         rvPlatosAnadirParticipante.setLayoutManager(new LinearLayoutManager(this));
         anadirPAdapter = new AnadirPersonaAdapter();
         rvPlatosAnadirParticipante.setAdapter(anadirPAdapter);
+        anadirPAdapter.setmListener(this::onItemClick);
 
         anadirPAdapter.setResultsPlato(platos);
 
@@ -88,6 +93,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity {
 
         tvTitleAnadirP.getPaint().setShader(gradient);
         tvSubTitP.getPaint().setShader(gradient);
+        btnContinuarAnadirP.getPaint().setShader(gradient);
 
         // Asigna sombreado al texto
         float shadowRadius = 10f;
@@ -96,7 +102,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity {
         int shadowColor = Color.BLACK;
 
         tvTitleAnadirP.getPaint().setShadowLayer(shadowRadius, shadowDx, shadowDy, shadowColor);
-        tvSubTitP.getPaint().setShadowLayer(shadowRadius, shadowDx, shadowDy, shadowColor);
+
     }
 
     public void asignarId() {
@@ -108,7 +114,24 @@ public class AnadirParticipanteActivity extends AppCompatActivity {
         etDescAnadirP = findViewById(R.id.etDescripcionAnadirParticipante);
         tvSubTitP = findViewById(R.id.tvListaPlatosAnadirParticipante);
         ivLoginAnadirParticipante = findViewById(R.id.ivLoginAnadirParticipante);
+        btnContinuarAnadirP = findViewById(R.id.btnPlatosAnadirParticipante);
 
     }
 
+
+    @Override
+    public void onItemClick(int position) {
+
+        //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
+        if (position>0) {
+
+            Toast.makeText(this,"Pulsaste el campo: "+String.valueOf(position),Toast.LENGTH_SHORT).show();
+
+        } else {
+
+            Toast.makeText(this,"Pulsaste el campo: "+String.valueOf(position),Toast.LENGTH_SHORT).show();
+
+        }
+
+    }
 }
