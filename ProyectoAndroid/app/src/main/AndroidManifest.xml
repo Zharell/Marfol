@@ -15,8 +15,15 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+<<<<<<< HEAD
             android:name="mainActivity.crud.AnadirParticipanteActivity"
             android:windowSoftInputMode="adjustPan"
+=======
+            android:name="login.RecoverActivity"
+            android:exported="false" />
+        <activity
+            android:name="login.RegistroActivity"
+>>>>>>> b32826fa467172b3c16f009ba0931998565a1cdd
             android:exported="false" />
         <activity
             android:name="mainActivity.ParticipantesActivity"

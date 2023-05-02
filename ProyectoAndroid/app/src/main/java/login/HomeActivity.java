@@ -60,7 +60,9 @@ public class HomeActivity extends AppCompatActivity {
             prefs.apply();
             FirebaseAuth.getInstance()
                     .signOut();
-            onBackPressed();
+            Intent in =new Intent(this, IndexActivity.class);
+            startActivity(in);
+            finish();
         });
     }
 
