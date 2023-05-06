@@ -117,7 +117,12 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
-        btnBorrarBD.setOnClickListener(v -> {});
+        btnBorrarBD.setOnClickListener(v -> {
+            db.collection("users").document(email).collection("personas").add(new HashMap<String, Object>() {{
+                put("name", "Persona 1");
+                put("age", 30);
+            }});
+        });
         btnRecuperarBD.setOnClickListener(v -> {});
         }
     }
