@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_style"
-    tools:context="mainActivity.crud.AnadirParticipanteActivity">
+    tools:context="mainActivity.crud.AnadirPlatoActivity">
 
     <!-- Title Actividad -->
     <TextView
@@ -14,7 +14,7 @@
         android:layout_height="80dp"
         android:fontFamily="serif"
         android:gravity="center"
-        android:text="@string/anadir_participante"
+        android:text="@string/anadir_plato"
         android:textColor="@color/redBorder"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -106,9 +106,9 @@
         android:id="@+id/ivPlatoAnadirPlato"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:background="@drawable/button_index"
-
         android:layout_marginTop="16dp"
+
+        android:background="@drawable/button_index"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -118,31 +118,33 @@
         android:id="@+id/tvListaPlatosAnadirPlato"
         android:layout_width="320dp"
         android:layout_height="50dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="48dp"
         android:background="@drawable/editext_index"
         android:fontFamily="serif"
         android:gravity="center"
         android:maxLength="16"
         android:padding="10dp"
-        android:text="@string/tvrow_participante"
+        android:text="@string/tvrow_compartir"
         android:textColor="@color/redTitle"
         android:textColorHint="@color/redSLight"
 
         android:textSize="25dp"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
 
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivPlatoAnadirPlato" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPlatosAnadirPlato"
         android:layout_width="284dp"
-        android:layout_height="206dp"
+        android:layout_height="170dp"
 
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvListaPlatosAnadirPlato" />
 
@@ -160,6 +162,23 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rvPlatosAnadirPlato"
+        />
+
+    <Switch
+        android:id="@+id/swCompartirAnadirPlato"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/swCompartir_Plato"
+        android:textColor="@color/redTitle"
+        android:textColorHint="@color/redSLight"
+        android:textSize="21dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.218"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivPlatoAnadirPlato"
+
         />
 
 

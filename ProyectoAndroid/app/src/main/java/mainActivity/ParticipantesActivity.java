@@ -36,14 +36,14 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private Intent volverIndex;
     private RecyclerView rvPersonaParticipantes;
     private PersonaAdapter personaAdapter;
-    private ActivityResultLauncher resultLauncher;
+    private ActivityResultLauncher rLauncherComensales;
     private ArrayList<Persona> comensales;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_participantes);
-
+        
         //Método que asigna IDs a los elementos
         asignarId();
 
@@ -55,7 +55,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
 
         //Laucher Result - Se debe añadir el switch(code) que dependiendo de que actividad vuelva, haga una u otra cosa
-        resultLauncher = registerForActivityResult(
+        rLauncherComensales = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
 
 
@@ -90,10 +90,10 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     public void asignarId () {
 
         //Asigna Ids a los elementos de la actividad
-        ivMenuParticipantes = findViewById(R.id.ivMenuAnadirParticipante);
-        ivLoginParticipantes = findViewById(R.id.ivLoginAnadirParticipante);
+        ivMenuParticipantes = findViewById(R.id.ivMenuAnadirPlato);
+        ivLoginParticipantes = findViewById(R.id.ivLoginAnadirPlato);
         rvPersonaParticipantes = findViewById(R.id.rvPersonaParticipantes);
-        tvTitleParticipantes = findViewById(R.id.tvTitleAnadirParticipante);
+        tvTitleParticipantes = findViewById(R.id.tvTitleAnadirPlato);
 
         //Asigna IDs de los elementos del popup
         puVolverParticipantes = new Dialog(this);
@@ -164,7 +164,8 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         } else {
 
             Intent intent = new Intent(this, AnadirParticipanteActivity.class);
-            startActivity(intent);
+            intent.putExtra("arrayListComensales", comensales);
+            rLauncherComensales.launch(intent);
 
             /*
             ArrayList <Plato> platosComensales = new ArrayList<>();

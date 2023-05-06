@@ -16,6 +16,7 @@
     <string name="pop_confirmacion">CONFIRMAR</string>
     <string name="pop_cancelar">CANCELAR</string>
     <string name="anadir_participante">Añadir \nComensal</string>
+    <string name="anadir_plato">Añadir \nPlato - Bebida</string>
     <string name="etnombreanadir_participante">Nombre:</string>
     <string name="etdescripcionanadir_participante">Descripción:</string>
     <string name="tvlistaplatosanadir_participante">Platos</string>
@@ -31,4 +32,6 @@
     <string name="contraseñaOlvidada">Correo registrado</string>
     <string name="continuar_platos">Continuar</string>
     <string name="tvrow_participante">Platos y Bebidas</string>
+    <string name="tvrow_compartir">Compartir con...</string>
+    <string name="swCompartir_Plato">¿Compartir?</string>
 </resources>

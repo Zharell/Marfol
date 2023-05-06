@@ -86,10 +86,10 @@ public class IndexActivity extends AppCompatActivity {
 
         //Asigna Ids a los elementos de la actividad
         btnApIndex = findViewById(R.id.btnApIndex);
-        ivLoginIndex = findViewById(R.id.ivLoginAnadirParticipante);
-        ivMenuIndex = findViewById(R.id.ivMenuAnadirParticipante);
+        ivLoginIndex = findViewById(R.id.ivLoginAnadirPlato);
+        ivMenuIndex = findViewById(R.id.ivMenuAnadirPlato);
         rvPresetsIndex = findViewById(R.id.rvPresetsIndex);
-        tvTitleIndex = findViewById(R.id.tvTitleAnadirParticipante);
+        tvTitleIndex = findViewById(R.id.tvTitleAnadirPlato);
 
         //Asigna IDs de los elementos del popup
         puVolverIndex = new Dialog(this);

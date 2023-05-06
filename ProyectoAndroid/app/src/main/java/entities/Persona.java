@@ -1,8 +1,9 @@
 package entities;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Persona {
+public class Persona implements Serializable {
 
     private String nombre,descripcion, urlImage;
     private List<Plato> platos;
