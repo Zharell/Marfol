@@ -18,6 +18,7 @@
     <string name="confirmacion_volver">¿Estás seguro de que deseas volver?</string>
     <string name="atencion_msg">Atención</string>
     <string name="entrar">Entrar</string>
+    <string name="editar">Editar</string>
     <string name="pop_confirmacion">CONFIRMAR</string>
     <string name="pop_cancelar">CANCELAR</string>
     <string name="anadir_participante">Añadir \nComensal</string>

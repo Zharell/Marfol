@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,48 +9,24 @@
     tools:context="login.HomeActivity">
 
     <Button
-        android:id="@+id/btnBorrarBD"
-        android:layout_width="120dp"
+        android:id="@+id/btnEditarBD"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="@string/borrar"
+        android:text="@string/editar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.931"
+        app:layout_constraintHorizontal_bias="0.118"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.72" />
-
-    <Button
-        android:id="@+id/btnRecuperarBD"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:text="@string/recuperar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.72" />
-
-    <Button
-        android:id="@+id/btnGuardarBD"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:text="@string/guardar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.068"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.72" />
+        app:layout_constraintVertical_bias="0.714" />
 
     <TextView
-        android:id="@+id/etEmailHome"
+        android:id="@+id/tvEmailHome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:hint="@string/prompt_email"
+        android:text=""
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -58,14 +35,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.439" />
 
-    <EditText
-        android:id="@+id/etNombreUsuario"
+    <TextView
+        android:id="@+id/tvNombreApellido"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:hint="@string/nombre"
-        android:inputType="text"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -74,30 +49,27 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.546" />
 
-    <EditText
-        android:id="@+id/etTelefonoUsuario"
+    <TextView
+        android:id="@+id/tvTelefono"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-
-        android:hint="@string/telefono"
-        android:inputType="phone"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.629" />
+        app:layout_constraintVertical_bias="0.582" />
 
     <TextView
-        android:id="@+id/etProviderHome"
+        android:id="@+id/tvProviderHome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:hint="Provider"
+        android:textAppearance="@style/TextAppearance.AppCompat"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -107,6 +79,7 @@
         app:layout_constraintVertical_bias="0.484" />
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/appCompatButton2"
         android:layout_width="280dp"
         android:layout_height="250dp"
         android:background="@drawable/button_index"
@@ -125,15 +98,26 @@
 
     <Button
         android:id="@+id/btnLogoutHome"
-        android:layout_width="120dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="@string/logout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.481"
+        app:layout_constraintHorizontal_bias="0.862"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.976" />
+        app:layout_constraintVertical_bias="0.714" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTelefono"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvNombreApellido" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
