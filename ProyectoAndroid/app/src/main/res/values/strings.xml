@@ -1,9 +1,13 @@
 <resources>
     <string name="app_name">Marfol</string>
+    <string name="nombre">Nombre y apellido</string>
     <string name="button_intro">¡ A \nPagar !</string>
+    <string name="telefono">Teléfono</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="entrar">Entrar</string>
+    <string name="guardar">Guardar</string>
+    <string name="recuperar">Recuperar</string>
+    <string name="borrar">Borrar</string>
     <string name="logout">Logout</string>
     <string name="registrarse">Registrarse</string>
     <string name="google">Google</string>
@@ -13,6 +17,8 @@
     <string name="desea_volver">Perderás los participantes</string>
     <string name="confirmacion_volver">¿Estás seguro de que deseas volver?</string>
     <string name="atencion_msg">Atención</string>
+    <string name="entrar">Entrar</string>
+    <string name="editar">Editar</string>
     <string name="pop_confirmacion">CONFIRMAR</string>
     <string name="pop_cancelar">CANCELAR</string>
     <string name="anadir_participante">Añadir \nComensal</string>
