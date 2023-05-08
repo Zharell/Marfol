@@ -79,14 +79,23 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()) {
-                    progressBar.setVisibility(View.GONE);
                     String name = documentSnapshot.getString("name");
                     String phone = documentSnapshot.getString("phone");
+
+                    // Si no hay datos de nombre o teléfono, ocultar la progress bar
+                    if (name == null || phone == null) {
+                        progressBar.setVisibility(View.GONE);
+                        return;
+                    }
+
                     // Actualizar los EditText con los datos recuperados
                     tvNombreUsuario.setText("Nombre: "+name);
                     tvTelefonoUsuario.setText("Teléfono: "+phone);
+
+                    progressBar.setVisibility(View.GONE);
                 } else {
                     Log.d(TAG, "No se encontró el documento");
+                    progressBar.setVisibility(View.GONE);
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
