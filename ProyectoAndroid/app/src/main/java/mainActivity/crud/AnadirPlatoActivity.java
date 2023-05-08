@@ -1,34 +1,63 @@
 package mainActivity.crud;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tfg.marfol.R;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+
+import entities.Plato;
 
 public class AnadirPlatoActivity extends AppCompatActivity {
 
     private Switch swCompartirPlato;
     private RecyclerView rvPlatosAnadirPlato;
-    private TextView tvTitleAnadirP, etNombreAnadirP, etDescAnadirP, tvSubTitP;
+    private TextView tvTitleAnadirP, tvSubTitP;
+
+    private EditText  etNombreAnadirP, etDescAnadirP, etPrecioAnadirP;
     private Button btnContinuarAnadirP;
     private ImageView ivLoginAnadirPlato, ivPlatoAnadirP;
+    private static final int CAMERA_PERMISSION_CODE = 100;
+    private ArrayList <Plato> platos;
+    private boolean esCompartido=false;
+    private String uriCapturada="";
+    private ActivityResultLauncher<Intent> camaraLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anadir_plato);
+
+        //Recibe la lista de comensales para empezar a añadir
+        Intent intent = getIntent();
+        platos = (ArrayList<Plato>) intent.getSerializableExtra("arrayListPlatos");
 
         //Método que asigna IDs a los elementos
         asignarId();
@@ -36,21 +65,115 @@ public class AnadirPlatoActivity extends AppCompatActivity {
         //Método que asigna los efectos a los elementos
         asignarEfectos();
 
+        //Botón encargado de añadir el plato
+        btnContinuarAnadirP.setOnClickListener(view -> {
+
+            //Añade el plato y devuelve
+            anadirPlato();
+
+        });
+
+
         //Comprueba si el switch compartir está activo o no para mostrar su información
-        swCompartirPlato.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
-                    tvSubTitP.setVisibility(View.VISIBLE);
-                    rvPlatosAnadirPlato.setVisibility(View.VISIBLE);
-                } else {
-                    tvSubTitP.setVisibility(View.INVISIBLE);
-                    rvPlatosAnadirPlato.setVisibility(View.INVISIBLE);
+        swCompartirPlato.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            if (isChecked) {
+                tvSubTitP.setVisibility(View.VISIBLE);
+                rvPlatosAnadirPlato.setVisibility(View.VISIBLE);
+                esCompartido=true;
+            } else {
+                tvSubTitP.setVisibility(View.INVISIBLE);
+                rvPlatosAnadirPlato.setVisibility(View.INVISIBLE);
+                esCompartido=false;
+            }
+
+        });
+
+        //Añadimos onClick en el ImageView para activar la imagen
+        ivPlatoAnadirP.setOnClickListener(view -> {
+            // Solicitar permiso para acceder a la cámara
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+                //Si no tenemos los permisos los obtenemos
+                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+            } else {
+
+                // Si ya se tienen los permisos, abrir la cámara
+                abrirCamara();
+            }
+        });
+
+        // Registrar el launcher para la cámara
+        camaraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK) {
+
+                // Si la foto se toma correctamente, mostrar la vista previa en el ImageView
+                Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
+                ivPlatoAnadirP.setImageBitmap(photo);
+
+                // Insertar la imagen en la galería y obtenemos la URI transformada en String para almacenar en la BD
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.TITLE, "personaMarfol.jpg");
+                Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+                try {
+
+                    OutputStream outputStream = getContentResolver().openOutputStream(uri);
+                    photo.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                    outputStream.close();
+
+                    //Obtenemos la ruta URI de la imagen seleccionada
+                    uriCapturada = uri.toString();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
 
             }
         });
 
+    }
+
+    public void anadirPlato () {
+
+        boolean esValidado=true;
+        String nombre = String.valueOf(etNombreAnadirP.getText());
+        String descripcion = String.valueOf(etDescAnadirP.getText());
+        double precio;
+
+        //Comprueba si el editText está vacío, de estarlo el programa lo entiende como un 0, además, remplaza , por . para evitar errores
+        precio = etPrecioAnadirP.getText().toString().equalsIgnoreCase("") ? 0 : Double.parseDouble(etPrecioAnadirP.getText().toString().replace(",","."));
+
+        //Comprueba si has añadido un nombre
+        if (etNombreAnadirP.getText().toString().length() == 0) {
+            Toast.makeText(this,"Debe introducir un nombre", Toast.LENGTH_SHORT).show();
+
+            esValidado=false;
+        }
+
+        if (precio <= 0) {
+            Toast.makeText(this,"Debe introducir un precio mayor a 0", Toast.LENGTH_SHORT).show();
+
+            esValidado=false;
+        }
+
+        //Comprueba si ha validado, añade la persona, envía al padre el ArrayList de comensales, platos y cierra la actividad
+        if (esValidado) {
+
+            //Añado a la lista la persona creada
+            platos.add(new Plato(nombre,descripcion,precio,precio,uriCapturada,esCompartido));
+
+            Intent intentPlato = new Intent();
+            intentPlato.putExtra("arrayListPlatos", platos);
+            setResult(Activity.RESULT_OK, intentPlato);
+            finish();
+
+        }
+
+    }
+
+    // Método para abrir la cámara
+    private void abrirCamara() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        camaraLauncher.launch(cameraIntent);
     }
 
     public void asignarEfectos() {
@@ -97,6 +220,7 @@ public class AnadirPlatoActivity extends AppCompatActivity {
         tvTitleAnadirP = findViewById(R.id.tvTitleAnadirPlato);
         etNombreAnadirP = findViewById(R.id.etNombreAnadirPlato);
         etDescAnadirP = findViewById(R.id.etDescripcionAnadirPlato);
+        etPrecioAnadirP = findViewById(R.id.etPlatoPrecio);
         tvSubTitP = findViewById(R.id.tvListaPlatosAnadirPlato);
         ivLoginAnadirPlato = findViewById(R.id.ivLoginAnadirPlato);
         btnContinuarAnadirP = findViewById(R.id.btnPlatosAnadirPlato);

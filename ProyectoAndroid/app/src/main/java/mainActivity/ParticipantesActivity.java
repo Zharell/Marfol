@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -43,7 +44,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_participantes);
-        
+
         //Método que asigna IDs a los elementos
         asignarId();
 
@@ -57,6 +58,12 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         //Laucher Result - Se debe añadir el switch(code) que dependiendo de que actividad vuelva, haga una u otra cosa
         rLauncherComensales = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        comensales = (ArrayList<Persona>) data.getSerializableExtra("arrayListComensales");
+                        personaAdapter.setResultsPersona(comensales);
+
+                    }
 
 
 

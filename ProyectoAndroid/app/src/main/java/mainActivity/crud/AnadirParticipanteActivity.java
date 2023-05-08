@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tfg.marfol.R;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -23,6 +24,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +40,8 @@ import entities.Plato;
 public class AnadirParticipanteActivity extends AppCompatActivity implements AnadirPersonaAdapter.onItemClickListener {
 
     private RecyclerView rvPlatosAnadirParticipante;
-    private TextView tvTitleAnadirP, etNombreAnadirP, etDescAnadirP, tvSubTitP;
+    private TextView tvTitleAnadirP, tvSubTitP;
+    private EditText etNombreAnadirP, etDescAnadirP;
     private Button btnContinuarAnadirP;
     private ImageView ivLoginAnadirParticipante, ivPlatoAnadirP;
 
@@ -46,8 +49,9 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
     private ArrayList <Plato> platos;
     private ActivityResultLauncher <Intent> camaraLauncher;
+    private ActivityResultLauncher rLauncherPlatos;
     private static final int CAMERA_PERMISSION_CODE = 100;
-    private String uriCapturada;
+    private String uriCapturada="";
     private ArrayList<Persona> comensales;
 
     @Override
@@ -59,8 +63,6 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         Intent intent = getIntent();
         comensales = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComensales");
 
-        Toast.makeText(this, comensales.get(0).getNombre(),Toast.LENGTH_SHORT).show();
-
         //Método que asigna IDs a los elementos
         asignarId();
 
@@ -69,6 +71,20 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
+
+        //Laucher Result - Se debe añadir el switch(code) que dependiendo de que actividad vuelva, haga una u otra cosa
+        rLauncherPlatos = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        platos = (ArrayList<Plato>) data.getSerializableExtra("arrayListPlatos");
+                        anadirPAdapter.setResultsPlato(platos);
+                    }
+
+
+
+                }
+        );
 
         // Registrar el launcher para la cámara
         camaraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -89,6 +105,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                     photo.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                     outputStream.close();
 
+                    //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
 
                 } catch (IOException e) {
@@ -111,8 +128,14 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             }
         });
 
+        btnContinuarAnadirP.setOnClickListener(view -> {
 
+            //Método encargado de crear un comensal
+            anadirComensal();
 
+        });
+
+        /*
         platos.add(new Plato( "pollito con papa", "eso es lo que me gusta a mí",20,20,"",false));
         platos.add(new Plato( "el pepe", "eso es lo que me gusta a mí",20,20,"",false));
         platos.add(new Plato( "kaylertragaSa", "eso es lo que me gusta a mí",20,20,"",false));
@@ -121,6 +144,36 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         platos.add(new Plato( "cocacolastic", "eso es lo que me gusta a mí",20,20,"",false));
         platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
         anadirPAdapter.setResultsPlato(platos);
+        */
+
+    }
+
+    public void anadirComensal() {
+
+        boolean esValidado=true;
+        String nombre = String.valueOf(etNombreAnadirP.getText());
+        String descripcion = String.valueOf(etDescAnadirP.getText());
+        ArrayList <Plato> platos = new ArrayList<Plato>();
+
+        //Comprueba si has añadido un nombre
+        if (etNombreAnadirP.getText().toString().length() == 0) {
+            Toast.makeText(this,"Debe introducir un nombre", Toast.LENGTH_SHORT).show();
+
+            esValidado=false;
+        }
+
+        //Comprueba si ha validado, añade la persona, envía al padre el ArrayList y cierra la actividad
+        if (esValidado) {
+
+            //Añado a la lista la persona creada
+            comensales.add(new Persona(nombre, descripcion, uriCapturada, platos));
+
+            Intent intentComensal = new Intent();
+            intentComensal.putExtra("arrayListComensales", comensales);
+            setResult(Activity.RESULT_OK, intentComensal);
+            finish();
+
+        }
 
 
     }
@@ -152,8 +205,8 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     //Se debe insertar el ArrayList vacío para que el adaptador inserte el objeto 0 ( añadir elemento )
     public void mostrarAdapter() {
 
-        //ArrayList creado para probar adapter
-        platos = new ArrayList<>();
+        //Se añaden la lista de platos vacía para que aparezca el botón de añadir Plato
+        platos = new ArrayList<Plato>();
 
         //Prepara el Adapter para su uso
         rvPlatosAnadirParticipante.setLayoutManager(new LinearLayoutManager(this));
@@ -226,8 +279,12 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
         } else {
 
+            //Accedemos a la actividad de añadir plato
             Intent intent = new Intent(this, AnadirPlatoActivity.class);
-            startActivity(intent);
+            intent.putExtra("arrayListPlatos", platos);
+            rLauncherPlatos.launch(intent);
+
+
 
         }
 

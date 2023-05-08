@@ -1,6 +1,8 @@
 package entities;
 
-public class Plato {
+import java.io.Serializable;
+
+public class Plato implements Serializable {
 
     private String nombre, descripcion, urlImage;
 
