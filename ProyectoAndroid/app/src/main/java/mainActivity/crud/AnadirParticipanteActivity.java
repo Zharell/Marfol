@@ -303,17 +303,17 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         }
 
     }
-    private void anadirPersonaABd(String nombre,String descripcion){
+    private void anadirPersonaABd(String nombre,String descripcion) {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        if (!nombre.equals("")) {
+            if (currentUser != null) {
+                // el usuario está autenticado
+                // aquí puedes agregar la lógica para agregar varias personas a la base de datos
+                CollectionReference personaRef = db.collection("users").document(currentUser.getEmail()).collection("personas");
 
-        if (currentUser != null) {
-            // el usuario está autenticado
-            // aquí puedes agregar la lógica para agregar varias personas a la base de datos
-            CollectionReference personaRef = db.collection("users").document(currentUser.getEmail()).collection("personas");
-
-            // iterar sobre la lista de personas que deseas agregar
+                // iterar sobre la lista de personas que deseas agregar
 
                 Map<String, Object> nuevaPersona = new HashMap<>();
                 nuevaPersona.put("nombre", nombre);
@@ -335,10 +335,11 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                             }
                         });
 
-        } else {
-            // el usuario no está autenticado, muestra un mensaje o inicia sesión automáticamente
-            Toast.makeText(this, "Inicia sesión para agregar una persona", Toast.LENGTH_SHORT).show();
-        }
+            } else {
+                // el usuario no está autenticado, muestra un mensaje o inicia sesión automáticamente
+                Toast.makeText(this, "Inicia sesión para agregar una persona", Toast.LENGTH_SHORT).show();
+            }
 
+        }
     }
 }
