@@ -9,6 +9,13 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.tfg.marfol.R;
 
 import android.Manifest;
@@ -32,6 +39,9 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import adapters.AnadirPersonaAdapter;
 import entities.Persona;
@@ -58,6 +68,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anadir_participante);
+
 
         //Recibe la lista de comensales para empezar a añadir
         Intent intent = getIntent();
@@ -153,6 +164,9 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         boolean esValidado=true;
         String nombre = String.valueOf(etNombreAnadirP.getText());
         String descripcion = String.valueOf(etDescAnadirP.getText());
+        anadirPersonaABd(nombre,descripcion);
+
+
         ArrayList <Plato> platos = new ArrayList<Plato>();
 
         //Comprueba si has añadido un nombre
@@ -286,6 +300,44 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
 
 
+        }
+
+    }
+    private void anadirPersonaABd(String nombre,String descripcion){
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        if (currentUser != null) {
+            // el usuario está autenticado
+            // aquí puedes agregar la lógica para agregar varias personas a la base de datos
+            CollectionReference personaRef = db.collection("users").document(currentUser.getEmail()).collection("personas");
+
+            // iterar sobre la lista de personas que deseas agregar
+
+                Map<String, Object> nuevaPersona = new HashMap<>();
+                nuevaPersona.put("nombre", nombre);
+                nuevaPersona.put("descripcion", descripcion);
+
+                personaRef.add(nuevaPersona)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                // la persona se agregó exitosamente
+                                Toast.makeText(AnadirParticipanteActivity.this, "Se agregó la persona exitosamente", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // ocurrió un error al agregar la persona
+                                Toast.makeText(AnadirParticipanteActivity.this, "Ocurrió un error al agregar la persona", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+        } else {
+            // el usuario no está autenticado, muestra un mensaje o inicia sesión automáticamente
+            Toast.makeText(this, "Inicia sesión para agregar una persona", Toast.LENGTH_SHORT).show();
         }
 
     }
