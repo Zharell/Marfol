@@ -1,7 +1,10 @@
 package mainActivity;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,11 +18,20 @@ import android.graphics.Shader;
 
 import android.os.Bundle;
 
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.tfg.marfol.R;
 
 import java.util.ArrayList;
@@ -40,6 +52,10 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private ActivityResultLauncher rLauncherComensales;
     private ArrayList<Persona> comensales;
 
+    private ArrayList<Persona> comensalesBd;
+    private TextView tvLlenarTexto;
+
+    private RecyclerView rvPersonaParticipantesBd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +69,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
-
+        llenarDatos();
 
         //Laucher Result - Se debe añadir el switch(code) que dependiendo de que actividad vuelva, haga una u otra cosa
         rLauncherComensales = registerForActivityResult(
@@ -101,7 +117,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         ivLoginParticipantes = findViewById(R.id.ivLoginAnadirPlato);
         rvPersonaParticipantes = findViewById(R.id.rvPersonaParticipantes);
         tvTitleParticipantes = findViewById(R.id.tvTitleAnadirPlato);
-
+        //tvLlenarTexto = findViewById(R.id.tvLlenarTexto);
         //Asigna IDs de los elementos del popup
         puVolverParticipantes = new Dialog(this);
         volverIndex = new Intent(this, IndexActivity.class);
@@ -200,6 +216,36 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
             */
 
 
+        }
+
+    }
+    private void llenarDatos(){
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        if (currentUser != null) {
+            CollectionReference personaRef = db.collection("users").document(currentUser.getEmail()).collection("personas");
+            personaRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+
+                        String datos = "";
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+
+                            Persona persona = document.toObject(Persona.class);
+                            datos += persona.getNombre() + " - " + persona.getDescripcion() + "\n";
+                        }
+                        tvLlenarTexto.setText(datos);
+                    } else {
+                        Log.d(TAG, "Error getting documents: ", task.getException());
+                    }
+                }
+            });
+        } else {
+            // el usuario no está autenticado, muestra un mensaje o inicia sesión automáticamente
+            Toast.makeText(this, "Inicia sesión para ver los datos", Toast.LENGTH_SHORT).show();
         }
 
     }
