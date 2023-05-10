@@ -74,8 +74,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
-        llenarDatos();
-
 
         //Método BD
         llenarDatos();
