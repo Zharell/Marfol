@@ -9,6 +9,8 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -81,7 +83,22 @@ public class IndexActivity extends AppCompatActivity {
 
 
     }
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.overflow, menu);
+        return true;
+    }
 
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+        if(id == R.id.testMenu1){
+            Toast.makeText(this, "Pursaste el primer item",Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.testMenu2) {
+            Toast.makeText(this, "Pursaste el segundo item",Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.testMenu3) {
+            Toast.makeText(this, "Pursaste el tercer item",Toast.LENGTH_SHORT).show();
+        }
+        return super.onOptionsItemSelected(item);
+    }
     public void asignarId() {
 
         //Asigna Ids a los elementos de la actividad
@@ -147,7 +164,7 @@ public class IndexActivity extends AppCompatActivity {
         puVolverIndex.show();
 
     }
-
+    //desplegable
 
 
 

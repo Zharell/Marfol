@@ -96,6 +96,12 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         platos = (ArrayList<Plato>) data.getSerializableExtra("arrayListPlatos");
+                        String prueba ="";
+                        for (int i = 1; i < platos.size(); i++) {
+                            Plato plato = platos.get(i);
+                            prueba+="datos: " + plato.getNombre()+ plato.getPrecio();
+                        }
+                        Toast.makeText(this, prueba, Toast.LENGTH_SHORT).show();
                         anadirPAdapter.setResultsPlato(platos);
                     }
 
