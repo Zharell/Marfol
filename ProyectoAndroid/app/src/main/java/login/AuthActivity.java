@@ -147,14 +147,5 @@ public class AuthActivity extends AppCompatActivity {
         }
     }
 
-    //Método que al pulsar el botón de volver redirige a la pantalla Index
-    // (Se debe añadir Launcher Result) Por si el usuario pulsa sin querer volver
-    // No pierda los participantes añadidos
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(this, IndexActivity.class);
-        startActivity(intent);
-        finish();
-    }
 
 }

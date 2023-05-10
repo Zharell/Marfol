@@ -1,16 +1,22 @@
 package mainActivity;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.LauncherActivity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,6 +24,11 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.tfg.marfol.R;
+
+import java.net.URI;
+import java.util.ArrayList;
+
+import entities.Persona;
 
 
 public class IndexActivity extends AppCompatActivity {
@@ -30,7 +41,7 @@ public class IndexActivity extends AppCompatActivity {
     private Button btnCancelarIndex, btnConfirmarIndex;
     private TextView tvMessage1Popup, tvMessage2Popup, tvTitlePopup;
     private FirebaseAuth mAuth;
-
+    private ActivityResultLauncher rLauncherIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,31 +53,19 @@ public class IndexActivity extends AppCompatActivity {
 
         //Método que asigna efectos a los elementos (colores, etc)
         asignarEfectos();
-
-        //Comprueba si estás logueado
-        mAuth = FirebaseAuth.getInstance();
-
-        //Comprueba si estás logueado o no
-        if (mAuth.getCurrentUser() != null) {
-
-            Toast.makeText(this, "Estás logueado bro ",Toast.LENGTH_SHORT).show();
-
-        } else {
-
-            Toast.makeText(this, "No estás logueado pendejo ",Toast.LENGTH_SHORT).show();
-
-        }
+        //Método para comprobar las imagenes del usuario
+        comprobarLogueado();
 
         //Puesto provisional para probar cosas
         ivLoginIndex.setOnClickListener(view -> {
             Intent intent = new Intent(this, login.AuthActivity.class);
-            startActivity(intent);
-            finish();
+            rLauncherIndex.launch(intent);
         });
 
         //Botón que accede a la gestión de participantes
         btnApIndex.setOnClickListener(view -> {
             Intent intent = new Intent(this, ParticipantesActivity.class);
+
             startActivity(intent);
             finish();
         });
@@ -81,24 +80,29 @@ public class IndexActivity extends AppCompatActivity {
         //Cancela, desaparece el popup y continúa en la actividad
         btnCancelarIndex.setOnClickListener(view -> puVolverIndex.dismiss());
 
+        //launcher result para comprobar las imagenes del usuario
+        rLauncherIndex = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    comprobarLogueado();
+                    Toast.makeText(this, "Launcher jiji",Toast.LENGTH_SHORT).show();
+                }
+        );
 
     }
-    public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.overflow, menu);
-        return true;
-    }
 
-    public boolean onOptionsItemSelected(MenuItem item){
-        int id = item.getItemId();
-        if(id == R.id.testMenu1){
-            Toast.makeText(this, "Pursaste el primer item",Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.testMenu2) {
-            Toast.makeText(this, "Pursaste el segundo item",Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.testMenu3) {
-            Toast.makeText(this, "Pursaste el tercer item",Toast.LENGTH_SHORT).show();
+    private void comprobarLogueado() {
+        //Coge la instancia de usuario
+        mAuth = FirebaseAuth.getInstance();
+        //Comprueba si estás logueado o no
+        if (mAuth.getCurrentUser() != null) {
+            Toast.makeText(this, "Estás logueado bro ",Toast.LENGTH_SHORT).show();
+            ivLoginIndex.setImageURI(Uri.parse("android.resource://com.tfg.marfol/"+R.drawable.google_icon));
+        } else {
+            Toast.makeText(this, "No estás logueado pendejo ",Toast.LENGTH_SHORT).show();
+            ivLoginIndex.setImageURI(Uri.parse("android.resource://com.tfg.marfol/"+R.drawable.nologinimg));
         }
-        return super.onOptionsItemSelected(item);
     }
+
     public void asignarId() {
 
         //Asigna Ids a los elementos de la actividad
@@ -118,7 +122,6 @@ public class IndexActivity extends AppCompatActivity {
         tvTitlePopup = puVolverIndex.findViewById(R.id.tvTitlePopup);
 
     }
-
     public void asignarEfectos() {
 
         //Ajusta el tamaño de la imagen del login
@@ -164,7 +167,7 @@ public class IndexActivity extends AppCompatActivity {
         puVolverIndex.show();
 
     }
-    //desplegable
+
 
 
 

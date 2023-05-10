@@ -303,11 +303,10 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                 CollectionReference personaRef = db.collection("users").document(currentUser.getEmail()).collection("personas");
 
                 // iterar sobre la lista de personas que deseas agregar
-
                 Map<String, Object> nuevaPersona = new HashMap<>();
                 nuevaPersona.put("nombre", nombre);
                 nuevaPersona.put("descripcion", descripcion);
-
+                nuevaPersona.put("imagen", uriCapturada);
                 personaRef.add(nuevaPersona)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
