@@ -134,7 +134,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         rvPersonaParticipantes = findViewById(R.id.rvPersonaParticipantes);
         tvTitleParticipantes = findViewById(R.id.tvTitleAnadirPlato);
         btnContinuarParticipantes = findViewById(R.id.btnContinuarParticipantes);
-        //tvLlenarTexto = findViewById(R.id.tvLlenarTexto);
+        tvLlenarTexto = findViewById(R.id.tvLlenarTexto);
 
         //Asigna IDs de los elementos del popup
         puVolverParticipantes = new Dialog(this);
@@ -247,35 +247,26 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
         if (currentUser != null) {
             CollectionReference personaRef = db.collection("users").document(currentUser.getEmail()).collection("personas");
-            // ...
-
             personaRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
-                        QuerySnapshot querySnapshot = task.getResult();
-
-                        if (!querySnapshot.isEmpty()) {
-                            String datos = "";
-                            for (QueryDocumentSnapshot document : querySnapshot) {
-                                Persona persona = document.toObject(Persona.class);
-                                datos += persona.getNombre() + " - " + persona.getDescripcion() + "\n";
-                            }
-                            tvLlenarTexto.setText(datos);
-                        } else {
-                            // No hay documentos en la colección
-                            // Realiza alguna acción o muestra un mensaje según tus necesidades
+                        String datos = "";
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Persona persona = document.toObject(Persona.class);
+                            datos += persona.getNombre() + " - " + persona.getDescripcion() + "\n";
                         }
+                        tvLlenarTexto.setText(datos);
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                     }
                 }
             });
-
         } else {
             // el usuario no está autenticado, muestra un mensaje o inicia sesión automáticamente
             Toast.makeText(this, "Inicia sesión para ver los datos", Toast.LENGTH_SHORT).show();
         }
+
 
     }
 
