@@ -66,6 +66,9 @@ public class IndexActivity extends AppCompatActivity {
         btnApIndex.setOnClickListener(view -> {
             Intent intent = new Intent(this, ParticipantesActivity.class);
             startActivity(intent);
+
+            //Aplica un efecto de desvanecimiento entre actividades y se cierra
+            overridePendingTransition(androidx.navigation.ui.R.anim.nav_default_enter_anim, androidx.navigation.ui.R.anim.nav_default_exit_anim);
             finish();
         });
 

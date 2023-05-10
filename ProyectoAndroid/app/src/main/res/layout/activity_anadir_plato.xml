@@ -117,19 +117,20 @@
 
     <EditText
         android:id="@+id/etPlatoPrecio"
-        android:layout_width="80dp"
+        android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginTop="12dp"
+        android:background="@drawable/button_index"
         android:gravity="center"
         android:hint="@string/tvPrecio"
+        android:inputType="numberDecimal"
         android:maxLength="16"
         android:padding="10dp"
+
+
         android:textColor="@color/redTitle"
         android:textColorHint="@color/redSLight"
         android:textSize="25dp"
-
-
-        android:background="@drawable/button_index"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.85"
         app:layout_constraintStart_toStartOf="parent"
@@ -193,7 +194,7 @@
         android:text="@string/swCompartir_Plato"
         android:textColor="@color/redTitle"
         android:textColorHint="@color/redSLight"
-        android:textSize="21dp"
+        android:textSize="24dp"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.2"

@@ -1,4 +1,4 @@
-package mainActivity.crud;
+package mainActivity.detalle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -8,8 +8,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.tfg.marfol.R;
 
 import android.Manifest;
 import android.app.Activity;
@@ -23,46 +21,48 @@ import android.graphics.Shader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tfg.marfol.R;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import adapters.AnadirPersonaAdapter;
+import adapters.PersonaDetalleAdapter;
 import entities.Persona;
 import entities.Plato;
+import mainActivity.crud.AnadirPlatoActivity;
 
-public class AnadirParticipanteActivity extends AppCompatActivity implements AnadirPersonaAdapter.onItemClickListener {
+public class DetallePersonaActivity extends AppCompatActivity implements PersonaDetalleAdapter.onItemClickListener {
 
-    private final boolean PRIMER_USO = true;
-    private RecyclerView rvPlatosAnadirParticipante;
-    private TextView tvTitleAnadirP, tvSubTitP;
-    private EditText etNombreAnadirP, etDescAnadirP;
-    private Button btnContinuarAnadirP;
-    private ImageView ivLoginAnadirParticipante, ivPlatoAnadirP;
-    private AnadirPersonaAdapter anadirPAdapter;
+    private Persona comensal;
+    private ImageView ivLoginDetalle, ivMenuDetalle, ivFotoDetalle;
+    private EditText etTitleDetalle, etDescripcionDetalle;
+    private RecyclerView rvAnadirPlatoDetalle;
+    private PersonaDetalleAdapter adapterDetalle;
+    private ArrayList<Plato> platos;
+    private static final int CAMERA_PERMISSION_CODE = 100;
     private ActivityResultLauncher <Intent> camaraLauncher;
     private ActivityResultLauncher rLauncherPlatos;
-    private static final int CAMERA_PERMISSION_CODE = 100;
+    private Button btnContinuarDetalle;
     private String uriCapturada="";
-    private ArrayList<Persona> comensales;
-    private int comensalPosicion;
-    private ArrayList <Plato> platos;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_anadir_participante);
+        setContentView(R.layout.activity_detalle_persona);
 
         //Recibe la lista de comensales para empezar a añadir
         Intent intent = getIntent();
-        comensales = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComensales");
+        comensal = (Persona) intent.getSerializableExtra("comensalDetalle");
 
         //Método que asigna IDs a los elementos
         asignarId();
@@ -73,18 +73,38 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
 
+        //Método que inserta la información a los comensales
+        insertarComensal();
+
         //Laucher Result - recibe los platos del usuario creado
         rLauncherPlatos = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         platos = (ArrayList<Plato>) data.getSerializableExtra("arrayListPlatos");
-                        anadirPAdapter.setResultsPlato(platos);
+                        adapterDetalle.setResultsPlato(platos);
                     }
 
 
                 }
         );
+
+        //Añadimos onClick en el ImageView para activar la imagen
+        ivFotoDetalle.setOnClickListener(view -> {
+            // Solicitar permiso para acceder a la cámara
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+                //Si no tenemos los permisos los obtenemos
+                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+            } else {
+                // Si ya se tienen los permisos, abrir la cámara
+                abrirCamara();
+            }
+        });
+
+        //Botón que vuelve a participantes y además devuelve el comensal modificado
+        btnContinuarDetalle.setOnClickListener(view -> {
+            editarComensal();
+        });
 
         // Registrar el launcher para la cámara
         camaraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -92,7 +112,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
                 // Si la foto se toma correctamente, mostrar la vista previa en el ImageView
                 Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
-                ivPlatoAnadirP.setImageBitmap(photo);
+                ivFotoDetalle.setImageBitmap(photo);
 
                 // Insertar la imagen en la galería y obtenemos la URI transformada en String para almacenar en la BD
                 ContentValues values = new ContentValues();
@@ -115,77 +135,36 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             }
         });
 
-        //Añadimos onClick en el ImageView para activar la imagen
-        ivPlatoAnadirP.setOnClickListener(view -> {
-            // Solicitar permiso para acceder a la cámara
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
-                //Si no tenemos los permisos los obtenemos
-                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
-            } else {
-                // Si ya se tienen los permisos, abrir la cámara
-                abrirCamara();
-            }
-        });
 
-        btnContinuarAnadirP.setOnClickListener(view -> {
-            //Método encargado de crear un comensal
-            anadirComensal();
-        });
-
-        /*
-        platos.add(new Plato( "pollito con papa", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "el pepe", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "kaylertragaSa", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "cachopo", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "cerveza viemfria", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "cocacolastic", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        anadirPAdapter.setResultsPlato(platos);
-        */
 
     }
 
-    public void anadirComensal() {
-
+    public void editarComensal() {
         boolean esValidado=true;
-        String nombre = String.valueOf(etNombreAnadirP.getText());
-        String descripcion = String.valueOf(etDescAnadirP.getText());
+        String nombre = String.valueOf(etTitleDetalle.getText());
+        String descripcion = String.valueOf(etDescripcionDetalle.getText());
 
         //Comprueba si has añadido un nombre
-        if (etNombreAnadirP.getText().toString().length() == 0) {
+        if (etTitleDetalle.getText().toString().length() == 0) {
             Toast.makeText(this,"Debe introducir un nombre", Toast.LENGTH_SHORT).show();
-
             esValidado=false;
         }
-
         //Comprueba si ha validado, añade la persona, envía al padre el ArrayList y cierra la actividad
         if (esValidado) {
-
             //Añado a la lista la persona creada
-            comensales.add(new Persona(nombre, descripcion, uriCapturada, platos));
+            Persona personaEditada = new Persona(nombre, descripcion, uriCapturada, platos);
 
             Intent intentComensal = new Intent();
-            intentComensal.putExtra("arrayListComensales", comensales);
+            intentComensal.putExtra("detalleComensal", personaEditada);
             setResult(Activity.RESULT_OK, intentComensal);
             finish();
         }
+    }
+
+    // Método para abrir la cámara
+    private void abrirCamara() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        camaraLauncher.launch(cameraIntent);
     }
 
     // Método para manejar la respuesta de la solicitud de permisos
@@ -203,31 +182,25 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         }
     }
 
-    // Método para abrir la cámara
-    private void abrirCamara() {
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        camaraLauncher.launch(cameraIntent);
-    }
-
     //Se debe insertar el ArrayList vacío para que el adaptador inserte el objeto 0 ( añadir elemento )
     public void mostrarAdapter() {
 
         //Se añaden la lista de platos vacía para que aparezca el botón de añadir Plato
-        platos = new ArrayList<Plato>();
+        platos = comensal.getPlatos();
 
         //Prepara el Adapter para su uso
-        rvPlatosAnadirParticipante.setLayoutManager(new LinearLayoutManager(this));
-        anadirPAdapter = new AnadirPersonaAdapter();
-        rvPlatosAnadirParticipante.setAdapter(anadirPAdapter);
-        anadirPAdapter.setmListener(this::onItemClick);
-        anadirPAdapter.setResultsPlato(platos);
+        rvAnadirPlatoDetalle.setLayoutManager(new LinearLayoutManager(this));
+        adapterDetalle = new PersonaDetalleAdapter();
+        rvAnadirPlatoDetalle.setAdapter(adapterDetalle);
+        adapterDetalle.setmListener(this::onItemClick);
+        adapterDetalle.setResultsPlato(platos);
 
     }
 
     public void asignarEfectos() {
 
         //Ajusta el tamaño de la imagen del login
-        ivLoginAnadirParticipante.setPadding(20, 20, 20, 20);
+        ivLoginDetalle.setPadding(20, 20, 20, 20);
 
         //Asigna el degradado de colores a los textos
         int[] colors = {getResources().getColor(R.color.redBorder),
@@ -237,14 +210,12 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         float[] positions = {0f, 0.2f};
 
         LinearGradient gradient = new LinearGradient(0, 0, 40,
-                tvTitleAnadirP.getPaint().getTextSize(),
+                etTitleDetalle.getPaint().getTextSize(),
                 colors,
                 positions,
                 Shader.TileMode.REPEAT);
 
-        tvTitleAnadirP.getPaint().setShader(gradient);
-        tvSubTitP.getPaint().setShader(gradient);
-        btnContinuarAnadirP.getPaint().setShader(gradient);
+        etTitleDetalle.getPaint().setShader(gradient);
 
         // Asigna sombreado al texto
         float shadowRadius = 10f;
@@ -252,32 +223,36 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         float shadowDy = 5f;
         int shadowColor = Color.BLACK;
 
-        tvTitleAnadirP.getPaint().setShadowLayer(shadowRadius, shadowDx, shadowDy, shadowColor);
+        etTitleDetalle.getPaint().setShadowLayer(shadowRadius, shadowDx, shadowDy, shadowColor);
 
-        //Inserta Imagen photo
-        ivPlatoAnadirP.setImageURI(Uri.parse("android.resource://com.tfg.marfol/"+R.drawable.camera));
-        ivPlatoAnadirP.setPadding(30, 30, 30, 30);
+    }
 
+    public void insertarComensal() {
+        etTitleDetalle.setText(comensal.getNombre());
+        etDescripcionDetalle.setText(comensal.getDescripcion());
+        uriCapturada  = comensal.getUrlImage();
+        if (!comensal.getUrlImage().equalsIgnoreCase("")) {
+            ivFotoDetalle.setImageURI(Uri.parse(comensal.getUrlImage()));
+        } else {
+            //Inserta Imagen photo
+            ivFotoDetalle.setImageURI(Uri.parse("android.resource://com.tfg.marfol/"+R.drawable.camera));
+            ivFotoDetalle.setPadding(30, 30, 30, 30);
+        }
     }
 
     public void asignarId() {
 
-        //Asigna Ids a los elementos de la actividad
-        rvPlatosAnadirParticipante = findViewById(R.id.rvPlatosAnadirPlato);
-        tvTitleAnadirP = findViewById(R.id.tvTitleAnadirPlato);
-        etNombreAnadirP = findViewById(R.id.etNombreAnadirPlato);
-        etDescAnadirP = findViewById(R.id.etDescripcionAnadirPlato);
-        tvSubTitP = findViewById(R.id.tvListaPlatosAnadirPlato);
-        ivLoginAnadirParticipante = findViewById(R.id.ivLoginAnadirPlato);
-        btnContinuarAnadirP = findViewById(R.id.btnPlatosAnadirPlato);
-        ivPlatoAnadirP = findViewById(R.id.ivPlatoAnadirPlato);
-
+        ivLoginDetalle = findViewById(R.id.ivLoginDetallePersona);
+        ivMenuDetalle = findViewById(R.id.ivMenuDetallePersona);
+        ivFotoDetalle = findViewById(R.id.ivFotoPersonaDetalle);
+        etTitleDetalle = findViewById(R.id.etTitleDetallePersona);
+        etDescripcionDetalle = findViewById(R.id.etDescripcionDetallePersona);
+        rvAnadirPlatoDetalle = findViewById(R.id.rvAnadirPlatoDetalle);
+        btnContinuarDetalle = findViewById(R.id.btnEditarDetalle);
     }
-
 
     @Override
     public void onItemClick(int position) {
-        comensalPosicion = position;
         //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
         if (position>0) {
 
@@ -293,6 +268,5 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
 
         }
-
     }
 }

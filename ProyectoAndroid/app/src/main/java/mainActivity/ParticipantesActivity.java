@@ -27,18 +27,21 @@ import java.util.ArrayList;
 import adapters.PersonaAdapter;
 import entities.Persona;
 import mainActivity.crud.AnadirParticipanteActivity;
+import mainActivity.detalle.DetallePersonaActivity;
 
 public class ParticipantesActivity extends AppCompatActivity implements PersonaAdapter.onItemClickListener {
 
     private ImageView ivLoginParticipantes, ivMenuParticipantes;
     private TextView tvTitleParticipantes;
     private Dialog puVolverParticipantes;
-    private Button btnCancelarParticipantes, btnConfirmarParticipantes;
+    private Button btnCancelarParticipantes, btnConfirmarParticipantes, btnContinuarParticipantes;
     private Intent volverIndex;
     private RecyclerView rvPersonaParticipantes;
     private PersonaAdapter personaAdapter;
-    private ActivityResultLauncher rLauncherComensales;
+    private ActivityResultLauncher rLauncherAnadirComensal;
+    private ActivityResultLauncher rLauncherDetalleComensal;
     private ArrayList<Persona> comensales;
+    private int comensalPosicion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,18 +58,25 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         mostrarAdapter();
 
 
-        //Laucher Result - Se debe añadir el switch(code) que dependiendo de que actividad vuelva, haga una u otra cosa
-        rLauncherComensales = registerForActivityResult(
+        //Laucher Result recibe el ArrayList con los nuevos comensales y los inserta en el adapter
+        rLauncherAnadirComensal = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         comensales = (ArrayList<Persona>) data.getSerializableExtra("arrayListComensales");
                         personaAdapter.setResultsPersona(comensales);
-
                     }
+                }
+        );
 
-
-
+        //Laucher Result recibe la persona y actualiza de ser necesario
+        rLauncherDetalleComensal = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        comensales.set(comensalPosicion,(Persona) data.getSerializableExtra("detalleComensal"));
+                        personaAdapter.setResultsPersona(comensales);
+                    }
                 }
         );
 
@@ -101,6 +111,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         ivLoginParticipantes = findViewById(R.id.ivLoginAnadirPlato);
         rvPersonaParticipantes = findViewById(R.id.rvPersonaParticipantes);
         tvTitleParticipantes = findViewById(R.id.tvTitleAnadirPlato);
+        btnContinuarParticipantes = findViewById(R.id.btnContinuarParticipantes);
 
         //Asigna IDs de los elementos del popup
         puVolverParticipantes = new Dialog(this);
@@ -132,6 +143,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         tvTitleParticipantes.getPaint().setShader(gradient);
         btnConfirmarParticipantes.getPaint().setShader(gradient);
         btnCancelarParticipantes.getPaint().setShader(gradient);
+        btnContinuarParticipantes.getPaint().setShader(gradient);
 
         // Asigna sombreado al texto
         float shadowRadius = 10f;
@@ -161,39 +173,41 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
     @Override
     public void onItemClick(int position) {
-
+        comensalPosicion = position;
         //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
         if (position>0) {
 
-
-            Toast.makeText(this,"Pulsaste el campo: "+String.valueOf(position),Toast.LENGTH_SHORT).show();
+            //Accede a la actividad detalle de una persona
+            Intent intentDetalle = new Intent(this, DetallePersonaActivity.class);
+            intentDetalle.putExtra("comensalDetalle", comensales.get(position));
+            rLauncherDetalleComensal.launch(intentDetalle);
 
         } else {
 
+            //Accede a la actividad para añadir nuevos comensales
             Intent intent = new Intent(this, AnadirParticipanteActivity.class);
             intent.putExtra("arrayListComensales", comensales);
-            rLauncherComensales.launch(intent);
+            rLauncherAnadirComensal.launch(intent);
+
 
             /*
-            ArrayList <Plato> platosComensales = new ArrayList<>();
-            platosComensales.add(new Plato("Cachopo","filete empanado",10,10, false));
-            comensales.add(new Persona("Juan", "Le gusta comer", "no hay URL", platosComensales));
-            comensales.add(new Persona("Gayler", "Le gusta comer", "no hay URL", platosComensales));
-            comensales.add(new Persona("Fer", "Le gusta comer", "no hay URL", platosComensales));
-            comensales.add(new Persona("Javier", "Le gusta comer", "no hay URL", platosComensales));
-            comensales.add(new Persona("Juan", "Le gusta comer", "no hay URL", platosComensales));
-            comensales.add(new Persona("Gayler", "Le gusta comer", "no hay URL", platosComensales));
-            comensales.add(new Persona("Fer", "Le gusta comer", "no hay URL", platosComensales));
-            comensales.add(new Persona("Javier", "Le gusta comer", "no hay URL", platosComensales));
-            comensales.add(new Persona("Juan", "Le gusta comer", "no hay URL", platosComensales));
-            comensales.add(new Persona("Gayler", "Le gusta comer", "no hay URL", platosComensales));
-            comensales.add(new Persona("Fer", "Le gusta comer", "no hay URL", platosComensales));
-            comensales.add(new Persona("Javier", "Le gusta comer", "no hay URL", platosComensales));
-            comensales.add(new Persona("Juan", "Le gusta comer", "no hay URL", platosComensales));
-            comensales.add(new Persona("Gayler", "Le gusta comer", "no hay URL", platosComensales));
-            comensales.add(new Persona("Fer", "Le gusta comer", "no hay URL", platosComensales));
-            comensales.add(new Persona("Javier", "Le gusta comer", "no hay URL", platosComensales));
-            // aqui acaba
+            comensales.add(new Persona("Juan", "Le gusta comer", "no hay URL", new ArrayList<>()));
+            comensales.add(new Persona("Gayler", "Le gusta comer", "no hay URL", new ArrayList<>()));
+            comensales.add(new Persona("Fer", "Le gusta comer", "no hay URL", new ArrayList<>()));
+            comensales.add(new Persona("Javier", "Le gusta comer", "no hay URL", new ArrayList<>()));
+            comensales.add(new Persona("Juan", "Le gusta comer", "no hay URL", new ArrayList<>()));
+            comensales.add(new Persona("Gayler", "Le gusta comer", "no hay URL", new ArrayList<>()));
+            comensales.add(new Persona("Fer", "Le gusta comer", "no hay URL", new ArrayList<>()));
+            comensales.add(new Persona("Javier", "Le gusta comer", "no hay URL", new ArrayList<>()));
+            comensales.add(new Persona("Juan", "Le gusta comer", "no hay URL", new ArrayList<>()));
+            comensales.add(new Persona("Gayler", "Le gusta comer", "no hay URL", new ArrayList<>()));
+            comensales.add(new Persona("Fer", "Le gusta comer", "no hay URL", new ArrayList<>()));
+            comensales.add(new Persona("Javier", "Le gusta comer", "no hay URL", new ArrayList<>()));
+            comensales.add(new Persona("Juan", "Le gusta comer", "no hay URL", new ArrayList<>()));
+            comensales.add(new Persona("Gayler", "Le gusta comer", "no hay URL", new ArrayList<>()));
+            comensales.add(new Persona("Fer", "Le gusta comer", "no hay URL", new ArrayList<>()));
+            comensales.add(new Persona("Javier", "Le gusta comer", "no hay URL", new ArrayList<>()));
+
 
             //Añade el contenido al adapter, si está vacío el propio Adapter añade el " Añadir Persona "
             personaAdapter.setResultsPersona(comensales);
