@@ -44,14 +44,8 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-<<<<<<< HEAD
-import java.util.List;
-=======
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
->>>>>>> a3f70e8111d1a7a497b2f099d24cb2492e1b775b
-
 import adapters.AnadirPersonaAdapter;
 import entities.Persona;
 import entities.Plato;
@@ -194,18 +188,13 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         boolean esValidado=true;
         String nombre = String.valueOf(etNombreAnadirP.getText());
         String descripcion = String.valueOf(etDescAnadirP.getText());
-<<<<<<< HEAD
-=======
+
         anadirPersonaABd(nombre,descripcion);
 
-
         ArrayList <Plato> platos = new ArrayList<Plato>();
->>>>>>> a3f70e8111d1a7a497b2f099d24cb2492e1b775b
-
         //Comprueba si has añadido un nombre
         if (etNombreAnadirP.getText().toString().length() == 0) {
             Toast.makeText(this,"Debe introducir un nombre", Toast.LENGTH_SHORT).show();
-
             esValidado=false;
         }
 
@@ -296,10 +285,8 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     }
     @Override
     public void onItemClick(int position) {
-<<<<<<< HEAD
         comensalPosicion = position;
-=======
->>>>>>> a3f70e8111d1a7a497b2f099d24cb2492e1b775b
+
         //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
         if (position>0) {
             Toast.makeText(this,"Pulsaste el campo: "+String.valueOf(position),Toast.LENGTH_SHORT).show();
