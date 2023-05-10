@@ -3,8 +3,8 @@
     <string name="nombre">Nombre y apellido</string>
     <string name="button_intro">¡ A \nPagar !</string>
     <string name="telefono">Teléfono</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
+    <string name="prompt_email">Email *</string>
+    <string name="prompt_password">Password *</string>
     <string name="guardar">Guardar</string>
     <string name="recuperar">Recuperar</string>
     <string name="borrar">Borrar</string>
@@ -32,10 +32,10 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-    <string name="repetirPassw">Repetir password</string>
+    <string name="repetirPassw">Repetir password *</string>
     <string name="enviar">Enviar</string>
     <string name="olvidada"><u>¿Contraseña olvidada?</u></string>
-    <string name="contraseñaOlvidada">Correo registrado</string>
+    <string name="contraseñaOlvidada">Correo del usuario</string>
     <string name="continuar_platos">Continuar</string>
     <string name="tvrow_participante">Platos y Bebidas</string>
     <string name="tvrow_compartir">Compartir con...</string>
