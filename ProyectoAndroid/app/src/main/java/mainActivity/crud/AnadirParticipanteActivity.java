@@ -9,6 +9,17 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.tfg.marfol.R;
 
 import android.Manifest;
@@ -23,6 +34,7 @@ import android.graphics.Shader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,7 +44,13 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+<<<<<<< HEAD
 import java.util.List;
+=======
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+>>>>>>> a3f70e8111d1a7a497b2f099d24cb2492e1b775b
 
 import adapters.AnadirPersonaAdapter;
 import entities.Persona;
@@ -55,10 +73,12 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     private int comensalPosicion;
     private ArrayList <Plato> platos;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anadir_participante);
+
 
         //Recibe la lista de comensales para empezar a añadir
         Intent intent = getIntent();
@@ -72,6 +92,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
+        //test
 
         //Laucher Result - recibe los platos del usuario creado
         rLauncherPlatos = registerForActivityResult(
@@ -79,6 +100,12 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         platos = (ArrayList<Plato>) data.getSerializableExtra("arrayListPlatos");
+                        String prueba ="";
+                        for (int i = 1; i < platos.size(); i++) {
+                            Plato plato = platos.get(i);
+                            prueba+="datos: " + plato.getNombre()+ plato.getPrecio();
+                        }
+                        Toast.makeText(this, prueba, Toast.LENGTH_SHORT).show();
                         anadirPAdapter.setResultsPlato(platos);
                     }
 
@@ -167,6 +194,13 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         boolean esValidado=true;
         String nombre = String.valueOf(etNombreAnadirP.getText());
         String descripcion = String.valueOf(etDescAnadirP.getText());
+<<<<<<< HEAD
+=======
+        anadirPersonaABd(nombre,descripcion);
+
+
+        ArrayList <Plato> platos = new ArrayList<Plato>();
+>>>>>>> a3f70e8111d1a7a497b2f099d24cb2492e1b775b
 
         //Comprueba si has añadido un nombre
         if (etNombreAnadirP.getText().toString().length() == 0) {
@@ -221,11 +255,8 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         rvPlatosAnadirParticipante.setAdapter(anadirPAdapter);
         anadirPAdapter.setmListener(this::onItemClick);
         anadirPAdapter.setResultsPlato(platos);
-
     }
-
     public void asignarEfectos() {
-
         //Ajusta el tamaño de la imagen del login
         ivLoginAnadirParticipante.setPadding(20, 20, 20, 20);
 
@@ -233,35 +264,26 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         int[] colors = {getResources().getColor(R.color.redBorder),
                 getResources().getColor(R.color.redTitle)
         };
-
         float[] positions = {0f, 0.2f};
-
         LinearGradient gradient = new LinearGradient(0, 0, 40,
                 tvTitleAnadirP.getPaint().getTextSize(),
                 colors,
                 positions,
                 Shader.TileMode.REPEAT);
-
         tvTitleAnadirP.getPaint().setShader(gradient);
         tvSubTitP.getPaint().setShader(gradient);
         btnContinuarAnadirP.getPaint().setShader(gradient);
-
         // Asigna sombreado al texto
         float shadowRadius = 10f;
         float shadowDx = 0f;
         float shadowDy = 5f;
         int shadowColor = Color.BLACK;
-
         tvTitleAnadirP.getPaint().setShadowLayer(shadowRadius, shadowDx, shadowDy, shadowColor);
-
         //Inserta Imagen photo
         ivPlatoAnadirP.setImageURI(Uri.parse("android.resource://com.tfg.marfol/"+R.drawable.camera));
         ivPlatoAnadirP.setPadding(30, 30, 30, 30);
-
     }
-
     public void asignarId() {
-
         //Asigna Ids a los elementos de la actividad
         rvPlatosAnadirParticipante = findViewById(R.id.rvPlatosAnadirPlato);
         tvTitleAnadirP = findViewById(R.id.tvTitleAnadirPlato);
@@ -271,28 +293,59 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         ivLoginAnadirParticipante = findViewById(R.id.ivLoginAnadirPlato);
         btnContinuarAnadirP = findViewById(R.id.btnPlatosAnadirPlato);
         ivPlatoAnadirP = findViewById(R.id.ivPlatoAnadirPlato);
-
     }
-
-
     @Override
     public void onItemClick(int position) {
+<<<<<<< HEAD
         comensalPosicion = position;
+=======
+>>>>>>> a3f70e8111d1a7a497b2f099d24cb2492e1b775b
         //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
         if (position>0) {
-
             Toast.makeText(this,"Pulsaste el campo: "+String.valueOf(position),Toast.LENGTH_SHORT).show();
-
         } else {
-
             //Accedemos a la actividad de añadir plato
             Intent intent = new Intent(this, AnadirPlatoActivity.class);
             intent.putExtra("arrayListPlatos", platos);
             rLauncherPlatos.launch(intent);
+        }
+    }
+    private void anadirPersonaABd(String nombre,String descripcion) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        if (!nombre.equals("")) {
+            if (currentUser != null) {
+                // el usuario está autenticado
+                CollectionReference personaRef = db.collection("users").document(currentUser.getEmail()).collection("personas");
 
+                // iterar sobre la lista de personas que deseas agregar
+                Map<String, Object> nuevaPersona = new HashMap<>();
+                nuevaPersona.put("nombre", nombre);
+                nuevaPersona.put("descripcion", descripcion);
+                nuevaPersona.put("imagen", uriCapturada);
+                personaRef.add(nuevaPersona)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                // la persona se agregó exitosamente
+                                Toast.makeText(AnadirParticipanteActivity.this, "Se agregó la persona exitosamente", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // ocurrió un error al agregar la persona
+                                Toast.makeText(AnadirParticipanteActivity.this, "Ocurrió un error al agregar la persona", Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
+            } else {
+                // el usuario no está autenticado, muestra un mensaje o inicia sesión automáticamente
+                Toast.makeText(this, "Inicia sesión para agregar una persona", Toast.LENGTH_SHORT).show();
+            }
 
         }
-
     }
+
 }

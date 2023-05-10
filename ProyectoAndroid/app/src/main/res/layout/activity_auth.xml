@@ -15,12 +15,13 @@
         android:layout_marginEnd="20dp"
         android:hint="@string/prompt_email"
         android:textColor="@color/black"
+        android:textColorHint="#474646"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.478" />
+        app:layout_constraintVertical_bias="0.455" />
 
     <EditText
         android:id="@+id/etPasswordLogin"
@@ -29,28 +30,27 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:hint="@string/prompt_password"
+        android:inputType="textPassword"
         android:textColor="@color/black"
+        android:textColorHint="#474646"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.559" />
+        app:layout_constraintVertical_bias="0.552" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/appCompatButton"
+    <ImageView
+        android:id="@+id/imagenLogoAuth"
         android:layout_width="280dp"
         android:layout_height="250dp"
-        android:background="@drawable/button_index"
-        android:fontFamily="@font/akaya_telivigala"
-        android:text="@string/button_intro"
+        android:background="@drawable/logo_marfol"
         android:textAlignment="center"
         android:textColor="@color/redBorder"
         android:textSize="55sp"
         android:textStyle="bold|italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.062" />
@@ -72,13 +72,12 @@
         android:layout_width="74dp"
         android:layout_height="70dp"
         android:background="@drawable/google_icon"
-        android:text="@string/google"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.477"
+        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.951" />
+        app:layout_constraintVertical_bias="0.953" />
 
     <Button
         android:id="@+id/btnEntrarLogin"
@@ -106,27 +105,12 @@
         app:layout_constraintVertical_bias="0.82" />
 
     <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="O"
-        android:textColor="@color/black"
-        android:background="@color/colorBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.481"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.827" />
-
-    <TextView
         android:id="@+id/tvContrasenaOlvidada"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:onClick="olvidada"
         android:text="@string/olvidada"
-        android:textColor="@color/black"
+        android:textColor="@color/teal_200"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

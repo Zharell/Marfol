@@ -63,11 +63,11 @@ public class AuthActivity extends AppCompatActivity {
     }
     //Este metodo crea un usuario con el correo pasandole las cajas y conectándose con firebase
     private void setup() {
-        String titulo= "Autentificación";
         //Registro
         btnRegistrarseLogin.setOnClickListener(v ->{
             Intent intent = new Intent(this, RegistroActivity.class);
             startActivity(intent);
+            finish();
         });
         //Este metodo se conecta con la BD firebase y comprueba si el usuario y la contraseña existen, si son correctos se loguea
         btnEntrarLogin.setOnClickListener(v ->{
@@ -147,14 +147,5 @@ public class AuthActivity extends AppCompatActivity {
         }
     }
 
-    //Método que al pulsar el botón de volver redirige a la pantalla Index
-    // (Se debe añadir Launcher Result) Por si el usuario pulsa sin querer volver
-    // No pierda los participantes añadidos
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(this, IndexActivity.class);
-        startActivity(intent);
-        finish();
-    }
 
 }

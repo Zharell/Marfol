@@ -7,6 +7,41 @@
     android:background="@drawable/background_style"
     tools:context="login.RegistroActivity">
 
+
+    <EditText
+        android:id="@+id/etTelefonoRegistro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:hint="@string/telefono"
+        android:inputType="phone"
+        android:textColor="@color/black"
+
+        android:textColorHint="#474646"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.467" />
+
+    <EditText
+        android:id="@+id/etNombreRegistro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:hint="@string/nombre"
+        android:textColorHint="#474646"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.38" />
+
     <EditText
         android:id="@+id/etRegistroEmailLogin"
         android:layout_width="match_parent"
@@ -15,12 +50,13 @@
         android:layout_marginEnd="20dp"
         android:hint="@string/prompt_email"
         android:textColor="@color/black"
+        android:textColorHint="@color/redLight"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.322" />
+        app:layout_constraintVertical_bias="0.295" />
 
     <EditText
         android:id="@+id/etRegistroPasswordLogin"
@@ -30,12 +66,15 @@
         android:layout_marginEnd="20dp"
         android:hint="@string/prompt_password"
         android:textColor="@color/black"
+        android:inputType="textPassword"
+        android:textColorHint="@color/redLight"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.44" />
+        app:layout_constraintVertical_bias="0.555" />
+
     <EditText
         android:id="@+id/etRegistroPasswordLogin2"
         android:layout_width="match_parent"
@@ -44,24 +83,38 @@
         android:layout_marginEnd="20dp"
         android:hint="@string/repetirPassw"
         android:textColor="@color/black"
+        android:inputType="textPassword"
+        android:textColorHint="@color/redLight"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.529" />
+        app:layout_constraintVertical_bias="0.641" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnRegistrarseRegistro"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:text="@string/registrarse"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.756" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="159dp"
+        android:layout_height="143dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.044"
+        app:srcCompat="@drawable/logo_marfol" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
