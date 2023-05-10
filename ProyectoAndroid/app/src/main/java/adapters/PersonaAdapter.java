@@ -43,7 +43,7 @@ public class PersonaAdapter extends RecyclerView.Adapter<PersonaAdapter.PersonaA
 
         //Insertamos para cada persona en el Recycler su nombre
         holder.tvPersonaRow.setText(resultsPersona.get(position).getNombre());
-        Log.d("Posiciones",String.valueOf(position));
+
         //Insertamos para cada persona en el Recycler su imagen
         holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
 

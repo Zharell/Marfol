@@ -117,10 +117,8 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     //Método que al pulsar el botón de volver redirige a la pantalla Index sin perder información
     @Override
     public void onBackPressed() {
-
         //Pregunta si realmente quieres salir
         puVolverParticipantes.show();
-
     }
 
 
