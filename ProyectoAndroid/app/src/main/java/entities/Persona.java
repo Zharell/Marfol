@@ -1,16 +1,16 @@
 package entities;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.ArrayList;
 
 public class Persona implements Serializable {
 
     private String nombre,descripcion, urlImage;
-    private List<Plato> platos;
+    private ArrayList<Plato> platos;
 
     public Persona () {}
 
-    public Persona (String nombre, String descripcion, String urlImage, List<Plato> platos) {
+    public Persona (String nombre, String descripcion, String urlImage, ArrayList<Plato> platos) {
         this.nombre=nombre;
         this.descripcion=descripcion;
         this.urlImage=urlImage;
@@ -39,8 +39,8 @@ public class Persona implements Serializable {
         this.urlImage = urlImage;
     }
 
-    public List<Plato> getPlatos() { return platos; }
+    public ArrayList<Plato> getPlatos() { return platos; }
 
-    public void setPlatos(List<Plato> platos) { this.platos = platos;}
+    public void setPlatos(ArrayList<Plato> platos) { this.platos = platos;}
 
 }

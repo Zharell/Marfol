@@ -45,29 +45,27 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 import adapters.AnadirPersonaAdapter;
 import entities.Persona;
 import entities.Plato;
 
 public class AnadirParticipanteActivity extends AppCompatActivity implements AnadirPersonaAdapter.onItemClickListener {
 
+    private final boolean PRIMER_USO = true;
     private RecyclerView rvPlatosAnadirParticipante;
     private TextView tvTitleAnadirP, tvSubTitP;
     private EditText etNombreAnadirP, etDescAnadirP;
     private Button btnContinuarAnadirP;
     private ImageView ivLoginAnadirParticipante, ivPlatoAnadirP;
-
     private AnadirPersonaAdapter anadirPAdapter;
-
-    private ArrayList <Plato> platos;
     private ActivityResultLauncher <Intent> camaraLauncher;
     private ActivityResultLauncher rLauncherPlatos;
     private static final int CAMERA_PERMISSION_CODE = 100;
     private String uriCapturada="";
     private ArrayList<Persona> comensales;
+    private int comensalPosicion;
+    private ArrayList <Plato> platos;
 
 
     @Override
@@ -90,7 +88,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         mostrarAdapter();
         //test
 
-        //Laucher Result - Se debe añadir el switch(code) que dependiendo de que actividad vuelva, haga una u otra cosa
+        //Laucher Result - recibe los platos del usuario creado
         rLauncherPlatos = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
@@ -104,7 +102,6 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                         Toast.makeText(this, prueba, Toast.LENGTH_SHORT).show();
                         anadirPAdapter.setResultsPlato(platos);
                     }
-
 
 
                 }
@@ -146,17 +143,14 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                 //Si no tenemos los permisos los obtenemos
                 ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
             } else {
-
                 // Si ya se tienen los permisos, abrir la cámara
                 abrirCamara();
             }
         });
 
         btnContinuarAnadirP.setOnClickListener(view -> {
-
             //Método encargado de crear un comensal
             anadirComensal();
-
         });
 
         /*
@@ -166,6 +160,23 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         platos.add(new Plato( "cachopo", "eso es lo que me gusta a mí",20,20,"",false));
         platos.add(new Plato( "cerveza viemfria", "eso es lo que me gusta a mí",20,20,"",false));
         platos.add(new Plato( "cocacolastic", "eso es lo que me gusta a mí",20,20,"",false));
+        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
+        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
+        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
+        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
+        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
+        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
+        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
+        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
+        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
+        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
+        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
+        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
+        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
+        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
+        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
+        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
+        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
         platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
         anadirPAdapter.setResultsPlato(platos);
         */
@@ -177,15 +188,13 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         boolean esValidado=true;
         String nombre = String.valueOf(etNombreAnadirP.getText());
         String descripcion = String.valueOf(etDescAnadirP.getText());
+
         anadirPersonaABd(nombre,descripcion);
 
-
         ArrayList <Plato> platos = new ArrayList<Plato>();
-
         //Comprueba si has añadido un nombre
         if (etNombreAnadirP.getText().toString().length() == 0) {
             Toast.makeText(this,"Debe introducir un nombre", Toast.LENGTH_SHORT).show();
-
             esValidado=false;
         }
 
@@ -199,10 +208,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             intentComensal.putExtra("arrayListComensales", comensales);
             setResult(Activity.RESULT_OK, intentComensal);
             finish();
-
         }
-
-
     }
 
     // Método para manejar la respuesta de la solicitud de permisos
@@ -211,12 +217,9 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAMERA_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                 // Si se conceden los permisos, abrir la cámara
                 abrirCamara();
-
             } else {
-
                 // Si se deniegan los permisos, mostrar un mensaje al usuario
                 Toast.makeText(this, "Para almacenar la imagen debe otorgar los permisos", Toast.LENGTH_SHORT).show();
             }
@@ -240,7 +243,6 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         anadirPAdapter = new AnadirPersonaAdapter();
         rvPlatosAnadirParticipante.setAdapter(anadirPAdapter);
         anadirPAdapter.setmListener(this::onItemClick);
-
         anadirPAdapter.setResultsPlato(platos);
     }
     public void asignarEfectos() {
@@ -283,6 +285,8 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     }
     @Override
     public void onItemClick(int position) {
+        comensalPosicion = position;
+
         //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
         if (position>0) {
             Toast.makeText(this,"Pulsaste el campo: "+String.valueOf(position),Toast.LENGTH_SHORT).show();

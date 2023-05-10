@@ -63,35 +63,50 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPersonaParticipantes"
-        android:layout_width="303dp"
-        android:layout_height="271dp"
-        app:layout_constraintBottom_toTopOf="@+id/textoFill"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
 
+        android:layout_marginTop="15dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitleAnadirPlato"
-        app:layout_constraintVertical_bias="0.456" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTitleAnadirPlato" />
 
     <TextView
         android:id="@+id/textoFill"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="368dp"
+        android:layout_marginTop="13dp"
+
         android:text="Participantes añadidos anteriormente"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rvPersonaParticipantes" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPersonaParticipantesBd"
-        android:layout_width="303dp"
-        android:layout_height="271dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="300dp"
+        android:layout_height="220dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textoFill"
-        app:layout_constraintVertical_bias="0.135" />
+        app:layout_constraintTop_toBottomOf="@+id/textoFill" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnContinuarParticipantes"
+        android:layout_width="200dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button_index"
+        android:text="@string/continuar_platos"
+        android:textColor="@color/redTitle"
+        android:textSize="22dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rvPersonaParticipantesBd" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

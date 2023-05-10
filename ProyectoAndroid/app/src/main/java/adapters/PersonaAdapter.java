@@ -1,6 +1,7 @@
 package adapters;
 
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +22,11 @@ import entities.Plato;
 
 public class PersonaAdapter extends RecyclerView.Adapter<PersonaAdapter.PersonaAdapterResultHolder> {
 
-    private List<Persona> resultsPersona = new ArrayList<>();
+    private ArrayList<Persona> resultsPersona = new ArrayList<>();
 
     //añadirPersona siempre se añade en la posición 0 ya que su función es redirigir a otra actividad distinta
     //Tiene la ruta URI de su imagen por defecto
-    Persona anadirPersona = new Persona("Añadir Persona", "", "android.resource://com.tfg.marfol/"+R.drawable.add_icon , new ArrayList<>());
-
+    private Persona anadirPersona = new Persona("Añadir Persona", "", "android.resource://com.tfg.marfol/"+R.drawable.add_icon , new ArrayList<>());
     private onItemClickListener mListener;
 
     @NonNull
@@ -43,19 +43,16 @@ public class PersonaAdapter extends RecyclerView.Adapter<PersonaAdapter.PersonaA
 
         //Insertamos para cada persona en el Recycler su nombre
         holder.tvPersonaRow.setText(resultsPersona.get(position).getNombre());
-
+        Log.d("Posiciones",String.valueOf(position));
         //Insertamos para cada persona en el Recycler su imagen
         holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
 
         //Método onclick
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mListener != null) {
-                    int position = holder.getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        mListener.onItemClick(position);
-                    }
+        holder.itemView.setOnClickListener(view -> {
+            if (mListener != null) {
+                int position1 = holder.getAdapterPosition();
+                if (position1 != RecyclerView.NO_POSITION) {
+                    mListener.onItemClick(position1);
                 }
             }
         });
@@ -67,7 +64,7 @@ public class PersonaAdapter extends RecyclerView.Adapter<PersonaAdapter.PersonaA
         return resultsPersona.size();
     }
 
-    public void setResultsPersona(List<Persona> resultsPersona) {
+    public void setResultsPersona(ArrayList<Persona> resultsPersona) {
 
         //Comprueba si está vacío para añadir el primer elemento ( Añadir Persona ) si no, no hace nada
         if (resultsPersona.size()==0) {

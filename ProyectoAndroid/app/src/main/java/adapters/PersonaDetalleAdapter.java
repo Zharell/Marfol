@@ -1,8 +1,7 @@
 package adapters;
 
-import android.graphics.drawable.Drawable;
+
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,35 +14,34 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tfg.marfol.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import entities.Plato;
 
-public class AnadirPersonaAdapter extends RecyclerView.Adapter<AnadirPersonaAdapter.AnadirPersonaAdapterResultHolder> {
+public class PersonaDetalleAdapter extends RecyclerView.Adapter<adapters.PersonaDetalleAdapter.PersonaDetalleAdapterResultHolder> {
     private ArrayList<Plato> resultsPlato = new ArrayList<>();
 
     //añadirPlato siempre se añade en la posición 0 ya que su función es redirigir a otra actividad distinta
-    Plato anadirPlato = new Plato("", "" ,0, 0, "android.resource://com.tfg.marfol/"+R.drawable.add_icon,false);
+    Plato anadirPlato = new Plato("", "", 0, 0, "android.resource://com.tfg.marfol/" + R.drawable.add_icon, false);
 
     private PersonaAdapter.onItemClickListener mListener;
 
     @NonNull
     @Override
-    public AnadirPersonaAdapter.AnadirPersonaAdapterResultHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public adapters.PersonaDetalleAdapter.PersonaDetalleAdapterResultHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.row_platoanadirpersona, parent, false);
 
-        return new AnadirPersonaAdapter.AnadirPersonaAdapterResultHolder(itemView);
+        return new adapters.PersonaDetalleAdapter.PersonaDetalleAdapterResultHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AnadirPersonaAdapterResultHolder holder, int position) {
+    public void onBindViewHolder(@NonNull adapters.PersonaDetalleAdapter.PersonaDetalleAdapterResultHolder holder, int position) {
 
         //Insertamos para cada persona en el Recycler su nombre
         holder.tvPlatoRow.setText(resultsPlato.get(position).getNombre());
 
         //Únicamente insertará la imagén del primer Plato ya que se encarga de añadir
-        if (position==0) {
+        if (position == 0) {
             holder.ivPlatoRow.setImageURI(Uri.parse(resultsPlato.get(0).getUrlImage()));
         } else {
             //Se deben limpiar las imágenes insertadas erroneamente (Fallos del propio onBindViewHolder)
@@ -71,7 +69,7 @@ public class AnadirPersonaAdapter extends RecyclerView.Adapter<AnadirPersonaAdap
     public void setResultsPlato(ArrayList<Plato> resultsPlato) {
 
         //Comprueba si está vacío para añadir el primer elemento ( Añadir Persona ) si no, no hace nada
-        if (resultsPlato.size()==0) {
+        if (resultsPlato.size() == 0) {
             resultsPlato.add(0, anadirPlato);
         }
 
@@ -84,12 +82,12 @@ public class AnadirPersonaAdapter extends RecyclerView.Adapter<AnadirPersonaAdap
         this.mListener = mListener;
     }
 
-    class AnadirPersonaAdapterResultHolder extends RecyclerView.ViewHolder {
+    class PersonaDetalleAdapterResultHolder extends RecyclerView.ViewHolder {
 
         private TextView tvPlatoRow;
         private ImageView ivPlatoRow;
 
-        public AnadirPersonaAdapterResultHolder(@NonNull View itemView) {
+        public PersonaDetalleAdapterResultHolder(@NonNull View itemView) {
             super(itemView);
 
             tvPlatoRow = itemView.findViewById(R.id.tvPlatoanadirPersonaRow);
@@ -99,7 +97,7 @@ public class AnadirPersonaAdapter extends RecyclerView.Adapter<AnadirPersonaAdap
 
     }
 
-    public interface onItemClickListener{
+    public interface onItemClickListener {
         void onItemClick(int position);
     }
 

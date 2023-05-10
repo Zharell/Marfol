@@ -44,7 +44,7 @@ public class AnadirPlatoActivity extends AppCompatActivity {
     private EditText  etNombreAnadirP, etDescAnadirP, etPrecioAnadirP;
     private Button btnContinuarAnadirP;
     private ImageView ivLoginAnadirPlato, ivPlatoAnadirP;
-    private static final int CAMERA_PERMISSION_CODE = 100;
+    private final int CAMERA_PERMISSION_CODE = 100;
     private ArrayList <Plato> platos;
     private boolean esCompartido=false;
     private String uriCapturada="";
@@ -95,7 +95,6 @@ public class AnadirPlatoActivity extends AppCompatActivity {
                 //Si no tenemos los permisos los obtenemos
                 ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
             } else {
-
                 // Si ya se tienen los permisos, abrir la cámara
                 abrirCamara();
             }
@@ -139,19 +138,17 @@ public class AnadirPlatoActivity extends AppCompatActivity {
         String descripcion = String.valueOf(etDescAnadirP.getText());
         double precio;
 
-        //Comprueba si el editText está vacío, de estarlo el programa lo entiende como un 0, además, remplaza , por . para evitar errores
+        //Comprueba si el editText está vacío, de estarlo el programa lo entiende como un 0, además, remplaza <,> por <.> para evitar errores
         precio = etPrecioAnadirP.getText().toString().equalsIgnoreCase("") ? 0 : Double.parseDouble(etPrecioAnadirP.getText().toString().replace(",","."));
 
         //Comprueba si has añadido un nombre
         if (etNombreAnadirP.getText().toString().length() == 0) {
             Toast.makeText(this,"Debe introducir un nombre", Toast.LENGTH_SHORT).show();
-
             esValidado=false;
         }
 
         if (precio <= 0) {
             Toast.makeText(this,"Debe introducir un precio mayor a 0", Toast.LENGTH_SHORT).show();
-
             esValidado=false;
         }
 

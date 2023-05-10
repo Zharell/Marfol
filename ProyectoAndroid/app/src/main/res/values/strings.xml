@@ -41,4 +41,5 @@
     <string name="tvrow_compartir">Compartir con...</string>
     <string name="swCompartir_Plato">¿Compartir?</string>
     <string name="tvPrecio">€</string>
+    <string name="btnvolver_detalle">Volver</string>
 </resources>
