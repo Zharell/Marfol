@@ -117,33 +117,28 @@ public class AuthActivity extends AppCompatActivity {
 
     }
     @Override
-    public void onActivityResult(int requestCode, int resultCode,Intent data){
-        super.onActivityResult(requestCode,resultCode,data);
-        if(requestCode == GOOGLE_SIGN_IN){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == GOOGLE_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
-
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                if(account != null){
-                    final String email=account.getEmail();
-                    AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
-                    FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(it->{
+                if (account != null) {
+                    final String email = account.getEmail();
+                    AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+                    FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(it -> {
                         if (it.isSuccessful() && email != null) {
                             showHome(email, ProviderType.GOOGLE);
                         } else {
                             showAlert();
                         }
-
-
-
+                    }).addOnFailureListener(e -> {
+                        showAlert();
                     });
-
                 }
             } catch (ApiException e) {
                 showAlert();
             }
-
-
         }
     }
 
