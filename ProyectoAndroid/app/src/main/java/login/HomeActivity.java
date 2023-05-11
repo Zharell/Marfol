@@ -21,7 +21,6 @@ import com.tfg.marfol.R;
 
 import java.util.HashMap;
 
-import firebaseData.EditarDatos;
 import mainActivity.IndexActivity;
 
 enum ProviderType{

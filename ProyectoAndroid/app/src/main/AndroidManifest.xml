@@ -24,7 +24,7 @@
             android:name="mainActivity.detalle.DetallePersonaActivity"
             android:exported="false" />
         <activity
-            android:name="firebaseData.EditarDatos"
+            android:name="login.EditarDatos"
             android:exported="false" />
         <activity
             android:name="mainActivity.crud.AnadirPlatoActivity"
