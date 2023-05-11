@@ -19,6 +19,7 @@ import android.graphics.Shader;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,11 +40,14 @@ import java.util.ArrayList;
 import adapters.PersonaAdapter;
 import adapters.PersonaBdAdapter;
 import entities.Persona;
+import entities.Plato;
 import mainActivity.crud.AnadirParticipanteActivity;
 import mainActivity.detalle.DetallePersonaActivity;
 
 public class ParticipantesActivity extends AppCompatActivity implements PersonaAdapter.onItemClickListener {
 
+    private final int MINIMO_PLATOS = 1;
+    private int numPlatos=0;
     private ImageView ivLoginParticipantes, ivMenuParticipantes;
     private TextView tvTitleParticipantes;
     private Dialog puVolverParticipantes;
@@ -54,6 +58,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private PersonaBdAdapter personaAdapterBd;
     private ActivityResultLauncher rLauncherAnadirComensal;
     private ActivityResultLauncher rLauncherDetalleComensal;
+    private ActivityResultLauncher rLauncherDesglose;
     private ArrayList<Persona> comensales;
     private int comensalPosicion;
 
@@ -100,6 +105,17 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                 }
         );
 
+        //Laucher Result recibe comensales desde Desglose por si se ha modificado
+        rLauncherDesglose = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        comensales = (ArrayList<Persona>) data.getSerializableExtra("arrayListDesglose");
+                        personaAdapter.setResultsPersona(comensales);
+                    }
+                }
+        );
+
         //Botones para el popup de confirmación
         //Confirmar, retrocede, cierra la actividad y pierde los datos introducidos - se debe cerrar con dismiss() para evitar fugas de memoria
         btnConfirmarParticipantes.setOnClickListener(view -> {
@@ -111,7 +127,33 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         //Cancela, desaparece el popup y continúa en la actividad
         btnCancelarParticipantes.setOnClickListener(view -> puVolverParticipantes.dismiss());
 
+        //Botón de continuar, avanza a la siguiente actividad
+        btnContinuarParticipantes.setOnClickListener(view -> {
+            //Obtenemos todos los platos
+            int numPlatos = obtenerPlatos();
+            if (comensales.size()>1 && numPlatos >= MINIMO_PLATOS) {
+                //Accede a la actividad detalle de una persona
+                Intent intentDesglose = new Intent(this, DesgloseActivity.class);
+                intentDesglose.putExtra("envioDesglose", comensales);
+                rLauncherDesglose.launch(intentDesglose);
+            } else {
+                //Comprobamos qué elemento nos falta para avanzar al desglose
+                if (comensales.size()<2) {
+                    Toast.makeText(this,"Debe añadir al menos un comensales",Toast.LENGTH_SHORT).show();
+                }
+                if (numPlatos < MINIMO_PLATOS) {
+                    Toast.makeText(this,"Debe añadir al menos un plato",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
 
+    //Comprueba si se han añadido platos para avanzar al Desglose
+    public int obtenerPlatos() {
+        for (int i=1;i<comensales.size();i++) {
+            numPlatos+=comensales.get(i).obtenerNumPlatos();
+        }
+        return numPlatos;
     }
 
     //Método que al pulsar el botón de volver redirige a la pantalla Index sin perder información
@@ -226,8 +268,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
             comensales.add(new Persona("Gayler", "Le gusta comer", "no hay URL", new ArrayList<>()));
             comensales.add(new Persona("Fer", "Le gusta comer", "no hay URL", new ArrayList<>()));
             comensales.add(new Persona("Javier", "Le gusta comer", "no hay URL", new ArrayList<>()));
-
-
             //Añade el contenido al adapter, si está vacío el propio Adapter añade el " Añadir Persona "
             personaAdapter.setResultsPersona(comensales);
             */

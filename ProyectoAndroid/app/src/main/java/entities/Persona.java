@@ -17,6 +17,28 @@ public class Persona implements Serializable {
         this.platos=platos;
     }
 
+    //Método devuelve el total a pagar
+    public double getPrecioTotal () {
+        double precioTotal=0;
+        for (int i=1;i<platos.size();i++) {
+            precioTotal += platos.get(i).getPrecio();
+        }
+        return precioTotal;
+    }
+
+    //Método que devuelve el número de platos añadidos, se resta 1 ya que es el plato botón (añadir plato)
+    public int obtenerNumPlatos() {
+        return (platos.size()-1);
+    }
+
+    //Método que comprueba si el comensal posee algún plato
+    public boolean existePlato() {
+        if (platos.size()>=2) {
+            return true;
+        }
+        return false;
+    }
+
     public String getNombre() { return nombre; }
 
     public void setNombre(String nombre) {

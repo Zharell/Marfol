@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@drawable/background_style"
+tools:context="mainActivity.DesgloseActivity">
+
+<!-- Title Actividad -->
+<TextView
+    android:id="@+id/tvTitleDesglose"
+    android:layout_width="wrap_content"
+    android:layout_height="40dp"
+    android:fontFamily="serif"
+    android:gravity="center"
+    android:text="@string/tvdesglose"
+    android:textColor="@color/redBorder"
+    android:textSize="30sp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.5"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.02"
+
+    />
+
+<!-- Menu APP -->
+<ImageView
+    android:id="@+id/ivMenuDesglose"
+    android:layout_width="60dp"
+    android:layout_height="40dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.04"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.02"
+    android:src="@android:drawable/ic_menu_sort_by_size"
+
+    />
+
+<!-- Login App -->
+<ImageView
+
+    android:id="@+id/ivLoginDesglose"
+    android:layout_width="50dp"
+    android:layout_height="50dp"
+    android:background="@drawable/login_style"
+    android:src="@drawable/nologinimg"
+    android:scaleType="fitCenter"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.96"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.02"
+
+
+
+    />
+
+<androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/rvPersonaDesglose"
+    android:layout_width="350dp"
+    android:layout_height="555dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.85"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.5"
+
+    />
+
+<androidx.appcompat.widget.AppCompatButton
+    android:id="@+id/btnGuardarRestauranteDes"
+    android:layout_width="200dp"
+    android:layout_height="55dp"
+    android:layout_marginTop="16dp"
+    android:background="@drawable/button_index"
+    android:text="@string/btnguardar_restaurante"
+    android:textColor="@color/redTitle"
+    android:textSize="22dp"
+
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.5"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/rvPersonaDesglose"
+    />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

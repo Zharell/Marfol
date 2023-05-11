@@ -95,12 +95,6 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         platos = (ArrayList<Plato>) data.getSerializableExtra("arrayListPlatos");
-                        String prueba ="";
-                        for (int i = 1; i < platos.size(); i++) {
-                            Plato plato = platos.get(i);
-                            prueba+="datos: " + plato.getNombre()+ plato.getPrecio();
-                        }
-                        Toast.makeText(this, prueba, Toast.LENGTH_SHORT).show();
                         anadirPAdapter.setResultsPlato(platos);
                     }
 
@@ -187,15 +181,17 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         boolean esValidado = true;
         String nombre = String.valueOf(etNombreAnadirP.getText());
         String descripcion = String.valueOf(etDescAnadirP.getText());
-        ArrayList <Plato> platos = new ArrayList<Plato>();
+
         if (etNombreAnadirP.getText().toString().length() == 0) {
             Toast.makeText(this,"Debe introducir un nombre", Toast.LENGTH_SHORT).show();
             esValidado=false;
         }
 
         if (esValidado) {
-            // Añade la persona localmente
+            // Añade la persona en la base de datos
             anadirPersonaABd(nombre,descripcion,uriCapturada);
+
+            // Añade la persona localmente
             comensales.add(new Persona(nombre, descripcion, uriCapturada, platos));
 
             Intent intentComensal = new Intent();

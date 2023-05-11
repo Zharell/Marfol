@@ -34,6 +34,8 @@
     <string name="previous">Previous</string>
     <string name="repetirPassw">Repetir password *</string>
     <string name="enviar">Enviar</string>
+    <string name="btneditar_detalle">Editar</string>
+    <string name="btnborrar_detalle">Borrar</string>
     <string name="olvidada"><u>¿Contraseña olvidada?</u></string>
     <string name="contraseñaOlvidada">Correo del usuario</string>
     <string name="continuar_platos">Continuar</string>
@@ -42,4 +44,6 @@
     <string name="swCompartir_Plato">¿Compartir?</string>
     <string name="tvPrecio">€</string>
     <string name="btnvolver_detalle">Volver</string>
+    <string name="btnguardar_restaurante">Guardar</string>
+    <string name="tvdesglose">Desglose</string>
 </resources>
