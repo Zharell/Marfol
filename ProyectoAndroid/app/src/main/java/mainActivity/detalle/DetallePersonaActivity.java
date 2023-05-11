@@ -28,6 +28,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.tfg.marfol.R;
 
 import java.io.IOException;
@@ -42,7 +55,7 @@ import mainActivity.crud.AnadirPlatoActivity;
 
 public class DetallePersonaActivity extends AppCompatActivity implements PersonaDetalleAdapter.onItemClickListener {
 
-    private Persona comensal;
+    private Persona comensal,comensalBd;
     private ImageView ivLoginDetalle, ivMenuDetalle, ivFotoDetalle;
     private EditText etTitleDetalle, etDescripcionDetalle;
     private RecyclerView rvAnadirPlatoDetalle;
@@ -63,6 +76,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         //Recibe la lista de comensales para empezar a añadir
         Intent intent = getIntent();
         comensal = (Persona) intent.getSerializableExtra("comensalDetalle");
+        comensalBd=comensal;
 
         //Método que asigna IDs a los elementos
         asignarId();
@@ -103,6 +117,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
 
         //Botón que vuelve a participantes y además devuelve el comensal modificado
         btnContinuarDetalle.setOnClickListener(view -> {
+            editarComensalBd();
             editarComensal();
         });
 
@@ -160,8 +175,79 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
             finish();
         }
     }
+    private void editarComensalBd() {
+        String nombreNuevo = String.valueOf(etTitleDetalle.getText());
+        String descripcionNueva = String.valueOf(etDescripcionDetalle.getText());
+        String nombreAntiguo = comensalBd.getNombre();
+        String descripcionAntigua = comensalBd.getDescripcion();
+        String imagenAntigua = comensalBd.getUrlImage();
 
-    // Método para abrir la cámara
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        String usuarioId = currentUser.getEmail();
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference personasRef = db.collection("personas");
+
+        Query query = personasRef.whereEqualTo("nombre", nombreNuevo);
+
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    if (task.getResult().isEmpty()) {
+                        // No existe ninguna persona con el mismo nombre, procede a actualizar los datos
+                        personasRef.whereEqualTo("usuarioId", usuarioId)
+                                .whereEqualTo("nombre", nombreAntiguo)
+                                .whereEqualTo("descripcion", descripcionAntigua)
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                String personaId = document.getId(); // Obtiene el ID del documento de la persona
+                                                DocumentReference personaRef = personasRef.document(personaId);
+
+                                                personaRef.update("nombre", nombreNuevo, "descripcion", descripcionNueva)
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                // La actualización se realizó exitosamente
+                                                                Toast.makeText(DetallePersonaActivity.this, "Los datos se actualizaron correctamente", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                // Ocurrió un error al actualizar los datos
+                                                                Toast.makeText(DetallePersonaActivity.this, "Error al actualizar los datos", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
+
+                                                break; // Si se encuentra una persona, se actualiza solo el primer documento y se sale del bucle
+                                            }
+                                        } else {
+                                            // Ocurrió un error al obtener los documentos
+                                            Toast.makeText(DetallePersonaActivity.this, "Error al obtener los documentos", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                    } else {
+                        // Ya existe una persona con el mismo nombre, no se realiza ninguna acción
+                        Toast.makeText(DetallePersonaActivity.this, "Ya existe una persona con el mismo nombre", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    // Ocurrió un error al obtener los documentos
+                    Toast.makeText(DetallePersonaActivity.this, "Error al obtener los documentos", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+
+
+        // Método para abrir la cámara
     private void abrirCamara() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         camaraLauncher.launch(cameraIntent);
