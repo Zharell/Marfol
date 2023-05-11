@@ -195,7 +195,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
         if (esValidado) {
             // Añade la persona localmente
-            anadirPersonaABd(nombre,descripcion);
+            anadirPersonaABd(nombre,descripcion,uriCapturada);
             comensales.add(new Persona(nombre, descripcion, uriCapturada, platos));
 
             Intent intentComensal = new Intent();
@@ -292,7 +292,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             rLauncherPlatos.launch(intent);
         }
     }
-    private void anadirPersonaABd(String nombre, String descripcion) {
+    private void anadirPersonaABd(String nombre, String descripcion,String imagen) {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -320,6 +320,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                             nuevaPersona.put("nombre", nombre);
                             nuevaPersona.put("descripcion", descripcion);
                             nuevaPersona.put("usuarioId", usuarioId);
+                            nuevaPersona.put("imagen", uriCapturada);
 
                             // Agrega la nueva persona con un ID único generado automáticamente
                             personasRef.add(nuevaPersona)
