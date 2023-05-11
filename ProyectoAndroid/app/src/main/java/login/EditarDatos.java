@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +23,8 @@ import com.tfg.marfol.R;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import mainActivity.IndexActivity;
 
 
 public class EditarDatos extends AppCompatActivity {
@@ -81,13 +84,8 @@ public class EditarDatos extends AppCompatActivity {
                                             public void onSuccess(Void unused) {
                                                 // Mostramos el mensaje de actualizado
                                                 Toast.makeText(EditarDatos.this, "Datos actualizados", Toast.LENGTH_SHORT).show();
+                                                finish();
                                                 // Esperamos 2 segundos antes de finalizar la actividad
-                                                new Handler().postDelayed(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        finish();
-                                                    }
-                                                }, 500);
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
@@ -106,12 +104,8 @@ public class EditarDatos extends AppCompatActivity {
                                                 // Mostramos el mensaje de actualizado
                                                 Toast.makeText(EditarDatos.this, "Datos actualizados", Toast.LENGTH_SHORT).show();
                                                 // Esperamos 2 segundos antes de finalizar la actividad
-                                                new Handler().postDelayed(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        finish();
-                                                    }
-                                                }, 500);
+                                                finish();
+
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
@@ -122,6 +116,7 @@ public class EditarDatos extends AppCompatActivity {
                                             }
                                         });
                             }
+
                         } else {
                             // Mostramos el mensaje de error
                             Toast.makeText(EditarDatos.this, "Error al verificar los datos del usuario", Toast.LENGTH_SHORT).show();

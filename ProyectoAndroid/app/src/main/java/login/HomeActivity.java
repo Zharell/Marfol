@@ -120,6 +120,7 @@ public class HomeActivity extends AppCompatActivity {
         btnEditarBD.setOnClickListener(v -> {
             Intent editar = new Intent(HomeActivity.this, EditarDatos.class);
             startActivity(editar);
+            finish();
         });
 
     }
