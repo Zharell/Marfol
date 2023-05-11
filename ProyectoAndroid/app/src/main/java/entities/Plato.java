@@ -11,6 +11,8 @@ public class Plato implements Serializable {
     private double precio, precioFinal;
     private boolean compartido;
 
+    
+
     public Plato (String nombre, String descripcion, double precio,double precioFinal,String urlImage , boolean compartido) {
         this.nombre=nombre;
         this.descripcion=descripcion;
