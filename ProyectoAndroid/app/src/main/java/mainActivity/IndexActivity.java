@@ -96,6 +96,7 @@ public class IndexActivity extends AppCompatActivity {
     private void comprobarLogueado() {
         //Coge la instancia de usuario
         mAuth = FirebaseAuth.getInstance();
+        
         //Comprueba si estás logueado o no
         if (mAuth.getCurrentUser() != null) {
             Toast.makeText(this, "Estás logueado bro ",Toast.LENGTH_SHORT).show();
