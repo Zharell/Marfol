@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.tfg.marfol.R;
@@ -182,26 +183,19 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         */
 
     }
-
     public void anadirComensal() {
-
-        boolean esValidado=true;
+        boolean esValidado = true;
         String nombre = String.valueOf(etNombreAnadirP.getText());
         String descripcion = String.valueOf(etDescAnadirP.getText());
-
-        anadirPersonaABd(nombre,descripcion);
-
         ArrayList <Plato> platos = new ArrayList<Plato>();
-        //Comprueba si has añadido un nombre
         if (etNombreAnadirP.getText().toString().length() == 0) {
             Toast.makeText(this,"Debe introducir un nombre", Toast.LENGTH_SHORT).show();
             esValidado=false;
         }
 
-        //Comprueba si ha validado, añade la persona, envía al padre el ArrayList y cierra la actividad
         if (esValidado) {
-
-            //Añado a la lista la persona creada
+            // Añade la persona localmente
+            anadirPersonaABd2(nombre,descripcion);
             comensales.add(new Persona(nombre, descripcion, uriCapturada, platos));
 
             Intent intentComensal = new Intent();
@@ -210,6 +204,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             finish();
         }
     }
+
 
     // Método para manejar la respuesta de la solicitud de permisos
     @Override
@@ -297,42 +292,104 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             rLauncherPlatos.launch(intent);
         }
     }
-    private void anadirPersonaABd(String nombre,String descripcion) {
+    private void anadirPersonaABd2(String nombre, String descripcion) {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        if (!nombre.equals("")) {
-            if (currentUser != null) {
-                // el usuario está autenticado
-                CollectionReference personaRef = db.collection("users").document(currentUser.getEmail()).collection("personas");
 
-                // iterar sobre la lista de personas que deseas agregar
+        if (currentUser != null) {
+            // El usuario está autenticado
+            String usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
+
+            // Obtén la colección "personas" en Firestore
+            CollectionReference personasRef = db.collection("personas");
+
+            // Realiza la consulta para verificar si ya existe una persona con los mismos valores de nombre y descripción
+            Query consulta = personasRef.whereEqualTo("nombre", nombre)
+                    .whereEqualTo("usuarioId", usuarioId);
+
+            consulta.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        if (task.getResult().isEmpty()) {
+                            // No existe una persona con los mismos valores de nombre y descripción, procede a agregarla
+
+                            // Crea un objeto HashMap para almacenar los datos de la nueva persona
+                            Map<String, Object> nuevaPersona = new HashMap<>();
+                            nuevaPersona.put("nombre", nombre);
+                            nuevaPersona.put("descripcion", descripcion);
+                            nuevaPersona.put("usuarioId", usuarioId);
+
+                            // Agrega la nueva persona con un ID único generado automáticamente
+                            personasRef.add(nuevaPersona)
+                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                        @Override
+                                        public void onSuccess(DocumentReference documentReference) {
+                                            // La persona se agregó exitosamente
+                                            Toast.makeText(AnadirParticipanteActivity.this, "Se agregó la persona exitosamente", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // Ocurrió un error al agregar la persona
+                                            Toast.makeText(AnadirParticipanteActivity.this, "Ocurrió un error al agregar la persona", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        } else {
+                            // Ya existe una persona con los mismos valores de nombre y descripción
+                            Toast.makeText(AnadirParticipanteActivity.this, "Ya existe una persona con ese nombre", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        // Ocurrió un error al obtener los documentos
+                        Toast.makeText(AnadirParticipanteActivity.this, "Error al obtener los documentos", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        } else {
+            // El usuario no está autenticado, muestra un mensaje o inicia sesión automáticamente
+            Toast.makeText(this, "Inicia sesión para agregar una persona", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void anadirPersonaABd(String nombre, String descripcion) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+            if (currentUser != null) {
+                // El usuario está autenticado
+                String usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
+                // Crea un objeto HashMap para almacenar los datos de la nueva persona
                 Map<String, Object> nuevaPersona = new HashMap<>();
                 nuevaPersona.put("nombre", nombre);
                 nuevaPersona.put("descripcion", descripcion);
-                nuevaPersona.put("imagen", uriCapturada);
-                personaRef.add(nuevaPersona)
+                nuevaPersona.put("usuarioId", usuarioId);
+                // Obtén la colección "personas" en Firestore
+                CollectionReference personasRef = db.collection("personas");
+
+                // Agrega la nueva persona con un ID único generado automáticamente
+                personasRef.add(nuevaPersona)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
-                                // la persona se agregó exitosamente
+                                // La persona se agregó exitosamente
                                 Toast.makeText(AnadirParticipanteActivity.this, "Se agregó la persona exitosamente", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                // ocurrió un error al agregar la persona
+                                // Ocurrió un error al agregar la persona
                                 Toast.makeText(AnadirParticipanteActivity.this, "Ocurrió un error al agregar la persona", Toast.LENGTH_SHORT).show();
                             }
                         });
-
             } else {
-                // el usuario no está autenticado, muestra un mensaje o inicia sesión automáticamente
+                // El usuario no está autenticado, muestra un mensaje o inicia sesión automáticamente
                 Toast.makeText(this, "Inicia sesión para agregar una persona", Toast.LENGTH_SHORT).show();
             }
 
-        }
     }
+
 
 }
