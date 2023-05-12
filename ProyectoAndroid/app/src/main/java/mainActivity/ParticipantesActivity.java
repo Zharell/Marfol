@@ -173,10 +173,10 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         tvTitleParticipantes = findViewById(R.id.tvTitleAnadirPlato);
         btnContinuarParticipantes = findViewById(R.id.btnContinuarParticipantes);
         tvLlenarTexto = findViewById(R.id.tvLlenarTexto);
+        volverIndex = new Intent(this, IndexActivity.class);
 
         //Asigna IDs de los elementos del popup
         puVolverParticipantes = new Dialog(this);
-        volverIndex = new Intent(this, IndexActivity.class);
         puVolverParticipantes.setContentView(R.layout.popup_confirmacion);
         btnCancelarParticipantes = puVolverParticipantes.findViewById(R.id.btnCancelarPopup);
         btnConfirmarParticipantes = puVolverParticipantes.findViewById(R.id.btnConfirmarPopup);
@@ -283,19 +283,16 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
         if (currentUser != null) {
             CollectionReference personaRef = db.collection("users").document(currentUser.getEmail()).collection("personas");
-            personaRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        String datos = "";
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Persona persona = document.toObject(Persona.class);
-                            datos += persona.getNombre() + " - " + persona.getDescripcion() + "\n";
-                        }
-                        tvLlenarTexto.setText(datos);
-                    } else {
-                        Log.d(TAG, "Error getting documents: ", task.getException());
+            personaRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    String datos = "";
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Persona persona = document.toObject(Persona.class);
+                        datos += persona.getNombre() + " - " + persona.getDescripcion() + "\n";
                     }
+                    tvLlenarTexto.setText(datos);
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
                 }
             });
         } else {

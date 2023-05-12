@@ -19,8 +19,8 @@
     <string name="atencion_msg">Atención</string>
     <string name="entrar">Entrar</string>
     <string name="editar">Editar</string>
-    <string name="pop_confirmacion">CONFIRMAR</string>
-    <string name="pop_cancelar">CANCELAR</string>
+    <string name="pop_confirmacion1">CONFIRMAR</string>
+    <string name="pop_cancelar1">CANCELAR</string>
     <string name="anadir_participante">Añadir \nComensal</string>
     <string name="anadir_plato">Añadir \nPlato - Bebida</string>
     <string name="etnombreanadir_participante">Nombre:</string>
