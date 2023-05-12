@@ -69,6 +69,7 @@ public class RegistroActivity extends AppCompatActivity {
                                 Map<String, Object> datosPersona = new HashMap<>();
                                 datosPersona.put("name", nombre);
                                 datosPersona.put("phone", telefono);
+                                datosPersona.put("imagen","");
                                 db.collection("users").document(email).set(datosPersona)
                                         .addOnSuccessListener(anadido -> {
                                             showHome(it.getResult().getUser().getEmail(), ProviderType.BASIC);

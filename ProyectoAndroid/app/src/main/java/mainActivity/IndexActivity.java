@@ -2,6 +2,7 @@ package mainActivity;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,13 +23,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.tfg.marfol.R;
 
 import java.net.URI;
 import java.util.ArrayList;
 
 import entities.Persona;
+import login.EditarDatos;
 
 
 public class IndexActivity extends AppCompatActivity {
@@ -41,6 +49,7 @@ public class IndexActivity extends AppCompatActivity {
     private Button btnCancelarIndex, btnConfirmarIndex;
     private TextView tvMessage1Popup, tvMessage2Popup, tvTitlePopup;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private ActivityResultLauncher rLauncherIndex;
 
     @Override
@@ -87,7 +96,7 @@ public class IndexActivity extends AppCompatActivity {
         rLauncherIndex = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     comprobarLogueado();
-                    Toast.makeText(this, "Launcher jiji",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Launcher jiji", Toast.LENGTH_SHORT).show();
                 }
         );
 
@@ -96,14 +105,40 @@ public class IndexActivity extends AppCompatActivity {
     private void comprobarLogueado() {
         //Coge la instancia de usuario
         mAuth = FirebaseAuth.getInstance();
-        
+        db = FirebaseFirestore.getInstance();
         //Comprueba si estás logueado o no
         if (mAuth.getCurrentUser() != null) {
-            Toast.makeText(this, "Estás logueado bro ",Toast.LENGTH_SHORT).show();
-            ivLoginIndex.setImageURI(Uri.parse("android.resource://com.tfg.marfol/"+R.drawable.google_icon));
+            Toast.makeText(this, "Estás logueado bro ", Toast.LENGTH_SHORT).show();
+            //obtiene el usuario actual logueado
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            //referencia del documento del usuario actual
+            DocumentReference userRef = db.collection("users").document(currentUser.getEmail());
+            // Obtiene los datos del documento del usuario actual
+            userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            // El documento del usuario existe
+                            String imagen = document.getString("imagen");
+                            // Si la imagen existe, mostrarla en el ImageView
+                            if (imagen != null) {
+                                Uri imageUri = Uri.parse(imagen);
+                                ivLoginIndex.setPadding(0, 0, 0, 0);
+                                ivLoginIndex.setImageURI(imageUri);
+                            }
+                        } else {
+                            ivLoginIndex.setImageResource(R.drawable.nologinimg);
+                        }
+                    } else {
+                        Toast.makeText(IndexActivity.this, "Error al obtener los datos del usuario", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         } else {
-            Toast.makeText(this, "No estás logueado pendejo ",Toast.LENGTH_SHORT).show();
-            ivLoginIndex.setImageURI(Uri.parse("android.resource://com.tfg.marfol/"+R.drawable.nologinimg));
+            Toast.makeText(this, "No estás logueado pendejo ", Toast.LENGTH_SHORT).show();
+            ivLoginIndex.setImageURI(Uri.parse("android.resource://com.tfg.marfol/" + R.drawable.nologinimg));
         }
     }
 
@@ -126,6 +161,7 @@ public class IndexActivity extends AppCompatActivity {
         tvTitlePopup = puVolverIndex.findViewById(R.id.tvTitlePopup);
 
     }
+
     public void asignarEfectos() {
 
         //Ajusta el tamaño de la imagen del login
@@ -133,7 +169,7 @@ public class IndexActivity extends AppCompatActivity {
 
         //Asigna el degradado de colores a los textos
         int[] colors = {getResources().getColor(R.color.redBorder),
-                        getResources().getColor(R.color.redTitle)
+                getResources().getColor(R.color.redTitle)
         };
 
         float[] positions = {0f, 0.2f};
@@ -171,8 +207,6 @@ public class IndexActivity extends AppCompatActivity {
         puVolverIndex.show();
 
     }
-
-
 
 
 }

@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,6 +69,7 @@ public class EditarDatos extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         String name = extras.getString("name");
         String phone = extras.getString("phone");
+        String img = extras.getString("img");
         etNombreUsuario.setText(name);
         etTelefonoUsuario.setText(phone);
 
@@ -75,7 +77,7 @@ public class EditarDatos extends AppCompatActivity {
         SharedPreferences prefAux = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
         email = prefAux.getString("email", "");
         provider = prefAux.getString("provider", "");
-
+        imagenDeBd();
 
         // Configuramos el botón de guardar
         btnGuardarBD.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +108,7 @@ public class EditarDatos extends AppCompatActivity {
 
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
+                    Log.d("AAAAAAAAAAAAAA",uriCapturada);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -127,7 +130,38 @@ public class EditarDatos extends AppCompatActivity {
         });
 
     }
+    private void imagenDeBd(){
+        // Realizar consulta al documento del usuario
+        if (email != null && !email.isEmpty()) {
+            db.collection("users").document(email).get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    // El documento del usuario existe
+                                    String imagen = document.getString("imagen");
+                                    // Si la imagen existe, mostrarla en el ImageView
+                                    if (imagen != null) {
+                                        Uri imageUri = Uri.parse(imagen);
+                                        ivPlatoAnadirP.setImageURI(imageUri);
+                                    }
+                                } else {
+                                    // El documento del usuario no existe
+                                    // Manejar el caso según tus necesidades
+                                }
+                            } else {
+                                // Mostrar el mensaje de error
+                                Toast.makeText(EditarDatos.this, "Error al obtener los datos del usuario", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        } else {
+            // Mostrar el mensaje de error o manejar el caso cuando email es nulo o vacío
+        }
 
+    }
     private void actualizarDatos() {
         // Creamos el mapa con los datos a actualizar
         Map<String, Object> map = new HashMap<>();
@@ -143,6 +177,14 @@ public class EditarDatos extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
+
+                                // Verificar si no se seleccionó una nueva imagen y conservar el valor existente
+                                if (uriCapturada.isEmpty()) {
+                                    map.put("imagen", document.getString("imagen"));
+                                } else {
+                                    map.put("imagen", uriCapturada);
+                                }
+
                                 // El documento del usuario ya existe, actualizamos sus datos
                                 db.collection("users").document(email).update(map)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -155,6 +197,11 @@ public class EditarDatos extends AppCompatActivity {
                                                 Intent resultIntent = new Intent();
                                                 resultIntent.putExtra("name", etNombreUsuario.getText().toString());
                                                 resultIntent.putExtra("phone", etTelefonoUsuario.getText().toString());
+                                                if (uriCapturada.isEmpty()) {
+                                                    resultIntent.putExtra("img", document.getString("imagen"));
+                                                } else {
+                                                    resultIntent.putExtra("img", uriCapturada);
+                                                }
 
                                                 // Establecer el resultado y finalizar la actividad
                                                 setResult(RESULT_OK, resultIntent);
@@ -180,7 +227,7 @@ public class EditarDatos extends AppCompatActivity {
                                                 Intent resultIntent = new Intent();
                                                 resultIntent.putExtra("name", etNombreUsuario.getText().toString());
                                                 resultIntent.putExtra("phone", etTelefonoUsuario.getText().toString());
-
+                                                resultIntent.putExtra("imagen", uriCapturada);
                                                 // Establecer el resultado y finalizar la actividad
                                                 setResult(RESULT_OK, resultIntent);
                                                 finish();
@@ -203,6 +250,7 @@ public class EditarDatos extends AppCompatActivity {
                     }
                 });
     }
+
     private void abrirCamara() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         camaraLauncher.launch(cameraIntent);

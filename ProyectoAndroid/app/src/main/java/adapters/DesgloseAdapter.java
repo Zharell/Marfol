@@ -24,7 +24,6 @@ public class DesgloseAdapter extends RecyclerView.Adapter<DesgloseAdapter.Desglo
     //Tiene la ruta URI de su imagen por defecto
     private Persona anadirPersona = new Persona(0,"Añadir Persona", "", "android.resource://com.tfg.marfol/"+R.drawable.add_icon , new ArrayList<>());
     private onItemClickListener mListener;
-    //
 
     @NonNull
     @Override

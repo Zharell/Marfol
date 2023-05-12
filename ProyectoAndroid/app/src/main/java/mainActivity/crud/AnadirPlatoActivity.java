@@ -251,7 +251,7 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
             //Accedemos a la actividad de añadir plato
             Intent intent = new Intent(this, AnadirPlatoActivity.class);
             intent.putExtra("arrayListPlatos", platos);
-            rLauncherComp.launch(intent);
+            //rLauncherComp.launch(intent);
         }
     }
 }
