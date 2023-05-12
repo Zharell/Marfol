@@ -1,5 +1,8 @@
 package login;
 import static android.content.ContentValues.TAG;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
@@ -30,11 +33,12 @@ enum ProviderType{
 public class HomeActivity extends AppCompatActivity {
     private Button btnLogoutHome, btnEditarBD;
     private TextView tvEmailHome;
-    private TextView tvProviderHome;
     private TextView tvNombreUsuario, tvTelefonoUsuario;
     private FirebaseFirestore db;
     private HashMap<String, Object> map = new HashMap<>();
     private ProgressBar progressBar;
+    private ActivityResultLauncher rLauncherHome;
+    private String nombreEnviar,telefonoEnviar;
 
 
     @Override
@@ -46,7 +50,6 @@ public class HomeActivity extends AppCompatActivity {
         btnLogoutHome = findViewById(R.id.btnLogoutHome);
         btnEditarBD = findViewById(R.id.btnEditarBD);
         tvEmailHome = findViewById(R.id.tvEmailHome);
-        tvProviderHome = findViewById(R.id.tvProviderHome);
         tvNombreUsuario = findViewById(R.id.tvNombreApellido);
         tvTelefonoUsuario = findViewById(R.id.tvTelefono);
         Bundle extras = getIntent().getExtras();
@@ -64,13 +67,28 @@ public class HomeActivity extends AppCompatActivity {
         prefs.putString("email", email);
         prefs.putString("provider", provider);
         prefs.apply();
+        rLauncherHome = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        // Aquí puedes obtener los datos de vuelta de la actividad de edición
+                        Intent data = result.getData();
+                        if (data != null) {
+                            // Obtén los datos enviados desde la actividad de edición
+                            String name = data.getStringExtra("name");
+                            String phone = data.getStringExtra("phone");
+                            // Por ejemplo, actualiza los TextView en esta actividad
+                            tvNombreUsuario.setText(getString(R.string.nombre)+" "+name);
+                            tvTelefonoUsuario.setText(getString(R.string.telefono)+" "+phone);
+                        }
+                    }
+                }
+        );
 
 
     }
 
     private void setup(String email, String provider) {
-        tvEmailHome.setText(email);
-        tvProviderHome.setText(provider);
+        tvEmailHome.setText(getString(R.string.correoHome)+" "+email);
         DocumentReference id = db.collection("users").document(email);
         progressBar.setVisibility(View.VISIBLE);
 
@@ -88,8 +106,9 @@ public class HomeActivity extends AppCompatActivity {
                     }
 
                     // Actualizar los EditText con los datos recuperados
-                    tvNombreUsuario.setText("Nombre: "+name);
-                    tvTelefonoUsuario.setText("Teléfono: "+phone);
+
+                    tvNombreUsuario.setText(getString(R.string.nombre)+" "+name);
+                    tvTelefonoUsuario.setText(getString(R.string.telefono)+" "+phone);
 
                     progressBar.setVisibility(View.GONE);
                 } else {
@@ -119,8 +138,18 @@ public class HomeActivity extends AppCompatActivity {
         });
         btnEditarBD.setOnClickListener(v -> {
             Intent editar = new Intent(HomeActivity.this, EditarDatos.class);
-            startActivity(editar);
-            finish();
+            //aqui parseo los datos para quitar Nombre: y Teléfono: y quedarme solo con el valor de dentro
+            nombreEnviar =  tvNombreUsuario.getText().toString();
+            telefonoEnviar = tvTelefonoUsuario.getText().toString();
+            String[] partes = nombreEnviar.split("Nombre: ");
+            nombreEnviar = partes[1];
+            partes = telefonoEnviar.split("Teléfono: ");
+            telefonoEnviar = partes[1];
+
+            editar.putExtra("name", nombreEnviar);
+            editar.putExtra("phone", telefonoEnviar);
+            setResult(RESULT_OK, editar);
+            rLauncherHome.launch(editar);
         });
 
     }

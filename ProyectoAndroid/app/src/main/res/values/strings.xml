@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Marfol</string>
-    <string name="nombre">Nombre y apellido</string>
     <string name="button_intro">¡ A \nPagar !</string>
-    <string name="telefono">Teléfono</string>
+    <string name="nombre">Nombre:</string>
+    <string name="telefono">Teléfono:</string>
     <string name="prompt_email">Email *</string>
     <string name="prompt_password">Password *</string>
     <string name="guardar">Guardar</string>
@@ -46,4 +46,6 @@
     <string name="btnvolver_detalle">Volver</string>
     <string name="btnguardar_restaurante">Guardar</string>
     <string name="tvdesglose">Desglose</string>
+    <string name="correoHome">Correo: </string>
+
 </resources>

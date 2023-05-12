@@ -1,5 +1,7 @@
 package login;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -32,6 +34,7 @@ public class EditarDatos extends AppCompatActivity {
     private Button btnGuardarBD;
     private FirebaseFirestore db;
     private String email, provider;
+    private ActivityResultLauncher rLauncherEditar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +48,17 @@ public class EditarDatos extends AppCompatActivity {
         etNombreUsuario = findViewById(R.id.etNombreUsuario);
         etTelefonoUsuario = findViewById(R.id.etTelefonoUsuario);
         btnGuardarBD = findViewById(R.id.btnGuardarBD);
+        Bundle extras = getIntent().getExtras();
+        String name = extras.getString("name");
+        String phone = extras.getString("phone");
+        etNombreUsuario.setText(name);
+        etTelefonoUsuario.setText(phone);
 
         // Obtenemos los datos del usuario
         SharedPreferences prefAux = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
         email = prefAux.getString("email", "");
         provider = prefAux.getString("provider", "");
-        etNombreUsuario.setText(prefAux.getString("name", ""));
-        etTelefonoUsuario.setText(prefAux.getString("phone", ""));
+
 
         // Configuramos el botón de guardar
         btnGuardarBD.setOnClickListener(new View.OnClickListener() {
@@ -84,8 +91,15 @@ public class EditarDatos extends AppCompatActivity {
                                             public void onSuccess(Void unused) {
                                                 // Mostramos el mensaje de actualizado
                                                 Toast.makeText(EditarDatos.this, "Datos actualizados", Toast.LENGTH_SHORT).show();
+
+                                                // Crear el Intent con los datos a enviar
+                                                Intent resultIntent = new Intent();
+                                                resultIntent.putExtra("name", etNombreUsuario.getText().toString());
+                                                resultIntent.putExtra("phone", etTelefonoUsuario.getText().toString());
+
+                                                // Establecer el resultado y finalizar la actividad
+                                                setResult(RESULT_OK, resultIntent);
                                                 finish();
-                                                // Esperamos 2 segundos antes de finalizar la actividad
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
@@ -103,7 +117,13 @@ public class EditarDatos extends AppCompatActivity {
                                             public void onSuccess(Void unused) {
                                                 // Mostramos el mensaje de actualizado
                                                 Toast.makeText(EditarDatos.this, "Datos actualizados", Toast.LENGTH_SHORT).show();
-                                                // Esperamos 2 segundos antes de finalizar la actividad
+                                                // Crear el Intent con los datos a enviar
+                                                Intent resultIntent = new Intent();
+                                                resultIntent.putExtra("name", etNombreUsuario.getText().toString());
+                                                resultIntent.putExtra("phone", etTelefonoUsuario.getText().toString());
+
+                                                // Establecer el resultado y finalizar la actividad
+                                                setResult(RESULT_OK, resultIntent);
                                                 finish();
 
                                             }
