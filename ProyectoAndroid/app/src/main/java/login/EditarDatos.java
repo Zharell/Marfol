@@ -4,15 +4,24 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,6 +32,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tfg.marfol.R;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,8 +44,13 @@ public class EditarDatos extends AppCompatActivity {
     private EditText etNombreUsuario, etTelefonoUsuario;
     private Button btnGuardarBD;
     private FirebaseFirestore db;
+
     private String email, provider;
+    private ImageView ivPlatoAnadirP;
     private ActivityResultLauncher rLauncherEditar;
+    private ActivityResultLauncher <Intent> camaraLauncher;
+    private static final int CAMERA_PERMISSION_CODE = 100;
+    private String uriCapturada="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +63,7 @@ public class EditarDatos extends AppCompatActivity {
         // Obtenemos las referencias a los elementos del layout
         etNombreUsuario = findViewById(R.id.etNombreUsuario);
         etTelefonoUsuario = findViewById(R.id.etTelefonoUsuario);
+        ivPlatoAnadirP = findViewById(R.id.ivAnadirFotoPersona);
         btnGuardarBD = findViewById(R.id.btnGuardarBD);
         Bundle extras = getIntent().getExtras();
         String name = extras.getString("name");
@@ -67,6 +84,48 @@ public class EditarDatos extends AppCompatActivity {
                 actualizarDatos();
             }
         });
+
+        // Registrar el launcher para la cámara
+        camaraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK) {
+
+                // Si la foto se toma correctamente, mostrar la vista previa en el ImageView
+                Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
+                ivPlatoAnadirP.setImageBitmap(photo);
+
+                // Insertar la imagen en la galería y obtenemos la URI transformada en String para almacenar en la BD
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.TITLE, "personaMarfol.jpg");
+                Uri uri = getContentResolver(). insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+                try {
+
+                    OutputStream outputStream = getContentResolver().openOutputStream(uri);
+                    photo.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                    outputStream.close();
+
+                    //Obtenemos la ruta URI de la imagen seleccionada
+                    uriCapturada = uri.toString();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+        //Añadimos onClick en el ImageView para activar la imagen
+        ivPlatoAnadirP.setOnClickListener(view -> {
+            // Solicitar permiso para acceder a la cámara
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+                //Si no tenemos los permisos los obtenemos
+                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+            } else {
+                // Si ya se tienen los permisos, abrir la cámara
+                abrirCamara();
+            }
+        });
+
     }
 
     private void actualizarDatos() {
@@ -143,6 +202,25 @@ public class EditarDatos extends AppCompatActivity {
                         }
                     }
                 });
+    }
+    private void abrirCamara() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        camaraLauncher.launch(cameraIntent);
+    }
+
+    // Método para manejar la respuesta de la solicitud de permisos
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Si se conceden los permisos, abrir la cámara
+                abrirCamara();
+            } else {
+                // Si se deniegan los permisos, mostrar un mensaje al usuario
+                Toast.makeText(this, "Para almacenar la imagen debe otorgar los permisos", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
 
