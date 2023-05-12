@@ -5,6 +5,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tfg.marfol.R;
@@ -33,19 +34,23 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import adapters.AnadirPersonaAdapter;
+import adapters.PersonaCompartirAdapter;
+import entities.Persona;
 import entities.Plato;
 
-public class AnadirPlatoActivity extends AppCompatActivity {
+public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCompartirAdapter.onItemClickListener {
 
     private Switch swCompartirPlato;
     private RecyclerView rvPlatosAnadirPlato;
     private TextView tvTitleAnadirP, tvSubTitP;
-
+    private PersonaCompartirAdapter anadirPAdapter;
     private EditText  etNombreAnadirP, etDescAnadirP, etPrecioAnadirP;
     private Button btnContinuarAnadirP;
     private ImageView ivLoginAnadirPlato, ivPlatoAnadirP;
     private final int CAMERA_PERMISSION_CODE = 100;
     private ArrayList <Plato> platos;
+    private ArrayList <Persona> comensalCompartir;
     private boolean esCompartido=false;
     private String uriCapturada="";
     private ActivityResultLauncher<Intent> camaraLauncher;
@@ -65,14 +70,11 @@ public class AnadirPlatoActivity extends AppCompatActivity {
         //Método que asigna los efectos a los elementos
         asignarEfectos();
 
+        //Método que muestra el contenido del adaptader
+        mostrarAdapter();
+
         //Botón encargado de añadir el plato
-        btnContinuarAnadirP.setOnClickListener(view -> {
-
-            //Añade el plato y devuelve
-            anadirPlato();
-
-        });
-
+        btnContinuarAnadirP.setOnClickListener(view -> { anadirPlato(); });
 
         //Comprueba si el switch compartir está activo o no para mostrar su información
         swCompartirPlato.setOnCheckedChangeListener((compoundButton, isChecked) -> {
@@ -131,6 +133,20 @@ public class AnadirPlatoActivity extends AppCompatActivity {
 
     }
 
+    //Se debe insertar el ArrayList vacío para que el adaptador inserte el objeto 0 ( añadir elemento )
+    public void mostrarAdapter() {
+
+        //Se añaden la lista de platos vacía para que aparezca el botón de añadir Plato
+        comensalCompartir = new ArrayList<Persona>();
+
+        //Prepara el Adapter para su uso
+        rvPlatosAnadirPlato.setLayoutManager(new LinearLayoutManager(this));
+        anadirPAdapter = new PersonaCompartirAdapter();
+        rvPlatosAnadirPlato.setAdapter(anadirPAdapter);
+        anadirPAdapter.setmListener(this::onItemClick);
+        anadirPAdapter.setResultsPersonaCom(comensalCompartir);
+    }
+
     public void anadirPlato () {
 
         boolean esValidado=true;
@@ -156,7 +172,7 @@ public class AnadirPlatoActivity extends AppCompatActivity {
         if (esValidado) {
 
             //Añado a la lista la persona creada
-            platos.add(new Plato(nombre,descripcion,precio,precio,uriCapturada,esCompartido));
+            platos.add(new Plato(nombre,descripcion,precio,precio,uriCapturada,esCompartido, new ArrayList<>()));
 
             Intent intentPlato = new Intent();
             intentPlato.putExtra("arrayListPlatos", platos);
@@ -226,4 +242,16 @@ public class AnadirPlatoActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onItemClick(int position) {
+        //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
+        if (position>0) {
+            Toast.makeText(this,"Pulsaste el campo: "+String.valueOf(position),Toast.LENGTH_SHORT).show();
+        } else {
+            //Accedemos a la actividad de añadir plato
+            Intent intent = new Intent(this, AnadirPlatoActivity.class);
+            intent.putExtra("arrayListPlatos", platos);
+            rLauncherComp.launch(intent);
+        }
+    }
 }

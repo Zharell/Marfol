@@ -70,7 +70,6 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
     private Button btnContinuarDetalle;
     private String uriCapturada="";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,8 +100,6 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
                         platos = (ArrayList<Plato>) data.getSerializableExtra("arrayListPlatos");
                         adapterDetalle.setResultsPlato(platos);
                     }
-
-
                 }
         );
 
@@ -142,11 +139,9 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
                     outputStream.close();
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         });
 
@@ -169,8 +164,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
             //AÑADIR A BD
             editarComensalBd();
             //Añado a la lista la persona creada
-            Persona personaEditada = new Persona(nombre, descripcion, uriCapturada, platos);
-
+            Persona personaEditada = new Persona(comensal.getComensalCode(),nombre, descripcion, uriCapturada, platos);
             Intent intentComensal = new Intent();
             intentComensal.putExtra("detalleComensal", personaEditada);
             setResult(Activity.RESULT_OK, intentComensal);
@@ -178,7 +172,6 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         }
     }
     private void editarComensalBd() {
-
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser == null){

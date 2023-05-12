@@ -5,12 +5,14 @@ import java.util.ArrayList;
 
 public class Persona implements Serializable {
 
+    private int comensalCode;
     private String nombre,descripcion, urlImage;
     private ArrayList<Plato> platos;
 
     public Persona () {}
 
-    public Persona (String nombre, String descripcion, String urlImage, ArrayList<Plato> platos) {
+    public Persona (int comensalCode,String nombre, String descripcion, String urlImage, ArrayList<Plato> platos) {
+        this.comensalCode=comensalCode;
         this.nombre=nombre;
         this.descripcion=descripcion;
         this.urlImage=urlImage;
@@ -38,6 +40,10 @@ public class Persona implements Serializable {
         }
         return false;
     }
+
+    public int getComensalCode() { return comensalCode; }
+
+    public void setComensalCode(int comensalCode) { this.comensalCode = comensalCode; }
 
     public String getNombre() { return nombre; }
 

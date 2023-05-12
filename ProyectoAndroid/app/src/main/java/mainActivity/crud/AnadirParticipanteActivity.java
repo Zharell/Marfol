@@ -68,7 +68,6 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     private int comensalPosicion;
     private ArrayList <Plato> platos;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +86,6 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
-        //test
 
         //Laucher Result - recibe los platos del usuario creado
         rLauncherPlatos = registerForActivityResult(
@@ -97,7 +95,6 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                         platos = (ArrayList<Plato>) data.getSerializableExtra("arrayListPlatos");
                         anadirPAdapter.setResultsPlato(platos);
                     }
-
 
                 }
         );
@@ -192,7 +189,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             anadirPersonaABd(nombre,descripcion,uriCapturada);
 
             // Añade la persona localmente
-            comensales.add(new Persona(nombre, descripcion, uriCapturada, platos));
+            comensales.add(new Persona(comensales.size(),nombre, descripcion, uriCapturada, platos));
 
             Intent intentComensal = new Intent();
             intentComensal.putExtra("arrayListComensales", comensales);

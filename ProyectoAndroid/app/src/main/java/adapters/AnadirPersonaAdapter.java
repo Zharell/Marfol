@@ -17,13 +17,14 @@ import com.tfg.marfol.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import entities.Persona;
 import entities.Plato;
 
 public class AnadirPersonaAdapter extends RecyclerView.Adapter<AnadirPersonaAdapter.AnadirPersonaAdapterResultHolder> {
     private ArrayList<Plato> resultsPlato = new ArrayList<>();
 
     //añadirPlato siempre se añade en la posición 0 ya que su función es redirigir a otra actividad distinta
-    Plato anadirPlato = new Plato("", "" ,0, 0, "android.resource://com.tfg.marfol/"+R.drawable.add_icon,false);
+    Plato anadirPlato = new Plato("", "" ,0, 0, "android.resource://com.tfg.marfol/"+R.drawable.add_icon,false, new ArrayList<Persona>());
 
     private PersonaAdapter.onItemClickListener mListener;
 

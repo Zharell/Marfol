@@ -5,7 +5,6 @@
     android:background="@drawable/pipopup_check"
     android:orientation="vertical"
     android:padding="20dp"
-
     >
 
     <TextView
@@ -36,8 +35,6 @@
         android:textColor="@color/redBorder"
         android:text="@string/confirmacion_volver"
         android:textSize="17sp"
-
-
         />
 
     <LinearLayout
@@ -57,7 +54,6 @@
             android:text="@string/pop_cancelar1"
             android:textColor="@color/redBorder"
             android:textSize="18sp"
-
             />
 
         <Button
@@ -69,7 +65,6 @@
             android:text="@string/pop_confirmacion1"
             android:textColor="@color/redBorder"
             android:textSize="18sp"
-
             />
 
     </LinearLayout>
