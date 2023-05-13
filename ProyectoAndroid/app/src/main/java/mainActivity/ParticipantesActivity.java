@@ -4,8 +4,10 @@ import static android.content.ContentValues.TAG;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
@@ -18,39 +20,50 @@ import android.graphics.Shader;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+
+import com.google.android.gms.tasks.Task;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.tfg.marfol.R;
+
 
 import java.util.ArrayList;
 
+
 import adapters.PersonaAdapter;
-import adapters.PersonaBdAdapter;
+import adapters.PersonaAdapterBd;
 import entities.Persona;
 import login.AuthActivity;
 import mainActivity.crud.AnadirParticipanteActivity;
 import mainActivity.detalle.DetallePersonaActivity;
 
-public class ParticipantesActivity extends AppCompatActivity implements PersonaAdapter.onItemClickListener {
+public class ParticipantesActivity extends AppCompatActivity implements PersonaAdapter.onItemClickListener, PersonaAdapterBd.onItemClickListenerBd {
 
     private final int MINIMO_PLATOS = 1;
     private int numPlatos=0;
     private ImageView ivLoginParticipantes, ivMenuParticipantes;
-    private TextView tvTitleParticipantes;
+    private TextView tvTitleParticipantes,textoFill;
     private Dialog puVolverParticipantes;
     private Button btnCancelarParticipantes, btnConfirmarParticipantes, btnContinuarParticipantes;
     private Intent volverIndex;
     private RecyclerView rvPersonaParticipantes;
     private PersonaAdapter personaAdapter;
-    private PersonaBdAdapter personaAdapterBd;
+    private PersonaAdapterBd personaAdapterBd;
     private ActivityResultLauncher rLauncherAnadirComensal;
     private ActivityResultLauncher rLauncherDetalleComensal;
     private ActivityResultLauncher rLauncherDesglose;
@@ -59,10 +72,12 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private int comensalPosicion;
 
     private ArrayList<Persona> comensalesBd;
-    private TextView tvLlenarTexto;
 
     private RecyclerView rvPersonaParticipantesBd;
     private Intent irLogin;
+    private FirebaseFirestore db;
+    private FirebaseAuth auth ;
+    private FirebaseUser currentUser ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,18 +197,23 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         ivMenuParticipantes = findViewById(R.id.ivMenuAnadirPlato);
         ivLoginParticipantes = findViewById(R.id.ivParticipantesImagen);
         rvPersonaParticipantes = findViewById(R.id.rvPersonaParticipantes);
+        rvPersonaParticipantesBd = findViewById(R.id.rvPersonaParticipantesBd);
         tvTitleParticipantes = findViewById(R.id.tvTitleAnadirPlato);
         btnContinuarParticipantes = findViewById(R.id.btnContinuarParticipantes);
-        tvLlenarTexto = findViewById(R.id.tvLlenarTexto);
         volverIndex = new Intent(this, IndexActivity.class);
         irLogin = new Intent(this, AuthActivity.class);
-
+        db = FirebaseFirestore.getInstance();
         //Asigna IDs de los elementos del popup
         puVolverParticipantes = new Dialog(this);
         puVolverParticipantes.setContentView(R.layout.popup_confirmacion);
         btnCancelarParticipantes = puVolverParticipantes.findViewById(R.id.btnCancelarPopup);
         btnConfirmarParticipantes = puVolverParticipantes.findViewById(R.id.btnConfirmarPopup);
-
+        auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
+        comensales= new ArrayList<>();
+        comensalesBd = new ArrayList<>();
+        textoFill= findViewById(R.id.textoFill);
+        textoFill.setVisibility(View.INVISIBLE);
     }
 
     public void asignarEfectos() {
@@ -231,19 +251,76 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     //Método que prepara el recycler y el adaptador para su uso
     public void mostrarAdapter() {
 
-        //ArrayList creado para probar adapter
-        comensales = new ArrayList<>();
 
         //Prepara el Adapter para su uso
         rvPersonaParticipantes.setLayoutManager(new GridLayoutManager(this,2));
         personaAdapter = new PersonaAdapter();
         rvPersonaParticipantes.setAdapter(personaAdapter);
         personaAdapter.setmListener(this);
-
         //Añade el contenido al adapter, si está vacío el propio Adapter añade el " Añadir Persona "
         personaAdapter.setResultsPersona(comensales);
 
+
+        //aqui datos de la base de datos
+        rvPersonaParticipantesBd.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false));
+        personaAdapterBd = new PersonaAdapterBd();
+        rvPersonaParticipantesBd.setAdapter(personaAdapterBd);
+        personaAdapterBd.setmListener(this);
+        if (currentUser != null) {
+            textoFill.setVisibility(View.VISIBLE);
+            cargarDatosBd(comensalesBd);
+            personaAdapterBd.setResultsPersona(comensalesBd);
+        } else {
+            // El usuario no está logueado, no hagas nada o muestra un mensaje de aviso
+            Toast.makeText(this, "Inicia sesión para cargar los datos", Toast.LENGTH_SHORT).show();
+        }
+
     }
+    private void cargarDatosBd(ArrayList<Persona> comensalesBd) {
+        String usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
+        DocumentReference id = db.collection("users").document(usuarioId);
+        if (currentUser != null) {
+            // Obtén la colección "personas" en Firestore
+            CollectionReference personasRef = db.collection("personas");
+
+            // Realiza la consulta para obtener todas las personas del usuario actual
+            Query consulta = personasRef.whereEqualTo("usuarioId", usuarioId);
+
+            consulta.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        // Limpiar el ArrayList antes de agregar los nuevos datos
+                        int incremento=1;
+                        // Recorrer los documentos obtenidos y agregar los datos al ArrayList
+                        for (DocumentSnapshot document : task.getResult()) {
+                            String nombre = document.getString("nombre");
+                            String descripcion = document.getString("descripcion");
+                            String imagen = document.getString("imagen");
+                            Persona persona = new Persona(incremento,nombre, descripcion, imagen, new ArrayList<>());
+                            comensalesBd.add(persona);
+                            incremento++;
+                        }
+
+                        // Notificar al adapter que los datos han cambiado
+                        personaAdapterBd.notifyDataSetChanged();
+                    } else {
+                        // Ocurrió un error al obtener los documentos
+
+                    }
+                }
+            });
+        } else {
+
+            // El usuario no está autenticado, muestra un mensaje o inicia sesión automáticamente
+            Toast.makeText(this, "Inicia sesión para cargar los datos", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+
+
 
     @Override
     public void onItemClick(int position) {
@@ -281,7 +358,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                         Persona persona = document.toObject(Persona.class);
                         datos += persona.getNombre() + " - " + persona.getDescripcion() + "\n";
                     }
-                    tvLlenarTexto.setText(datos);
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
@@ -294,4 +370,8 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
     }
 
+    @Override
+    public void onItemClickBd(int position) {
+        Toast.makeText(this,String.valueOf(position),Toast.LENGTH_SHORT).show();
+    }
 }

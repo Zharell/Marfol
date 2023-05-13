@@ -111,7 +111,7 @@ public class HomeActivity extends AppCompatActivity {
                     tvEmailHome.setText(email);
                     tvNombreUsuario.setText(name);
                     tvTelefonoUsuario.setText(phone);
-                    Glide.with(HomeActivity.this).load(imagen).circleCrop().into(ivFotoPersonaHome);
+                    Glide.with(HomeActivity.this).load(imagen).into(ivFotoPersonaHome);
                     Log.d("AAAAAAAAAAAAAAAAAAAAA",imagen);
                     //ivFotoPersonaHome.setImageURI(Uri.parse(img));
 

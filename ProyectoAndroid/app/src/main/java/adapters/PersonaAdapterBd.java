@@ -11,26 +11,24 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.tfg.marfol.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import entities.Persona;
-import entities.Plato;
 
-public class PersonaBdAdapter extends RecyclerView.Adapter<PersonaBdAdapter.PersonaBdAdapterResultHolder> {
+public class PersonaAdapterBd extends RecyclerView.Adapter<PersonaAdapterBd.PersonaBdAdapterResultHolder> {
 
     private List<Persona> resultsPersona = new ArrayList<>();
 
-    private onItemClickListener mListener;
+    private onItemClickListenerBd mListener;
 
     @NonNull
     @Override
     public PersonaBdAdapterResultHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.row_persona, parent, false);
+                .inflate(R.layout.row_persona_bd, parent, false);
 
         return new PersonaBdAdapterResultHolder(itemView);
     }
@@ -51,7 +49,7 @@ public class PersonaBdAdapter extends RecyclerView.Adapter<PersonaBdAdapter.Pers
                 if (mListener != null) {
                     int position = holder.getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
-                        mListener.onItemClick(position);
+                        mListener.onItemClickBd(position);
                     }
                 }
             }
@@ -70,7 +68,7 @@ public class PersonaBdAdapter extends RecyclerView.Adapter<PersonaBdAdapter.Pers
 
     }
 
-    public void setmListener(onItemClickListener mListener) {
+    public void setmListener(onItemClickListenerBd mListener) {
         this.mListener = mListener;
     }
 
@@ -89,8 +87,8 @@ public class PersonaBdAdapter extends RecyclerView.Adapter<PersonaBdAdapter.Pers
 
     }
 
-    public interface onItemClickListener{
-        void onItemClick(int position);
+    public interface onItemClickListenerBd{
+        void onItemClickBd(int position);
     }
 
 }
