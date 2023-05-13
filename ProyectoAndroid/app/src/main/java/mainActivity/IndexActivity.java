@@ -87,7 +87,7 @@ public class IndexActivity extends AppCompatActivity {
 
         //Asigna Ids a los elementos de la actividad
         btnApIndex = findViewById(R.id.btnApIndex);
-        ivLoginIndex = findViewById(R.id.ivLoginAnadirPlato);
+        ivLoginIndex = findViewById(R.id.ivAnadirPlatoImagen);
         ivMenuIndex = findViewById(R.id.ivMenuAnadirPlato);
         rvPresetsIndex = findViewById(R.id.rvPresetsIndex);
         tvTitleIndex = findViewById(R.id.tvTitleAnadirPlato);

@@ -42,21 +42,21 @@
         />
 
     <!-- Login App -->
+
     <ImageView
 
-        android:id="@+id/ivLoginAnadirPlato"
+        android:id="@+id/ivParticipantesImagen"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="@drawable/login_style"
-        android:src="@drawable/nologinimg"
         android:scaleType="fitCenter"
+        android:src="@drawable/nologinimg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.96"
+        app:layout_constraintHorizontal_bias="0.955"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.02"
-
 
 
         />
@@ -66,9 +66,9 @@
         android:layout_width="350dp"
         android:layout_height="413dp"
 
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvTitleAnadirPlato" />
 

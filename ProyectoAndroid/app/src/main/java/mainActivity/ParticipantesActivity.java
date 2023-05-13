@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import adapters.PersonaAdapter;
 import adapters.PersonaBdAdapter;
 import entities.Persona;
+import login.AuthActivity;
 import mainActivity.crud.AnadirParticipanteActivity;
 import mainActivity.detalle.DetallePersonaActivity;
 
@@ -53,6 +54,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private ActivityResultLauncher rLauncherAnadirComensal;
     private ActivityResultLauncher rLauncherDetalleComensal;
     private ActivityResultLauncher rLauncherDesglose;
+    private ActivityResultLauncher rLauncherLogin;
     private ArrayList<Persona> comensales;
     private int comensalPosicion;
 
@@ -60,6 +62,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private TextView tvLlenarTexto;
 
     private RecyclerView rvPersonaParticipantesBd;
+    private Intent irLogin;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +89,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                         Intent data = result.getData();
                         comensales = (ArrayList<Persona>) data.getSerializableExtra("arrayListComensales");
                         personaAdapter.setResultsPersona(comensales);
+                        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
                     }
                 }
         );
@@ -97,6 +101,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                         Intent data = result.getData();
                         comensales.set(comensalPosicion,(Persona) data.getSerializableExtra("detalleComensal"));
                         personaAdapter.setResultsPersona(comensales);
+                        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
                     }
                 }
         );
@@ -108,9 +113,16 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                         Intent data = result.getData();
                         comensales = (ArrayList<Persona>) data.getSerializableExtra("arrayListDesglose");
                         personaAdapter.setResultsPersona(comensales);
+                        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
                     }
                 }
         );
+        rLauncherLogin = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
+                }
+        );
+
 
         //Botones para el popup de confirmación
         //Confirmar, retrocede, cierra la actividad y pierde los datos introducidos - se debe cerrar con dismiss() para evitar fugas de memoria
@@ -142,7 +154,11 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                 }
             }
         });
+        ivLoginParticipantes.setOnClickListener(view ->{
+            rLauncherLogin.launch(irLogin);
+        });
     }
+
 
     //Comprueba si se han añadido platos para avanzar al Desglose
     public int obtenerPlatos() {
@@ -164,12 +180,13 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
         //Asigna Ids a los elementos de la actividad
         ivMenuParticipantes = findViewById(R.id.ivMenuAnadirPlato);
-        ivLoginParticipantes = findViewById(R.id.ivLoginAnadirPlato);
+        ivLoginParticipantes = findViewById(R.id.ivParticipantesImagen);
         rvPersonaParticipantes = findViewById(R.id.rvPersonaParticipantes);
         tvTitleParticipantes = findViewById(R.id.tvTitleAnadirPlato);
         btnContinuarParticipantes = findViewById(R.id.btnContinuarParticipantes);
         tvLlenarTexto = findViewById(R.id.tvLlenarTexto);
         volverIndex = new Intent(this, IndexActivity.class);
+        irLogin = new Intent(this, AuthActivity.class);
 
         //Asigna IDs de los elementos del popup
         puVolverParticipantes = new Dialog(this);
@@ -245,28 +262,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
             Intent intent = new Intent(this, AnadirParticipanteActivity.class);
             intent.putExtra("arrayListComensales", comensales);
             rLauncherAnadirComensal.launch(intent);
-
-
-            /*
-            comensales.add(new Persona("Juan", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Gayler", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Fer", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Javier", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Juan", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Gayler", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Fer", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Javier", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Juan", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Gayler", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Fer", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Javier", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Juan", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Gayler", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Fer", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Javier", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            //Añade el contenido al adapter, si está vacío el propio Adapter añade el " Añadir Persona "
-            personaAdapter.setResultsPersona(comensales);
-            */
 
 
         }
