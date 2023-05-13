@@ -19,7 +19,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.tfg.marfol.R;
 
@@ -35,7 +34,6 @@ import android.graphics.Shader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -50,6 +48,7 @@ import java.util.Map;
 import adapters.AnadirPersonaAdapter;
 import entities.Persona;
 import entities.Plato;
+import mainActivity.MetodosGlobales;
 
 public class AnadirParticipanteActivity extends AppCompatActivity implements AnadirPersonaAdapter.onItemClickListener {
 
@@ -73,7 +72,6 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anadir_participante);
 
-
         //Recibe la lista de comensales para empezar a añadir
         Intent intent = getIntent();
         comensales = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComensales");
@@ -83,6 +81,8 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
         //Método que asigna los efectos a los elementos
         asignarEfectos();
+        //Comprobar usuario si está logueado o no
+        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginAnadirParticipante);
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
@@ -145,33 +145,6 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             anadirComensal();
         });
 
-        /*
-        platos.add(new Plato( "pollito con papa", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "el pepe", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "kaylertragaSa", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "cachopo", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "cerveza viemfria", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "cocacolastic", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        anadirPAdapter.setResultsPlato(platos);
-        */
 
     }
     public void anadirComensal() {

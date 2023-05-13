@@ -34,10 +34,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-import adapters.AnadirPersonaAdapter;
 import adapters.PersonaCompartirAdapter;
 import entities.Persona;
 import entities.Plato;
+import mainActivity.MetodosGlobales;
 
 public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCompartirAdapter.onItemClickListener {
 
@@ -72,6 +72,8 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
+        //Comprobar usuario logueado
+        MetodosGlobales.comprobarUsuarioLogueado(AnadirPlatoActivity.this,ivLoginAnadirPlato);
 
         //Botón encargado de añadir el plato
         btnContinuarAnadirP.setOnClickListener(view -> { anadirPlato(); });

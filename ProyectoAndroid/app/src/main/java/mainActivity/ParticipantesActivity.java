@@ -4,7 +4,6 @@ import static android.content.ContentValues.TAG;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,20 +18,16 @@ import android.graphics.Shader;
 import android.os.Bundle;
 
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.tfg.marfol.R;
 
 import java.util.ArrayList;
@@ -40,7 +35,6 @@ import java.util.ArrayList;
 import adapters.PersonaAdapter;
 import adapters.PersonaBdAdapter;
 import entities.Persona;
-import entities.Plato;
 import mainActivity.crud.AnadirParticipanteActivity;
 import mainActivity.detalle.DetallePersonaActivity;
 
@@ -76,6 +70,8 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
         //Método que asigna los efectos a los elementos
         asignarEfectos();
+        //comprobar si estoy logueado
+        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();

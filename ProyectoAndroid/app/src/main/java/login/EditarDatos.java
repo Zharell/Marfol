@@ -70,16 +70,9 @@ public class EditarDatos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_datos);
 
-        // Obtenemos la instancia de Firebase
-        db = FirebaseFirestore.getInstance();
-        mAuth= FirebaseAuth.getInstance();
-        storageReference = FirebaseStorage.getInstance().getReference();
+       asignarId();
 
-        // Obtenemos las referencias a los elementos del layout
-        etNombreUsuario = findViewById(R.id.etNombreUsuario);
-        etTelefonoUsuario = findViewById(R.id.etTelefonoUsuario);
-        ivPlatoAnadirP = findViewById(R.id.ivAnadirFotoPersona);
-        btnGuardarBD = findViewById(R.id.btnGuardarBD);
+
         Bundle extras = getIntent().getExtras();
         String name = extras.getString("name");
         String phone = extras.getString("phone");
@@ -90,6 +83,7 @@ public class EditarDatos extends AppCompatActivity {
         SharedPreferences prefAux = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
         email = prefAux.getString("email", "");
         provider = prefAux.getString("provider", "");
+
         imagenDeBd();
 
         // Configuramos el botón de guardar
@@ -119,7 +113,7 @@ public class EditarDatos extends AppCompatActivity {
 
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
-                    Glide.with(EditarDatos.this).load(uriCapturada).into(ivPlatoAnadirP);
+                    Glide.with(EditarDatos.this).load(uriCapturada).circleCrop().into(ivPlatoAnadirP);
                     Log.d("AAAAAAAAAAAAAA",uriCapturada);
 
                 } catch (IOException e) {
@@ -142,6 +136,20 @@ public class EditarDatos extends AppCompatActivity {
         });
 
     }
+
+    private void asignarId() {
+        // Obtenemos la instancia de Firebase
+        db = FirebaseFirestore.getInstance();
+        mAuth= FirebaseAuth.getInstance();
+        storageReference = FirebaseStorage.getInstance().getReference();
+
+        // Obtenemos las referencias a los elementos del layout
+        etNombreUsuario = findViewById(R.id.etNombreUsuario);
+        etTelefonoUsuario = findViewById(R.id.etTelefonoUsuario);
+        ivPlatoAnadirP = findViewById(R.id.ivAnadirFotoPersona);
+        btnGuardarBD = findViewById(R.id.btnGuardarBD);
+    }
+
     private void imagenDeBd(){
         // Realizar consulta al documento del usuario
         if (email != null && !email.isEmpty()) {
@@ -156,12 +164,12 @@ public class EditarDatos extends AppCompatActivity {
                                     String imagen = document.getString("imagen");
                                     // Si la imagen existe, mostrarla en el ImageView
                                     if (imagen != null) {
-                                        Glide.with(EditarDatos.this).load(imagen).into(ivPlatoAnadirP);
+                                        Glide.with(EditarDatos.this).load(imagen).circleCrop().into(ivPlatoAnadirP);
                                     }
                                 } else {
                                     // El documento del usuario no existe
                                     // Manejar el caso según tus necesidades
-                                    Glide.with(EditarDatos.this).load("").into(ivPlatoAnadirP);
+                                    Glide.with(EditarDatos.this).load(R.drawable.nologinimg).circleCrop().into(ivPlatoAnadirP);
                                 }
                             } else {
                                 // Mostrar el mensaje de error

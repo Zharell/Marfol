@@ -2,11 +2,9 @@ package mainActivity;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -17,14 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tfg.marfol.R;
 
@@ -52,7 +43,7 @@ public class IndexActivity extends AppCompatActivity {
         //Método que asigna efectos a los elementos (colores, etc)
         asignarEfectos();
         //Método para comprobar las imagenes del usuario
-        comprobarLogueado();
+        MetodosGlobales.comprobarUsuarioLogueado(IndexActivity.this,ivLoginIndex);
 
         //Puesto provisional para probar cosas
         ivLoginIndex.setOnClickListener(view -> {
@@ -84,50 +75,12 @@ public class IndexActivity extends AppCompatActivity {
         //launcher result para comprobar las imagenes del usuario
         rLauncherIndex = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-                    comprobarLogueado();
+                    MetodosGlobales.comprobarUsuarioLogueado(IndexActivity.this,ivLoginIndex);
                     Toast.makeText(this, "Launcher jiji", Toast.LENGTH_SHORT).show();
                 }
         );
 
-    }
 
-    private void comprobarLogueado() {
-        //Coge la instancia de usuario
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
-        //Comprueba si estás logueado o no
-        if (mAuth.getCurrentUser() != null) {
-            Toast.makeText(this, "Estás logueado bro ", Toast.LENGTH_SHORT).show();
-            //obtiene el usuario actual logueado
-            FirebaseUser currentUser = mAuth.getCurrentUser();
-            //referencia del documento del usuario actual
-            DocumentReference userRef = db.collection("users").document(currentUser.getEmail());
-            // Obtiene los datos del documento del usuario actual
-            userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            // El documento del usuario existe
-                            String imagen = document.getString("imagen");
-                            // Si la imagen existe, mostrarla en el ImageView
-                            if (imagen != null) {
-                                ivLoginIndex.setPadding(0, 0, 0, 0);
-                                Glide.with(IndexActivity.this).load(imagen).into(ivLoginIndex);
-                            }
-                        } else {
-                            Glide.with(IndexActivity.this).load(R.drawable.nologinimg).into(ivLoginIndex);
-                        }
-                    } else {
-                        Toast.makeText(IndexActivity.this, "Error al obtener los datos del usuario", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        } else {
-            Toast.makeText(this, "No estás logueado pendejo ", Toast.LENGTH_SHORT).show();
-            Glide.with(IndexActivity.this).load(R.drawable.nologinimg).into(ivLoginIndex);
-        }
     }
 
     public void asignarId() {
@@ -187,13 +140,11 @@ public class IndexActivity extends AppCompatActivity {
     //Método que al pulsar el botón de volver te pregunta si deseas cerrar la app
     @Override
     public void onBackPressed() {
-
         //Pregunta si realmente quieres salir
         tvTitlePopup.setText("Salir");
         tvMessage1Popup.setText("Salir de Marfol, se cerrará la aplicación");
         tvMessage2Popup.setText("¿ Estás seguro ?");
         puVolverIndex.show();
-
     }
 
 
