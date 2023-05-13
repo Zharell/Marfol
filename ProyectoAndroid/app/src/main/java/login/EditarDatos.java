@@ -83,7 +83,6 @@ public class EditarDatos extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         String name = extras.getString("name");
         String phone = extras.getString("phone");
-        //String img = extras.getString("img");
         etNombreUsuario.setText(name);
         etTelefonoUsuario.setText(phone);
 
