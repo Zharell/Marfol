@@ -25,12 +25,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.tfg.marfol.R;
 
 import java.io.IOException;
@@ -50,8 +56,14 @@ public class EditarDatos extends AppCompatActivity {
     private ImageView ivPlatoAnadirP;
     private ActivityResultLauncher rLauncherEditar;
     private ActivityResultLauncher <Intent> camaraLauncher;
+    private FirebaseAuth mAuth;
     private static final int CAMERA_PERMISSION_CODE = 100;
-    private String uriCapturada="";
+    private String uriCapturada="",storage_path="users/*",photo="photo";
+
+    private StorageReference storageReference;
+    private static final int COD_SEL_IMAGE = 400;
+    private static final int COD_SEL_STORAGE = 500;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +72,8 @@ public class EditarDatos extends AppCompatActivity {
 
         // Obtenemos la instancia de Firebase
         db = FirebaseFirestore.getInstance();
+        mAuth= FirebaseAuth.getInstance();
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         // Obtenemos las referencias a los elementos del layout
         etNombreUsuario = findViewById(R.id.etNombreUsuario);
@@ -69,7 +83,7 @@ public class EditarDatos extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         String name = extras.getString("name");
         String phone = extras.getString("phone");
-        String img = extras.getString("img");
+        //String img = extras.getString("img");
         etNombreUsuario.setText(name);
         etTelefonoUsuario.setText(phone);
 
@@ -93,8 +107,6 @@ public class EditarDatos extends AppCompatActivity {
 
                 // Si la foto se toma correctamente, mostrar la vista previa en el ImageView
                 Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
-                ivPlatoAnadirP.setImageBitmap(photo);
-
                 // Insertar la imagen en la galería y obtenemos la URI transformada en String para almacenar en la BD
                 ContentValues values = new ContentValues();
                 values.put(MediaStore.Images.Media.TITLE, "personaMarfol.jpg");
@@ -108,6 +120,7 @@ public class EditarDatos extends AppCompatActivity {
 
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
+                    Glide.with(EditarDatos.this).load(uriCapturada).into(ivPlatoAnadirP);
                     Log.d("AAAAAAAAAAAAAA",uriCapturada);
 
                 } catch (IOException e) {
@@ -144,12 +157,12 @@ public class EditarDatos extends AppCompatActivity {
                                     String imagen = document.getString("imagen");
                                     // Si la imagen existe, mostrarla en el ImageView
                                     if (imagen != null) {
-                                        Uri imageUri = Uri.parse(imagen);
-                                        ivPlatoAnadirP.setImageURI(imageUri);
+                                        Glide.with(EditarDatos.this).load(imagen).into(ivPlatoAnadirP);
                                     }
                                 } else {
                                     // El documento del usuario no existe
                                     // Manejar el caso según tus necesidades
+                                    Glide.with(EditarDatos.this).load("").into(ivPlatoAnadirP);
                                 }
                             } else {
                                 // Mostrar el mensaje de error
@@ -163,6 +176,9 @@ public class EditarDatos extends AppCompatActivity {
 
     }
     private void actualizarDatos() {
+        //METERLO EN STORAGE
+        String rute_storage_photo = storage_path+""+photo+""+mAuth.getUid();
+        StorageReference reference = storageReference.child(rute_storage_photo);
         // Creamos el mapa con los datos a actualizar
         Map<String, Object> map = new HashMap<>();
         map.put("provider", provider);
@@ -177,6 +193,8 @@ public class EditarDatos extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
+
+                                imagenEnBd(reference,Uri.parse(uriCapturada));
 
                                 // Verificar si no se seleccionó una nueva imagen y conservar el valor existente
                                 if (uriCapturada.isEmpty()) {
@@ -255,6 +273,41 @@ public class EditarDatos extends AppCompatActivity {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         camaraLauncher.launch(cameraIntent);
     }
+    private void imagenEnBd(StorageReference reference, Uri uri) {
+        reference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                uriTask.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        String download_uri = uri.toString();
+                        HashMap<String, Object> map = new HashMap<>();
+                        map.put("imagen", download_uri);
+                        db.collection("users").document(email).set(map, SetOptions.merge())
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(EditarDatos.this, "¡Foto actualizada!", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(EditarDatos.this, "Error al actualizar la foto", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(EditarDatos.this, "Error al obtener la URL de la imagen", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+
 
     // Método para manejar la respuesta de la solicitud de permisos
     @Override

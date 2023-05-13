@@ -8,8 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +16,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,8 +25,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tfg.marfol.R;
-
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 
 import mainActivity.IndexActivity;
@@ -43,8 +41,8 @@ public class HomeActivity extends AppCompatActivity {
     private HashMap<String, Object> map = new HashMap<>();
     private ProgressBar progressBar;
     private ActivityResultLauncher rLauncherHome;
-    private String nombreEnviar,telefonoEnviar,uriCapturada;
-    ImageView ivFotoPersonaHome;
+    private String nombreEnviar,telefonoEnviar;
+    private ImageView ivFotoPersonaHome;
 
 
     @Override
@@ -84,11 +82,10 @@ public class HomeActivity extends AppCompatActivity {
                             String name = data.getStringExtra("name");
                             String phone = data.getStringExtra("phone");
                             String img = data.getStringExtra("img");
-                            uriCapturada= img;
                             // Por ejemplo, actualiza los TextView en esta actividad
                             tvNombreUsuario.setText(name);
                             tvTelefonoUsuario.setText(phone);
-                            ivFotoPersonaHome.setImageURI(Uri.parse(img));
+                            Glide.with(HomeActivity.this).load(img).into(ivFotoPersonaHome);
                         }
                     }
                 }
@@ -98,7 +95,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setup(String email, String provider) {
-        tvEmailHome.setText(email);
         DocumentReference id = db.collection("users").document(email);
         progressBar.setVisibility(View.VISIBLE);
 
@@ -108,7 +104,7 @@ public class HomeActivity extends AppCompatActivity {
                 if (documentSnapshot.exists()) {
                     String name = documentSnapshot.getString("name");
                     String phone = documentSnapshot.getString("phone");
-                    String img = documentSnapshot.getString("imagen");
+                    String imagen = documentSnapshot.getString("imagen");
                     // Si no hay datos de nombre o teléfono, ocultar la progress bar
                     if (name == null || phone == null) {
                         progressBar.setVisibility(View.GONE);
@@ -116,10 +112,12 @@ public class HomeActivity extends AppCompatActivity {
                     }
 
                     // Actualizar los EditText con los datos recuperados
-
+                    tvEmailHome.setText(email);
                     tvNombreUsuario.setText(name);
                     tvTelefonoUsuario.setText(phone);
-                    ivFotoPersonaHome.setImageURI(Uri.parse(img));
+                    Glide.with(HomeActivity.this).load(imagen).into(ivFotoPersonaHome);
+                    Log.d("AAAAAAAAAAAAAAAAAAAAA",imagen);
+                    //ivFotoPersonaHome.setImageURI(Uri.parse(img));
 
                     progressBar.setVisibility(View.GONE);
                 } else {
@@ -133,8 +131,6 @@ public class HomeActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
             }
         });
-
-
         btnLogoutHome.setOnClickListener(v -> {
             //Borrado de datos
             SharedPreferences prefAux = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
@@ -152,18 +148,8 @@ public class HomeActivity extends AppCompatActivity {
             //aqui parseo los datos para quitar Nombre: y Teléfono: y quedarme solo con el valor de dentro
             nombreEnviar =  tvNombreUsuario.getText().toString();
             telefonoEnviar = tvTelefonoUsuario.getText().toString();
-
-
-
-            /*
-            String[] partes = nombreEnviar.split("Nombre: ");
-            nombreEnviar = partes[1];
-            partes = telefonoEnviar.split("Teléfono: ");
-            telefonoEnviar = partes[1];*/
-
             editar.putExtra("name", nombreEnviar);
             editar.putExtra("phone", telefonoEnviar);
-            editar.putExtra("img",uriCapturada);
             setResult(RESULT_OK, editar);
             rLauncherHome.launch(editar);
         });

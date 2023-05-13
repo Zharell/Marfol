@@ -8,21 +8,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.LauncherActivity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
-import android.net.Uri;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,13 +27,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tfg.marfol.R;
-
-import java.net.URI;
-import java.util.ArrayList;
-
-import entities.Persona;
-import login.EditarDatos;
-
 
 public class IndexActivity extends AppCompatActivity {
 
@@ -124,12 +113,11 @@ public class IndexActivity extends AppCompatActivity {
                             String imagen = document.getString("imagen");
                             // Si la imagen existe, mostrarla en el ImageView
                             if (imagen != null) {
-                                Uri imageUri = Uri.parse(imagen);
                                 ivLoginIndex.setPadding(0, 0, 0, 0);
-                                ivLoginIndex.setImageURI(imageUri);
+                                Glide.with(IndexActivity.this).load(imagen).into(ivLoginIndex);
                             }
                         } else {
-                            ivLoginIndex.setImageResource(R.drawable.nologinimg);
+                            Glide.with(IndexActivity.this).load(R.drawable.nologinimg).into(ivLoginIndex);
                         }
                     } else {
                         Toast.makeText(IndexActivity.this, "Error al obtener los datos del usuario", Toast.LENGTH_SHORT).show();
@@ -138,7 +126,7 @@ public class IndexActivity extends AppCompatActivity {
             });
         } else {
             Toast.makeText(this, "No estás logueado pendejo ", Toast.LENGTH_SHORT).show();
-            ivLoginIndex.setImageURI(Uri.parse("android.resource://com.tfg.marfol/" + R.drawable.nologinimg));
+            Glide.with(IndexActivity.this).load(R.drawable.nologinimg).into(ivLoginIndex);
         }
     }
 
