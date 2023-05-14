@@ -21,7 +21,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.tfg.marfol.R;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import mainActivity.IndexActivity;
 
@@ -76,6 +81,7 @@ public class AuthActivity extends AppCompatActivity {
                         .signInWithEmailAndPassword(etEmailLogin.getText().toString(),
                                 etPasswordLogin.getText().toString()).addOnCompleteListener(it->{
                             if(it.isSuccessful()){
+
                                 showHome(it.getResult().getUser().getEmail(),ProviderType.BASIC);
                             }else{
                                 showAlert();
@@ -128,7 +134,38 @@ public class AuthActivity extends AppCompatActivity {
                     AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
                     FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(it -> {
                         if (it.isSuccessful() && email != null) {
-                            showHome(email, ProviderType.GOOGLE);
+                            // Verificar si el documento ya existe en la colección "users"
+                            FirebaseFirestore.getInstance().collection("users")
+                                    .document(email)
+                                    .get()
+                                    .addOnCompleteListener(documentTask -> {
+                                        if (documentTask.isSuccessful()) {
+                                            DocumentSnapshot document = documentTask.getResult();
+                                            if (document.exists()) {
+                                                // El documento ya existe, continuar con el inicio de sesión
+                                                showHome(email, ProviderType.GOOGLE);
+                                            } else {
+                                                // El documento no existe, crear uno nuevo con datos vacíos
+                                                Map<String, Object> datosPersona = new HashMap<>();
+                                                datosPersona.put("email", email);
+                                                datosPersona.put("name", "");
+                                                datosPersona.put("phone", "");
+                                                datosPersona.put("imagen", "");
+
+                                                FirebaseFirestore.getInstance().collection("users")
+                                                        .document(email)
+                                                        .set(datosPersona)
+                                                        .addOnSuccessListener(anadido -> {
+                                                            showHome(email, ProviderType.GOOGLE);
+                                                        })
+                                                        .addOnFailureListener(error -> {
+                                                            showAlert();
+                                                        });
+                                            }
+                                        } else {
+                                            showAlert();
+                                        }
+                                    });
                         } else {
                             showAlert();
                         }
@@ -141,6 +178,8 @@ public class AuthActivity extends AppCompatActivity {
             }
         }
     }
+
+
 
 
 }

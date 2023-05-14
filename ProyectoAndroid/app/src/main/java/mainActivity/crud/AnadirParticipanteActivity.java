@@ -19,7 +19,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.tfg.marfol.R;
 
@@ -35,7 +34,6 @@ import android.graphics.Shader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -50,6 +48,8 @@ import java.util.Map;
 import adapters.AnadirPersonaAdapter;
 import entities.Persona;
 import entities.Plato;
+import login.AuthActivity;
+import mainActivity.MetodosGlobales;
 
 public class AnadirParticipanteActivity extends AppCompatActivity implements AnadirPersonaAdapter.onItemClickListener {
 
@@ -62,20 +62,25 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     private AnadirPersonaAdapter anadirPAdapter;
     private ActivityResultLauncher <Intent> camaraLauncher;
     private ActivityResultLauncher rLauncherPlatos;
+    private ActivityResultLauncher rLauncherLogin;
     private static final int CAMERA_PERMISSION_CODE = 100;
     private String uriCapturada="";
     private ArrayList<Persona> comensales;
     private int comensalPosicion;
     private ArrayList <Plato> platos;
+    private Intent intentComensal;
+    private Intent intent;
+    private Intent data;
+    private Intent cameraIntent;
+    private Intent inLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anadir_participante);
 
-
         //Recibe la lista de comensales para empezar a añadir
-        Intent intent = getIntent();
+        intent = getIntent();
         comensales = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComensales");
 
         //Método que asigna IDs a los elementos
@@ -83,6 +88,8 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
         //Método que asigna los efectos a los elementos
         asignarEfectos();
+        //Comprobar usuario si está logueado o no
+        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginAnadirParticipante);
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
@@ -91,11 +98,17 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         rLauncherPlatos = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
+                        data = result.getData();
                         platos = (ArrayList<Plato>) data.getSerializableExtra("arrayListPlatos");
                         anadirPAdapter.setResultsPlato(platos);
+                        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginAnadirParticipante);
                     }
 
+                }
+        );
+        rLauncherLogin = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginAnadirParticipante);
                 }
         );
 
@@ -144,34 +157,10 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             //Método encargado de crear un comensal
             anadirComensal();
         });
+        ivLoginAnadirParticipante.setOnClickListener(v->{
+            rLauncherLogin.launch(inLogin);
+        });
 
-        /*
-        platos.add(new Plato( "pollito con papa", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "el pepe", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "kaylertragaSa", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "cachopo", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "cerveza viemfria", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "cocacolastic", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        platos.add(new Plato( "juan", "eso es lo que me gusta a mí",20,20,"",false));
-        anadirPAdapter.setResultsPlato(platos);
-        */
 
     }
     public void anadirComensal() {
@@ -191,7 +180,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             // Añade la persona localmente
             comensales.add(new Persona(comensales.size(),nombre, descripcion, uriCapturada, platos,0));
 
-            Intent intentComensal = new Intent();
+            intentComensal = new Intent();
             intentComensal.putExtra("arrayListComensales", comensales);
             setResult(Activity.RESULT_OK, intentComensal);
             finish();
@@ -216,7 +205,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
     // Método para abrir la cámara
     private void abrirCamara() {
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         camaraLauncher.launch(cameraIntent);
     }
 
@@ -267,9 +256,10 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         etNombreAnadirP = findViewById(R.id.etNombreAnadirPlato);
         etDescAnadirP = findViewById(R.id.etDescripcionAnadirPlato);
         tvSubTitP = findViewById(R.id.tvListaPlatosAnadirPlato);
-        ivLoginAnadirParticipante = findViewById(R.id.ivLoginAnadirPlato);
+        ivLoginAnadirParticipante = findViewById(R.id.ivAnadirPlatoImagen);
         btnContinuarAnadirP = findViewById(R.id.btnPlatosAnadirPlato);
         ivPlatoAnadirP = findViewById(R.id.ivPlatoAnadirPlato);
+        inLogin = new Intent(this, AuthActivity.class);
     }
     @Override
     public void onItemClick(int position) {
@@ -280,7 +270,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             Toast.makeText(this,"Pulsaste el campo: "+String.valueOf(position),Toast.LENGTH_SHORT).show();
         } else {
             //Accedemos a la actividad de añadir plato
-            Intent intent = new Intent(this, AnadirPlatoActivity.class);
+            intent = new Intent(this, AnadirPlatoActivity.class);
             intent.putExtra("arrayListPlatos", platos);
             intent.putExtra("arrayListComenComp", comensales);
             rLauncherPlatos.launch(intent);

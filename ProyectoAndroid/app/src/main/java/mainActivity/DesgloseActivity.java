@@ -93,7 +93,7 @@ public class DesgloseActivity extends AppCompatActivity {
 
                         for (int m=0;m<comensales.size();m++) {
                             if (comensales.get(m).getComensalCode() == comensales.get(i).getPlatos().get(j).getPersonasCompartir().get(h).getComensalCode()) {
-                                comensales.get(m).setMonedero(precioPlato);
+                                comensales.get(m).sumarMonedero(precioPlato);
                             }
                         }
                     }
@@ -101,10 +101,10 @@ public class DesgloseActivity extends AppCompatActivity {
             }
 
         }
-        Toast.makeText(this,"juan"+String.valueOf(comensales.get(1).getMonedero()),Toast.LENGTH_SHORT).show();
-        Toast.makeText(this,"javier"+String.valueOf(comensales.get(2).getMonedero()),Toast.LENGTH_SHORT).show();
-        Toast.makeText(this,"kayler"+String.valueOf(comensales.get(3).getMonedero()),Toast.LENGTH_SHORT).show();
-        Toast.makeText(this,"mario"+String.valueOf(comensales.get(4).getMonedero()),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"juan"+String.valueOf(comensales.get(1).getMonedero()),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"javier"+String.valueOf(comensales.get(2).getMonedero()),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"kayler"+String.valueOf(comensales.get(3).getMonedero()),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"mario"+String.valueOf(comensales.get(4).getMonedero()),Toast.LENGTH_SHORT).show();
     }
 
     public void asignarEfectos() {

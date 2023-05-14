@@ -39,6 +39,8 @@ import adapters.PersonaCompartirAdapter;
 import entities.Persona;
 import entities.Plato;
 import mainActivity.detalle.CompartirListaActivity;
+import login.AuthActivity;
+import mainActivity.MetodosGlobales;
 
 public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCompartirAdapter.onItemClickListener {
 
@@ -48,7 +50,7 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
     private PersonaCompartirAdapter anadirPAdapter;
     private EditText  etNombreAnadirP, etDescAnadirP, etPrecioAnadirP;
     private Button btnContinuarAnadirP;
-    private ImageView ivLoginAnadirPlato, ivPlatoAnadirP;
+    private ImageView ivAnadirPlatoImagen, ivPlatoAnadirP;
     private final int CAMERA_PERMISSION_CODE = 100;
     private ArrayList <Plato> platos;
     private ArrayList<Persona> nombreCompartir;
@@ -60,6 +62,8 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
     private int personaCode;
     private ActivityResultLauncher<Intent> camaraLauncher;
     private Intent intentObtener;
+    private ActivityResultLauncher rLauncherLogin;
+    private Intent inLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +85,8 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
+        //Comprobar usuario logueado
+        MetodosGlobales.comprobarUsuarioLogueado(AnadirPlatoActivity.this, ivAnadirPlatoImagen);
 
         //Botón encargado de añadir el plato
         btnContinuarAnadirP.setOnClickListener(view -> { anadirPlato(); });
@@ -152,6 +158,14 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
 
             }
         });
+        rLauncherLogin = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    MetodosGlobales.comprobarUsuarioLogueado(this, ivAnadirPlatoImagen);
+                }
+        );
+        ivAnadirPlatoImagen.setOnClickListener(v->{
+            rLauncherLogin.launch(inLogin);
+        });
 
     }
 
@@ -222,7 +236,7 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
     public void asignarEfectos() {
 
         //Ajusta el tamaño de la imagen del login
-        ivLoginAnadirPlato.setPadding(20, 20, 20, 20);
+        ivAnadirPlatoImagen.setPadding(20, 20, 20, 20);
 
         //Asigna el degradado de colores a los textos
         int[] colors = {getResources().getColor(R.color.redBorder),
@@ -264,10 +278,12 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
         etDescAnadirP = findViewById(R.id.etDescripcionAnadirPlato);
         etPrecioAnadirP = findViewById(R.id.etPlatoPrecio);
         tvSubTitP = findViewById(R.id.tvListaPlatosAnadirPlato);
-        ivLoginAnadirPlato = findViewById(R.id.ivLoginAnadirPlato);
+        ivAnadirPlatoImagen = findViewById(R.id.ivAnadirPlatoImagen);
         btnContinuarAnadirP = findViewById(R.id.btnPlatosAnadirPlato);
         ivPlatoAnadirP = findViewById(R.id.ivPlatoAnadirPlato);
         swCompartirPlato = findViewById(R.id.swCompartirAnadirPlato);
+         inLogin= new Intent(this, AuthActivity.class);
+
     }
 
     @Override
