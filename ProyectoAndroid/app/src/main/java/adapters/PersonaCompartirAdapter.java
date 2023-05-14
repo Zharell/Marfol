@@ -22,14 +22,14 @@ public class PersonaCompartirAdapter extends RecyclerView.Adapter<PersonaCompart
 
     //añadirPersona siempre se añade en la posición 0 ya que su función es redirigir a otra actividad distinta
     //Tiene la ruta URI de su imagen por defecto
-    private Persona anadirPersona = new Persona(0, "", "", "android.resource://com.tfg.marfol/"+R.drawable.add_icon , new ArrayList<>());
+    private Persona anadirPersona = new Persona(0, "", "", "android.resource://com.tfg.marfol/"+R.drawable.add_icon , new ArrayList<>(),0);
     private onItemClickListener mListener;
 
     @NonNull
     @Override
     public PersonaCompartirAdapterResultHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.row_platoanadircompartir, parent, false);
+                .inflate(R.layout.row_platoanadirpersona, parent, false);
 
         return new PersonaCompartirAdapterResultHolder(itemView);
     }
@@ -82,9 +82,8 @@ public class PersonaCompartirAdapter extends RecyclerView.Adapter<PersonaCompart
 
         public PersonaCompartirAdapterResultHolder(@NonNull View itemView) {
             super(itemView);
-            tvPersonaRow = itemView.findViewById(R.id.tvPlatoanadirRowComp);
-            ivPersonaRow = itemView.findViewById(R.id.ivPlatoanadirRowComp);
-            tvPrecioRow = itemView.findViewById(R.id.tvPlatoPrecioRowComp);
+            tvPersonaRow = itemView.findViewById(R.id.tvPlatoanadirPersonaRow);
+            ivPersonaRow = itemView.findViewById(R.id.ivPlatoanadirPersonaRow);
         }
 
     }

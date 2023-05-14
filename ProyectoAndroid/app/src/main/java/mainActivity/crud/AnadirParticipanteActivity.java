@@ -189,7 +189,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             anadirPersonaABd(nombre,descripcion,uriCapturada);
 
             // Añade la persona localmente
-            comensales.add(new Persona(comensales.size(),nombre, descripcion, uriCapturada, platos));
+            comensales.add(new Persona(comensales.size(),nombre, descripcion, uriCapturada, platos,0));
 
             Intent intentComensal = new Intent();
             intentComensal.putExtra("arrayListComensales", comensales);
@@ -282,6 +282,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             //Accedemos a la actividad de añadir plato
             Intent intent = new Intent(this, AnadirPlatoActivity.class);
             intent.putExtra("arrayListPlatos", platos);
+            intent.putExtra("arrayListComenComp", comensales);
             rLauncherPlatos.launch(intent);
         }
     }

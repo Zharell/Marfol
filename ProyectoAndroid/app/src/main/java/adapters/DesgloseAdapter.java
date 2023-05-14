@@ -22,7 +22,7 @@ public class DesgloseAdapter extends RecyclerView.Adapter<DesgloseAdapter.Desglo
 
     //añadirPersona siempre se añade en la posición 0 ya que su función es redirigir a otra actividad distinta
     //Tiene la ruta URI de su imagen por defecto
-    private Persona anadirPersona = new Persona(0,"Añadir Persona", "", "android.resource://com.tfg.marfol/"+R.drawable.add_icon , new ArrayList<>());
+    private Persona anadirPersona = new Persona(0,"Añadir Persona", "", "android.resource://com.tfg.marfol/"+R.drawable.add_icon , new ArrayList<>(),0);
     private onItemClickListener mListener;
 
     @NonNull
@@ -44,7 +44,7 @@ public class DesgloseAdapter extends RecyclerView.Adapter<DesgloseAdapter.Desglo
         holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
 
         //Insertamos el total de los precios del comensal
-        holder.tvPrecioRow.setText(String.valueOf(resultsPersona.get(position).getPrecioTotal()));
+        //holder.tvPrecioRow.setText(String.valueOf(resultsPersona.get(position).getPrecioTotal()));
 
         //Método onclick
         holder.itemView.setOnClickListener(view -> {

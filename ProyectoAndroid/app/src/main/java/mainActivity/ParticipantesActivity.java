@@ -128,6 +128,8 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         btnCancelarParticipantes.setOnClickListener(view -> puVolverParticipantes.dismiss());
 
         //Botón de continuar, avanza a la siguiente actividad
+        // 1 - Debe haber mínimo un comensal
+        // 2 - Debe haber mínimo un plato
         btnContinuarParticipantes.setOnClickListener(view -> {
             //Obtenemos todos los platos
             int numPlatos = obtenerPlatos();
@@ -229,7 +231,11 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
         //Añade el contenido al adapter, si está vacío el propio Adapter añade el " Añadir Persona "
         personaAdapter.setResultsPersona(comensales);
-
+        /*
+        comensales.add(new Persona(comensales.size(),"Juan", "Le gusta comer", "no hay URL", new ArrayList<>()));
+        comensales.add(new Persona(comensales.size(),"Gayler", "Le gusta comer", "no hay URL", new ArrayList<>()));
+        comensales.add(new Persona(comensales.size(),"Fer", "Le gusta comer", "no hay URL", new ArrayList<>()));
+        rvPersonaParticipantes.setAdapter(personaAdapter);*/
     }
 
     @Override
@@ -237,18 +243,18 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         comensalPosicion = position;
         //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
         if (position>0) {
-
             //Accede a la actividad detalle de una persona
             Intent intentDetalle = new Intent(this, DetallePersonaActivity.class);
             intentDetalle.putExtra("comensalDetalle", comensales.get(position));
+            intentDetalle.putExtra("arrayListComenComp", comensales);
             rLauncherDetalleComensal.launch(intentDetalle);
 
         } else {
-
             //Accede a la actividad para añadir nuevos comensales
             Intent intent = new Intent(this, AnadirParticipanteActivity.class);
             intent.putExtra("arrayListComensales", comensales);
             rLauncherAnadirComensal.launch(intent);
+
 
 
             /*

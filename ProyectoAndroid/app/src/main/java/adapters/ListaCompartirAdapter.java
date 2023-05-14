@@ -26,7 +26,7 @@ public class ListaCompartirAdapter extends RecyclerView.Adapter<ListaCompartirAd
     @Override
     public ListaCompartirAdapterResultHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.row_persona, parent, false);
+                .inflate(R.layout.row_listacompartir, parent, false);
 
         return new ListaCompartirAdapterResultHolder(itemView);
     }

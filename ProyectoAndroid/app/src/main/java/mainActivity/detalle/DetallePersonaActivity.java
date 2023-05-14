@@ -64,6 +64,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
     private RecyclerView rvAnadirPlatoDetalle;
     private PersonaDetalleAdapter adapterDetalle;
     private ArrayList<Plato> platos;
+    private ArrayList<Persona> nombreCompartir;
     private static final int CAMERA_PERMISSION_CODE = 100;
     private ActivityResultLauncher <Intent> camaraLauncher;
     private ActivityResultLauncher rLauncherPlatos;
@@ -78,6 +79,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         //Recibe la lista de comensales para empezar a añadir
         Intent intent = getIntent();
         comensal = (Persona) intent.getSerializableExtra("comensalDetalle");
+        nombreCompartir = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComenComp");
         comensalBd=comensal;
 
         //Método que asigna IDs a los elementos
@@ -164,7 +166,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
             //AÑADIR A BD
             editarComensalBd();
             //Añado a la lista la persona creada
-            Persona personaEditada = new Persona(comensal.getComensalCode(),nombre, descripcion, uriCapturada, platos);
+            Persona personaEditada = new Persona(comensal.getComensalCode(),nombre, descripcion, uriCapturada, platos, 0);
             Intent intentComensal = new Intent();
             intentComensal.putExtra("detalleComensal", personaEditada);
             setResult(Activity.RESULT_OK, intentComensal);
@@ -359,13 +361,12 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
             Toast.makeText(this,"Pulsaste el campo: "+String.valueOf(position),Toast.LENGTH_SHORT).show();
 
         } else {
-
             //Accedemos a la actividad de añadir plato
             Intent intent = new Intent(this, AnadirPlatoActivity.class);
             intent.putExtra("arrayListPlatos", platos);
+            intent.putExtra("arrayListComenComp", nombreCompartir);
+            intent.putExtra("comensalCode", comensal.getComensalCode());
             rLauncherPlatos.launch(intent);
-
-
 
         }
     }

@@ -108,7 +108,6 @@ public class IndexActivity extends AppCompatActivity {
     }
 
     public void asignarId() {
-
         //Asigna Ids a los elementos de la actividad
         btnApIndex = findViewById(R.id.btnApIndex);
         ivLoginIndex = findViewById(R.id.ivLoginAnadirPlato);
@@ -124,7 +123,6 @@ public class IndexActivity extends AppCompatActivity {
         tvMessage1Popup = puVolverIndex.findViewById(R.id.tvMessage1Popup);
         tvMessage2Popup = puVolverIndex.findViewById(R.id.tvMessage2Popup);
         tvTitlePopup = puVolverIndex.findViewById(R.id.tvTitlePopup);
-
     }
     public void asignarEfectos() {
 

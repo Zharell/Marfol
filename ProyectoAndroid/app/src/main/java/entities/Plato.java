@@ -26,6 +26,8 @@ public class Plato implements Serializable {
         this.personasCompartir=personasCompartir;
     }
 
+
+
     public ArrayList<Persona> getPersonasCompartir() { return personasCompartir;}
 
     public void setPersonasCompartir(ArrayList<Persona> personasCompartir) { this.personasCompartir = personasCompartir; }

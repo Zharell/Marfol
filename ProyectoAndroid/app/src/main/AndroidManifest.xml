@@ -18,13 +18,13 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".CompartirListaActivity"
+            android:name="mainActivity.detalle.CompartirListaActivity"
             android:exported="false" />
         <activity
             android:name="mainActivity.DesgloseActivity"
             android:exported="false" />
         <activity
-            android:name=".DetallePersonaActivity"
+            android:name="mainActivity.detalle.DetallePersonaActivity"
             android:exported="false" />
         <activity
             android:name="login.EditarDatos"
