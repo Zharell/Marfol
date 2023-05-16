@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -17,6 +19,14 @@
         android:theme="@style/Theme.Design.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC1JbQNg7WkFD4zGdVr1Y-RkaWtluXStKE"
+            />
+        <activity android:name="mainActivity.menu.ContactUs" />
+        <activity android:name="mainActivity.menu.AboutUs" />
+        <activity android:name="mainActivity.menu.Preferences" />
+        <activity android:name="mainActivity.API.API" />
         <activity
             android:name="mainActivity.detalle.CompartirListaActivity"
             android:exported="false" />

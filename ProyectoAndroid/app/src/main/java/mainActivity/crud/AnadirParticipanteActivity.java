@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -17,9 +18,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.tfg.marfol.R;
 
 import android.Manifest;
@@ -45,10 +51,12 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import adapters.AnadirPersonaAdapter;
 import entities.Persona;
 import entities.Plato;
 import login.AuthActivity;
+import login.EditarDatos;
 import mainActivity.MetodosGlobales;
 
 public class AnadirParticipanteActivity extends AppCompatActivity implements AnadirPersonaAdapter.onItemClickListener {
@@ -60,19 +68,24 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     private Button btnContinuarAnadirP;
     private ImageView ivLoginAnadirParticipante, ivPlatoAnadirP;
     private AnadirPersonaAdapter anadirPAdapter;
-    private ActivityResultLauncher <Intent> camaraLauncher;
+    private ActivityResultLauncher<Intent> camaraLauncher;
     private ActivityResultLauncher rLauncherPlatos;
     private ActivityResultLauncher rLauncherLogin;
     private static final int CAMERA_PERMISSION_CODE = 100;
-    private String uriCapturada="";
+    private String uriCapturada = "";
     private ArrayList<Persona> comensales;
     private int comensalPosicion;
-    private ArrayList <Plato> platos;
+    private ArrayList<Plato> platos;
     private Intent intentComensal;
     private Intent intent;
     private Intent data;
     private Intent cameraIntent;
     private Intent inLogin;
+    private String storage_path = "personas/*", photo = "photo";
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+    private FirebaseFirestore db;
+    private StorageReference storageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +102,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         //Método que asigna los efectos a los elementos
         asignarEfectos();
         //Comprobar usuario si está logueado o no
-        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginAnadirParticipante);
+        MetodosGlobales.comprobarUsuarioLogueado(this, ivLoginAnadirParticipante);
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
@@ -101,14 +114,14 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                         data = result.getData();
                         platos = (ArrayList<Plato>) data.getSerializableExtra("arrayListPlatos");
                         anadirPAdapter.setResultsPlato(platos);
-                        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginAnadirParticipante);
+                        MetodosGlobales.comprobarUsuarioLogueado(this, ivLoginAnadirParticipante);
                     }
 
                 }
         );
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-                    MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginAnadirParticipante);
+                    MetodosGlobales.comprobarUsuarioLogueado(this, ivLoginAnadirParticipante);
                 }
         );
 
@@ -118,7 +131,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
                 // Si la foto se toma correctamente, mostrar la vista previa en el ImageView
                 Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
-                ivPlatoAnadirP.setImageBitmap(photo);
+
 
                 // Insertar la imagen en la galería y obtenemos la URI transformada en String para almacenar en la BD
                 ContentValues values = new ContentValues();
@@ -133,6 +146,8 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
+                    ivPlatoAnadirP.setBackground(null);
+                    Glide.with(this).load(uriCapturada).circleCrop().into(ivPlatoAnadirP);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -146,7 +161,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             // Solicitar permiso para acceder a la cámara
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
                 //Si no tenemos los permisos los obtenemos
-                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
             } else {
                 // Si ya se tienen los permisos, abrir la cámara
                 abrirCamara();
@@ -157,28 +172,29 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             //Método encargado de crear un comensal
             anadirComensal();
         });
-        ivLoginAnadirParticipante.setOnClickListener(v->{
+        ivLoginAnadirParticipante.setOnClickListener(v -> {
             rLauncherLogin.launch(inLogin);
         });
 
 
     }
+
     public void anadirComensal() {
         boolean esValidado = true;
         String nombre = String.valueOf(etNombreAnadirP.getText());
         String descripcion = String.valueOf(etDescAnadirP.getText());
 
         if (etNombreAnadirP.getText().toString().length() == 0) {
-            Toast.makeText(this,"Debe introducir un nombre", Toast.LENGTH_SHORT).show();
-            esValidado=false;
+            Toast.makeText(this, "Debe introducir un nombre", Toast.LENGTH_SHORT).show();
+            esValidado = false;
         }
 
         if (esValidado) {
             // Añade la persona en la base de datos
-            anadirPersonaABd(nombre,descripcion,uriCapturada);
+            anadirPersonaABd(nombre, descripcion, uriCapturada);
 
             // Añade la persona localmente
-            comensales.add(new Persona(comensales.size(),nombre, descripcion, uriCapturada, platos,0));
+            comensales.add(new Persona(comensales.size(), nombre, descripcion, uriCapturada, platos, 0));
 
             intentComensal = new Intent();
             intentComensal.putExtra("arrayListComensales", comensales);
@@ -222,6 +238,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         anadirPAdapter.setmListener(this::onItemClick);
         anadirPAdapter.setResultsPlato(platos);
     }
+
     public void asignarEfectos() {
         //Ajusta el tamaño de la imagen del login
         ivLoginAnadirParticipante.setPadding(20, 20, 20, 20);
@@ -246,9 +263,10 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         int shadowColor = Color.BLACK;
         tvTitleAnadirP.getPaint().setShadowLayer(shadowRadius, shadowDx, shadowDy, shadowColor);
         //Inserta Imagen photo
-        ivPlatoAnadirP.setImageURI(Uri.parse("android.resource://com.tfg.marfol/"+R.drawable.camera));
+        ivPlatoAnadirP.setImageURI(Uri.parse("android.resource://com.tfg.marfol/" + R.drawable.camera));
         ivPlatoAnadirP.setPadding(30, 30, 30, 30);
     }
+
     public void asignarId() {
         //Asigna Ids a los elementos de la actividad
         rvPlatosAnadirParticipante = findViewById(R.id.rvPlatosAnadirPlato);
@@ -260,14 +278,18 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         btnContinuarAnadirP = findViewById(R.id.btnPlatosAnadirPlato);
         ivPlatoAnadirP = findViewById(R.id.ivPlatoAnadirPlato);
         inLogin = new Intent(this, AuthActivity.class);
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
     }
+
     @Override
     public void onItemClick(int position) {
         comensalPosicion = position;
 
         //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
-        if (position>0) {
-            Toast.makeText(this,"Pulsaste el campo: "+String.valueOf(position),Toast.LENGTH_SHORT).show();
+        if (position > 0) {
+            Toast.makeText(this, "Pulsaste el campo: " + String.valueOf(position), Toast.LENGTH_SHORT).show();
         } else {
             //Accedemos a la actividad de añadir plato
             intent = new Intent(this, AnadirPlatoActivity.class);
@@ -276,11 +298,8 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             rLauncherPlatos.launch(intent);
         }
     }
-    private void anadirPersonaABd(String nombre, String descripcion,String imagen) {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = auth.getCurrentUser();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+    private void anadirPersonaABd(String nombre, String descripcion, String imagen) {
         if (currentUser != null) {
             // El usuario está autenticado
             String usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
@@ -298,13 +317,11 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                     if (task.isSuccessful()) {
                         if (task.getResult().isEmpty()) {
                             // No existe una persona con los mismos valores de nombre y descripción, procede a agregarla
-
                             // Crea un objeto HashMap para almacenar los datos de la nueva persona
                             Map<String, Object> nuevaPersona = new HashMap<>();
                             nuevaPersona.put("nombre", nombre);
                             nuevaPersona.put("descripcion", descripcion);
                             nuevaPersona.put("usuarioId", usuarioId);
-                            nuevaPersona.put("imagen", uriCapturada);
 
                             // Agrega la nueva persona con un ID único generado automáticamente
                             personasRef.add(nuevaPersona)
@@ -312,6 +329,8 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                                         @Override
                                         public void onSuccess(DocumentReference documentReference) {
                                             // La persona se agregó exitosamente
+                                            String personaId = documentReference.getId();
+                                            subirImagenPersona(personaId, imagen);
                                             Toast.makeText(AnadirParticipanteActivity.this, "Se agregó la persona exitosamente", Toast.LENGTH_SHORT).show();
                                         }
                                     })
@@ -338,6 +357,62 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         }
     }
 
+
+    private void subirImagenPersona(String personaId, String imagen) {
+        if (personaId != null && !personaId.isEmpty()) {
+            // Obtiene una referencia al Storage de Firebase
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+
+            // Define una referencia a la imagen en Storage utilizando el ID de la persona
+            String rutaImagen = "personas/" + personaId + ".jpg";
+            StorageReference imagenRef = storageRef.child(rutaImagen);
+
+            // Sube la imagen a Storage
+            Uri imagenUri = Uri.parse(imagen);
+            UploadTask uploadTask = imagenRef.putFile(imagenUri);
+
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {            // La imagen se subió exitosamente
+                    Toast.makeText(AnadirParticipanteActivity.this, "Imagen subida exitosamente", Toast.LENGTH_SHORT).show();
+
+                    // Obtiene la URL de descarga de la imagen
+                    imagenRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            // La URL de descarga de la imagen está disponible
+                            String imagenUrl = uri.toString();
+
+                            // Actualiza el campo "imagen" en Firestore con la URL de descarga de la imagen
+                            db.collection("personas").document(personaId)
+                                    .update("imagen", imagenUrl)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            // La URL de la imagen se actualizó exitosamente en Firestore
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // Ocurrió un error al actualizar el campo "imagen" en Firestore
+                                        }
+                                    });
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    // Ocurrió un error al subir la imagen
+                    Toast.makeText(AnadirParticipanteActivity.this, "Error al subir la imagen", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            // El ID de la persona es nulo o vacío, muestra un mensaje de error
+            Toast.makeText(AnadirParticipanteActivity.this, "ID de persona inválido", Toast.LENGTH_SHORT).show();
+        }
+    }
 
 
 }

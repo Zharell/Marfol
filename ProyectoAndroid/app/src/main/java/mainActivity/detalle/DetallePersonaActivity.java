@@ -41,6 +41,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.tfg.marfol.R;
 
 import java.io.IOException;
@@ -53,6 +56,7 @@ import adapters.AnadirPersonaAdapter;
 import adapters.PersonaDetalleAdapter;
 import entities.Persona;
 import entities.Plato;
+import login.EditarDatos;
 import mainActivity.crud.AnadirParticipanteActivity;
 import mainActivity.crud.AnadirPlatoActivity;
 
@@ -70,6 +74,12 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
     private ActivityResultLauncher rLauncherPlatos;
     private Button btnContinuarDetalle;
     private String uriCapturada="";
+    private FirebaseFirestore db;
+    private FirebaseAuth auth ;
+    private FirebaseUser currentUser;
+    private String email;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -343,6 +353,9 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
     }
 
     public void asignarId() {
+        auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
 
         ivLoginDetalle = findViewById(R.id.ivLoginDetallePersona);
         ivMenuDetalle = findViewById(R.id.ivMenuDetallePersona);
@@ -351,6 +364,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         etDescripcionDetalle = findViewById(R.id.etDescripcionDetallePersona);
         rvAnadirPlatoDetalle = findViewById(R.id.rvAnadirPlatoDetalle);
         btnContinuarDetalle = findViewById(R.id.btnEditarDetalle);
+        email = currentUser.getEmail();
     }
 
     @Override
@@ -371,9 +385,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         }
     }
     private void anadirPersonaABd(String nombre, String descripcion,String imagen) {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = auth.getCurrentUser();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
         if (currentUser != null) {
             // El usuario está autenticado
