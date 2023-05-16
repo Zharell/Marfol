@@ -22,12 +22,13 @@ public class Persona implements Serializable {
     }
 
     //Método devuelve el total a pagar
-    public double getPrecioTotal () {
+    public void asignarPrecio () {
         double precioTotal=0;
         for (int i=1;i<platos.size();i++) {
-            precioTotal += platos.get(i).getPrecio();
+            if (!platos.get(i).isCompartido()) {
+                monedero+=platos.get(i).getPrecio();
+            }
         }
-        return precioTotal;
     }
 
     //Método que devuelve el número de platos añadidos, se resta 1 ya que es el plato botón (añadir plato)

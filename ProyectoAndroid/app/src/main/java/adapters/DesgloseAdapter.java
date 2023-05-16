@@ -12,12 +12,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tfg.marfol.R;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import entities.Persona;
 
 public class DesgloseAdapter extends RecyclerView.Adapter<DesgloseAdapter.DesgloseAdapterResultHolder> {
 
+    private NumberFormat euroFormat = NumberFormat.getCurrencyInstance(Locale.GERMANY);
     private ArrayList<Persona> resultsPersona = new ArrayList<>();
 
     //añadirPersona siempre se añade en la posición 0 ya que su función es redirigir a otra actividad distinta
@@ -44,7 +47,7 @@ public class DesgloseAdapter extends RecyclerView.Adapter<DesgloseAdapter.Desglo
         holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
 
         //Insertamos el total de los precios del comensal
-        //holder.tvPrecioRow.setText(String.valueOf(resultsPersona.get(position).getPrecioTotal()));
+        holder.tvPrecioRow.setText(euroFormat.format(resultsPersona.get(position).getMonedero()));
 
         //Método onclick
         holder.itemView.setOnClickListener(view -> {

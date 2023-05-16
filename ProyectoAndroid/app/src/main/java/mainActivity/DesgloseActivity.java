@@ -26,7 +26,7 @@ import adapters.PersonaAdapter;
 import entities.Persona;
 import entities.Plato;
 
-public class DesgloseActivity extends AppCompatActivity {
+public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapter.onItemClickListener {
 
     private Button btnGuardarRestaurante;
     private RecyclerView rvPersonaDesglose;
@@ -59,6 +59,7 @@ public class DesgloseActivity extends AppCompatActivity {
 
 
 
+
     }
 
     //Método que prepara el recycler y el adaptador para su uso
@@ -72,7 +73,7 @@ public class DesgloseActivity extends AppCompatActivity {
         rvPersonaDesglose.setLayoutManager(new LinearLayoutManager(this));
         desgloseAdapter = new DesgloseAdapter();
         rvPersonaDesglose.setAdapter(desgloseAdapter);
-        //desgloseAdapter.setmListener(this);
+        desgloseAdapter.setmListener(this);
 
         //Añade el contenido al adapter, si está vacío el propio Adapter añade el " Añadir Persona "
         desgloseAdapter.setResultsPersona(listaComensales);
@@ -80,17 +81,13 @@ public class DesgloseActivity extends AppCompatActivity {
     }
 
     public void repartirCompartido() {
-
         double precioPlato;
         for (int i=0;i<comensales.size();i++) {
-
             for (int j=0;j<comensales.get(i).getPlatos().size();j++) {
-
                 if (comensales.get(i).getPlatos().get(j).isCompartido()) {
                     comensales.get(i).getPlatos().get(j).getPersonasCompartir().add(comensales.get(i)); // ---
                     precioPlato = comensales.get(i).getPlatos().get(j).getPrecio() / (comensales.get(i).getPlatos().get(j).getPersonasCompartir().size());
                     for (int h = 0; h < comensales.get(i).getPlatos().get(j).getPersonasCompartir().size(); h++) {
-
                         for (int m=0;m<comensales.size();m++) {
                             if (comensales.get(m).getComensalCode() == comensales.get(i).getPlatos().get(j).getPersonasCompartir().get(h).getComensalCode()) {
                                 comensales.get(m).sumarMonedero(precioPlato);
@@ -99,12 +96,8 @@ public class DesgloseActivity extends AppCompatActivity {
                     }
                 }
             }
-
+            comensales.get(i).asignarPrecio();
         }
-        //Toast.makeText(this,"juan"+String.valueOf(comensales.get(1).getMonedero()),Toast.LENGTH_SHORT).show();
-        //Toast.makeText(this,"javier"+String.valueOf(comensales.get(2).getMonedero()),Toast.LENGTH_SHORT).show();
-        //Toast.makeText(this,"kayler"+String.valueOf(comensales.get(3).getMonedero()),Toast.LENGTH_SHORT).show();
-        //Toast.makeText(this,"mario"+String.valueOf(comensales.get(4).getMonedero()),Toast.LENGTH_SHORT).show();
     }
 
     public void asignarEfectos() {
@@ -139,4 +132,8 @@ public class DesgloseActivity extends AppCompatActivity {
         ivLoginDesglose = findViewById(R.id.ivLoginDesglose);
     }
 
+    @Override
+    public void onItemClick(int position) {
+
+    }
 }
