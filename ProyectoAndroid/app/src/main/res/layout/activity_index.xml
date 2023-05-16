@@ -31,15 +31,14 @@
         android:id="@+id/ivMenuAnadirPlato"
         android:layout_width="60dp"
         android:layout_height="40dp"
+        android:src="@android:drawable/ic_menu_sort_by_size"
+        android:onClick="showPopupMenu"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.04"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02"
-        android:src="@android:drawable/ic_menu_sort_by_size"
-
-        />
+        app:layout_constraintVertical_bias="0.02" />
 
     <!-- Login App -->
 
@@ -79,6 +78,24 @@
         app:layout_constraintTop_toTopOf="parent"
 
         app:layout_constraintVertical_bias="0.32" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnApIndex2"
+        android:layout_width="333dp"
+        android:layout_height="156dp"
+        android:background="@drawable/button_index"
+        android:fontFamily="serif"
+        android:text="@string/API"
+        android:textAlignment="center"
+        android:textColor="@color/redBorder"
+        android:textSize="40sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        app:layout_constraintVertical_bias="0.972" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPresetsIndex"

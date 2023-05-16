@@ -1,4 +1,10 @@
 <resources>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_preferences">Preferencias</string>
+    <string name="menu_contact_us">CONTACTO\n</string>
+    <string name="menu_about_us">Sobre Nosotros</string>
     <string name="app_name">Marfol</string>
     <string name="button_intro">¡ A \nPagar !</string>
     <string name="nombre">Nombre:</string>
@@ -47,5 +53,7 @@
     <string name="btnguardar_restaurante">Guardar</string>
     <string name="tvdesglose">Desglose</string>
     <string name="correoHome">Correo: </string>
+    <string name="google_maps_key">AIzaSyC1JbQNg7WkFD4zGdVr1Y-RkaWtluXStKE</string>
+    <string name="API">BUSCA DONDE COMER</string>
 
 </resources>
