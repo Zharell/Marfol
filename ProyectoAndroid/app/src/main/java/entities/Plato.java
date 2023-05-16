@@ -1,6 +1,7 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Plato implements Serializable {
 
@@ -11,16 +12,25 @@ public class Plato implements Serializable {
     private double precio, precioFinal;
     private boolean compartido;
 
+    private ArrayList<Persona> personasCompartir;
+
     
 
-    public Plato (String nombre, String descripcion, double precio,double precioFinal,String urlImage , boolean compartido) {
+    public Plato (String nombre, String descripcion, double precio,double precioFinal,String urlImage , boolean compartido, ArrayList<Persona> personasCompartir) {
         this.nombre=nombre;
         this.descripcion=descripcion;
         this.precio=precio;
         this.precioFinal=precioFinal;
         this.urlImage=urlImage;
         this.compartido=compartido;
+        this.personasCompartir=personasCompartir;
     }
+
+
+
+    public ArrayList<Persona> getPersonasCompartir() { return personasCompartir;}
+
+    public void setPersonasCompartir(ArrayList<Persona> personasCompartir) { this.personasCompartir = personasCompartir; }
 
     public String getNombre() {
         return nombre;

@@ -5,6 +5,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tfg.marfol.R;
@@ -21,6 +22,7 @@ import android.graphics.Shader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,22 +35,35 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import adapters.PersonaCompartirAdapter;
+import entities.Persona;
 import entities.Plato;
+import mainActivity.detalle.CompartirListaActivity;
+import login.AuthActivity;
+import mainActivity.MetodosGlobales;
 
-public class AnadirPlatoActivity extends AppCompatActivity {
+public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCompartirAdapter.onItemClickListener {
 
     private Switch swCompartirPlato;
     private RecyclerView rvPlatosAnadirPlato;
     private TextView tvTitleAnadirP, tvSubTitP;
-
+    private PersonaCompartirAdapter anadirPAdapter;
     private EditText  etNombreAnadirP, etDescAnadirP, etPrecioAnadirP;
     private Button btnContinuarAnadirP;
-    private ImageView ivLoginAnadirPlato, ivPlatoAnadirP;
+    private ImageView ivAnadirPlatoImagen, ivPlatoAnadirP;
     private final int CAMERA_PERMISSION_CODE = 100;
     private ArrayList <Plato> platos;
+    private ArrayList<Persona> nombreCompartir;
+    private ArrayList <Persona> comensalCompartirList;
+    private ArrayList <Persona> noRepCompartirList;
     private boolean esCompartido=false;
+    private ActivityResultLauncher rLauncherComp;
     private String uriCapturada="";
+    private int personaCode;
     private ActivityResultLauncher<Intent> camaraLauncher;
+    private Intent intentObtener;
+    private ActivityResultLauncher rLauncherLogin;
+    private Intent inLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +71,11 @@ public class AnadirPlatoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_anadir_plato);
 
         //Recibe la lista de comensales para empezar a añadir
-        Intent intent = getIntent();
-        platos = (ArrayList<Plato>) intent.getSerializableExtra("arrayListPlatos");
+        intentObtener = getIntent();
+        platos = (ArrayList<Plato>) intentObtener.getSerializableExtra("arrayListPlatos");
+        //Recibo desde Editar o Añadir
+        nombreCompartir = (ArrayList<Persona>) intentObtener.getSerializableExtra("arrayListComenComp");
+        personaCode = intentObtener.getIntExtra("comensalCode",0);
 
         //Método que asigna IDs a los elementos
         asignarId();
@@ -65,14 +83,13 @@ public class AnadirPlatoActivity extends AppCompatActivity {
         //Método que asigna los efectos a los elementos
         asignarEfectos();
 
+        //Método que muestra el contenido del adaptader
+        mostrarAdapter();
+        //Comprobar usuario logueado
+        MetodosGlobales.comprobarUsuarioLogueado(AnadirPlatoActivity.this, ivAnadirPlatoImagen);
+
         //Botón encargado de añadir el plato
-        btnContinuarAnadirP.setOnClickListener(view -> {
-
-            //Añade el plato y devuelve
-            anadirPlato();
-
-        });
-
+        btnContinuarAnadirP.setOnClickListener(view -> { anadirPlato(); });
 
         //Comprueba si el switch compartir está activo o no para mostrar su información
         swCompartirPlato.setOnCheckedChangeListener((compoundButton, isChecked) -> {
@@ -87,6 +104,19 @@ public class AnadirPlatoActivity extends AppCompatActivity {
             }
 
         });
+
+        //Laucher Result recibe las personas de la listas que van a compartir
+        rLauncherComp = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        //Método de cálculo aquí también
+                        Intent data = result.getData();
+                        comensalCompartirList.add((Persona) data.getSerializableExtra("personaCompartir"));
+                        anadirPAdapter.setResultsPersonaCom(comensalCompartirList);
+
+                    }
+                }
+        );
 
         //Añadimos onClick en el ImageView para activar la imagen
         ivPlatoAnadirP.setOnClickListener(view -> {
@@ -128,7 +158,28 @@ public class AnadirPlatoActivity extends AppCompatActivity {
 
             }
         });
+        rLauncherLogin = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    MetodosGlobales.comprobarUsuarioLogueado(this, ivAnadirPlatoImagen);
+                }
+        );
+        ivAnadirPlatoImagen.setOnClickListener(v->{
+            rLauncherLogin.launch(inLogin);
+        });
 
+    }
+
+    //Se debe insertar el ArrayList vacío para que el adaptador inserte el objeto 0 ( añadir elemento )
+    public void mostrarAdapter() {
+        //Se añaden la lista de platos vacía para que aparezca el botón de añadir Plato
+        comensalCompartirList = new ArrayList<Persona>();
+
+        //Prepara el Adapter para su uso
+        rvPlatosAnadirPlato.setLayoutManager(new LinearLayoutManager(this));
+        anadirPAdapter = new PersonaCompartirAdapter();
+        rvPlatosAnadirPlato.setAdapter(anadirPAdapter);
+        anadirPAdapter.setmListener(this::onItemClick);
+        anadirPAdapter.setResultsPersonaCom(comensalCompartirList);
     }
 
     public void anadirPlato () {
@@ -155,8 +206,17 @@ public class AnadirPlatoActivity extends AppCompatActivity {
         //Comprueba si ha validado, añade la persona, envía al padre el ArrayList de comensales, platos y cierra la actividad
         if (esValidado) {
 
-            //Añado a la lista la persona creada
-            platos.add(new Plato(nombre,descripcion,precio,precio,uriCapturada,esCompartido));
+            //Dependiendo si es compartido o no, sigue un
+            if (esCompartido) {
+                //Eliminamos la posición 0 ya que es un botón
+                comensalCompartirList.remove(0);
+
+                //Añado a la lista la persona creada                                           - lista de personas que van a compartir el plato
+                platos.add(new Plato(nombre,descripcion,precio,precio,uriCapturada,esCompartido, comensalCompartirList));
+            } else {
+                //Añado a la lista la persona creada                                          //Se crea el plato si en el compartido
+                platos.add(new Plato(nombre,descripcion,precio,precio,uriCapturada,esCompartido, new ArrayList<>()));
+            }
 
             Intent intentPlato = new Intent();
             intentPlato.putExtra("arrayListPlatos", platos);
@@ -176,7 +236,7 @@ public class AnadirPlatoActivity extends AppCompatActivity {
     public void asignarEfectos() {
 
         //Ajusta el tamaño de la imagen del login
-        ivLoginAnadirPlato.setPadding(20, 20, 20, 20);
+        ivAnadirPlatoImagen.setPadding(20, 20, 20, 20);
 
         //Asigna el degradado de colores a los textos
         int[] colors = {getResources().getColor(R.color.redBorder),
@@ -211,7 +271,6 @@ public class AnadirPlatoActivity extends AppCompatActivity {
     }
 
     public void asignarId() {
-
         //Asigna Ids a los elementos de la actividad
         rvPlatosAnadirPlato = findViewById(R.id.rvPlatosAnadirPlato);
         tvTitleAnadirP = findViewById(R.id.tvTitleAnadirPlato);
@@ -219,11 +278,36 @@ public class AnadirPlatoActivity extends AppCompatActivity {
         etDescAnadirP = findViewById(R.id.etDescripcionAnadirPlato);
         etPrecioAnadirP = findViewById(R.id.etPlatoPrecio);
         tvSubTitP = findViewById(R.id.tvListaPlatosAnadirPlato);
-        ivLoginAnadirPlato = findViewById(R.id.ivLoginAnadirPlato);
+        ivAnadirPlatoImagen = findViewById(R.id.ivAnadirPlatoImagen);
         btnContinuarAnadirP = findViewById(R.id.btnPlatosAnadirPlato);
         ivPlatoAnadirP = findViewById(R.id.ivPlatoAnadirPlato);
         swCompartirPlato = findViewById(R.id.swCompartirAnadirPlato);
+         inLogin= new Intent(this, AuthActivity.class);
 
     }
+
+    @Override
+    public void onItemClick(int position) {
+        //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
+        if (position>0) {
+            Toast.makeText(this,"Pulsaste el campo: "+String.valueOf(position),Toast.LENGTH_SHORT).show();
+        } else {
+
+            //Método que comprueba si hay repetidos en la lista de compartidos (no aparezcan de nuevo)
+            //Además, comprueba que no esté el propio usuario a la hora de repartir
+            noRepCompartirList = nombreCompartir;
+            for (Persona p : comensalCompartirList) {
+                noRepCompartirList.removeIf(persona -> persona.getComensalCode()==p.getComensalCode());
+                noRepCompartirList.removeIf(persona -> persona.getComensalCode()==personaCode);
+            }
+
+            //Accedemos a la actividad de compartir plato
+                Intent intent = new Intent(this, CompartirListaActivity.class);
+                intent.putExtra("arrayListComenComp", noRepCompartirList);
+                rLauncherComp.launch(intent);
+
+        }
+    }
+
 
 }

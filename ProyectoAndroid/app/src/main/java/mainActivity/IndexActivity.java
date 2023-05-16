@@ -10,24 +10,25 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
-import android.net.Uri;
 import android.os.Bundle;
+
 import android.view.Gravity;
 import android.view.View;
+
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.tfg.marfol.R;
+
 
 import mainActivity.API.API;
 import mainActivity.menu.AboutUs;
 import mainActivity.menu.ContactUs;
 import mainActivity.menu.Preferences;
-
 
 public class IndexActivity extends AppCompatActivity {
 
@@ -41,6 +42,7 @@ public class IndexActivity extends AppCompatActivity {
     private Button btnCancelarIndex, btnConfirmarIndex;
     private TextView tvMessage1Popup, tvMessage2Popup, tvTitlePopup;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private ActivityResultLauncher rLauncherIndex;
 
     private TextView menuItemAboutUs;
@@ -60,7 +62,7 @@ public class IndexActivity extends AppCompatActivity {
         //Método que asigna efectos a los elementos (colores, etc)
         asignarEfectos();
         //Método para comprobar las imagenes del usuario
-        comprobarLogueado();
+        MetodosGlobales.comprobarUsuarioLogueado(IndexActivity.this,ivLoginIndex);
 
         //Puesto provisional para probar cosas
         ivLoginIndex.setOnClickListener(view -> {
@@ -97,33 +99,21 @@ public class IndexActivity extends AppCompatActivity {
         //launcher result para comprobar las imagenes del usuario
         rLauncherIndex = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-                    comprobarLogueado();
-                    Toast.makeText(this, "Launcher jiji",Toast.LENGTH_SHORT).show();
+                    MetodosGlobales.comprobarUsuarioLogueado(IndexActivity.this,ivLoginIndex);
+                    Toast.makeText(this, "Launcher jiji", Toast.LENGTH_SHORT).show();
                 }
         );
 
-    }
 
-    private void comprobarLogueado() {
-        //Coge la instancia de usuario
-        mAuth = FirebaseAuth.getInstance();
-        
-        //Comprueba si estás logueado o no
-        if (mAuth.getCurrentUser() != null) {
-            Toast.makeText(this, "Estás logueado bro ",Toast.LENGTH_SHORT).show();
-            ivLoginIndex.setImageURI(Uri.parse("android.resource://com.tfg.marfol/"+R.drawable.google_icon));
-        } else {
-            Toast.makeText(this, "No estás logueado pendejo ",Toast.LENGTH_SHORT).show();
-            ivLoginIndex.setImageURI(Uri.parse("android.resource://com.tfg.marfol/"+R.drawable.nologinimg));
-        }
     }
 
     public void asignarId() {
-
         //Asigna Ids a los elementos de la actividad
         btnApIndex = findViewById(R.id.btnApIndex);
         btnApIndex2 = findViewById(R.id.btnApIndex2);
-        ivLoginIndex = findViewById(R.id.ivLoginAnadirPlato);
+
+        ivLoginIndex = findViewById(R.id.ivAnadirPlatoImagen);
+
         ivMenuIndex = findViewById(R.id.ivMenuAnadirPlato);
         rvPresetsIndex = findViewById(R.id.rvPresetsIndex);
         tvTitleIndex = findViewById(R.id.tvTitleAnadirPlato);
@@ -136,8 +126,8 @@ public class IndexActivity extends AppCompatActivity {
         tvMessage1Popup = puVolverIndex.findViewById(R.id.tvMessage1Popup);
         tvMessage2Popup = puVolverIndex.findViewById(R.id.tvMessage2Popup);
         tvTitlePopup = puVolverIndex.findViewById(R.id.tvTitlePopup);
-
     }
+
     public void asignarEfectos() {
 
         //Ajusta el tamaño de la imagen del login
@@ -145,7 +135,7 @@ public class IndexActivity extends AppCompatActivity {
 
         //Asigna el degradado de colores a los textos
         int[] colors = {getResources().getColor(R.color.redBorder),
-                        getResources().getColor(R.color.redTitle)
+                getResources().getColor(R.color.redTitle)
         };
 
         float[] positions = {0f, 0.2f};
@@ -176,13 +166,11 @@ public class IndexActivity extends AppCompatActivity {
     //Método que al pulsar el botón de volver te pregunta si deseas cerrar la app
     @Override
     public void onBackPressed() {
-
         //Pregunta si realmente quieres salir
         tvTitlePopup.setText("Salir");
         tvMessage1Popup.setText("Salir de Marfol, se cerrará la aplicación");
         tvMessage2Popup.setText("¿ Estás seguro ?");
         puVolverIndex.show();
-
     }
     public void showPopupMenu(View view) {
         View popupView = getLayoutInflater().inflate(R.layout.popup_menu, null);
@@ -194,7 +182,7 @@ public class IndexActivity extends AppCompatActivity {
         // Ajustar el tamaño del menú según tus preferencias
         int width = getResources().getDisplayMetrics().widthPixels * 7 / 10; // El 70% del ancho de la pantalla
         int height = getResources().getDisplayMetrics().heightPixels ; // El 70% del alto de la pantalla
-
+        
         PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
         popupWindow.setAnimationStyle(R.style.PopupAnimation);
 

@@ -18,19 +18,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import entities.Persona;
-import entities.Plato;
+import login.EditarDatos;
 
-public class PersonaBdAdapter extends RecyclerView.Adapter<PersonaBdAdapter.PersonaBdAdapterResultHolder> {
+public class PersonaAdapterBd extends RecyclerView.Adapter<PersonaAdapterBd.PersonaBdAdapterResultHolder> {
 
     private List<Persona> resultsPersona = new ArrayList<>();
 
-    private onItemClickListener mListener;
+    private onItemClickListenerBd mListener;
 
     @NonNull
     @Override
     public PersonaBdAdapterResultHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.row_persona, parent, false);
+                .inflate(R.layout.row_persona_bd, parent, false);
 
         return new PersonaBdAdapterResultHolder(itemView);
     }
@@ -42,7 +42,9 @@ public class PersonaBdAdapter extends RecyclerView.Adapter<PersonaBdAdapter.Pers
         holder.tvPersonaRow.setText(resultsPersona.get(position).getNombre());
 
         //Insertamos para cada persona en el Recycler su imagen
-        holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
+        //holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
+        Glide.with(holder.itemView).load(Uri.parse(resultsPersona.get(position).getUrlImage())).circleCrop().into(holder.ivPersonaRow);
+
 
         //Método onclick
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -51,7 +53,7 @@ public class PersonaBdAdapter extends RecyclerView.Adapter<PersonaBdAdapter.Pers
                 if (mListener != null) {
                     int position = holder.getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
-                        mListener.onItemClick(position);
+                        mListener.onItemClickBd(position);
                     }
                 }
             }
@@ -70,7 +72,7 @@ public class PersonaBdAdapter extends RecyclerView.Adapter<PersonaBdAdapter.Pers
 
     }
 
-    public void setmListener(onItemClickListener mListener) {
+    public void setmListener(onItemClickListenerBd mListener) {
         this.mListener = mListener;
     }
 
@@ -89,8 +91,8 @@ public class PersonaBdAdapter extends RecyclerView.Adapter<PersonaBdAdapter.Pers
 
     }
 
-    public interface onItemClickListener{
-        void onItemClick(int position);
+    public interface onItemClickListenerBd{
+        void onItemClickBd(int position);
     }
 
 }

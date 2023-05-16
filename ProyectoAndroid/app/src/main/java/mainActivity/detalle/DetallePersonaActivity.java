@@ -41,6 +41,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.tfg.marfol.R;
 
 import java.io.IOException;
@@ -53,6 +56,7 @@ import adapters.AnadirPersonaAdapter;
 import adapters.PersonaDetalleAdapter;
 import entities.Persona;
 import entities.Plato;
+import login.EditarDatos;
 import mainActivity.crud.AnadirParticipanteActivity;
 import mainActivity.crud.AnadirPlatoActivity;
 
@@ -64,11 +68,17 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
     private RecyclerView rvAnadirPlatoDetalle;
     private PersonaDetalleAdapter adapterDetalle;
     private ArrayList<Plato> platos;
+    private ArrayList<Persona> nombreCompartir;
     private static final int CAMERA_PERMISSION_CODE = 100;
     private ActivityResultLauncher <Intent> camaraLauncher;
     private ActivityResultLauncher rLauncherPlatos;
     private Button btnContinuarDetalle;
     private String uriCapturada="";
+    private FirebaseFirestore db;
+    private FirebaseAuth auth ;
+    private FirebaseUser currentUser;
+    private String email;
+
 
 
     @Override
@@ -79,6 +89,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         //Recibe la lista de comensales para empezar a añadir
         Intent intent = getIntent();
         comensal = (Persona) intent.getSerializableExtra("comensalDetalle");
+        nombreCompartir = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComenComp");
         comensalBd=comensal;
 
         //Método que asigna IDs a los elementos
@@ -101,8 +112,6 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
                         platos = (ArrayList<Plato>) data.getSerializableExtra("arrayListPlatos");
                         adapterDetalle.setResultsPlato(platos);
                     }
-
-
                 }
         );
 
@@ -142,11 +151,9 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
                     outputStream.close();
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         });
 
@@ -169,8 +176,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
             //AÑADIR A BD
             editarComensalBd();
             //Añado a la lista la persona creada
-            Persona personaEditada = new Persona(nombre, descripcion, uriCapturada, platos);
-
+            Persona personaEditada = new Persona(comensal.getComensalCode(),nombre, descripcion, uriCapturada, platos, 0);
             Intent intentComensal = new Intent();
             intentComensal.putExtra("detalleComensal", personaEditada);
             setResult(Activity.RESULT_OK, intentComensal);
@@ -178,7 +184,6 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         }
     }
     private void editarComensalBd() {
-
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser == null){
@@ -348,6 +353,9 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
     }
 
     public void asignarId() {
+        auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
 
         ivLoginDetalle = findViewById(R.id.ivLoginDetallePersona);
         ivMenuDetalle = findViewById(R.id.ivMenuDetallePersona);
@@ -356,6 +364,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         etDescripcionDetalle = findViewById(R.id.etDescripcionDetallePersona);
         rvAnadirPlatoDetalle = findViewById(R.id.rvAnadirPlatoDetalle);
         btnContinuarDetalle = findViewById(R.id.btnEditarDetalle);
+        email = currentUser.getEmail();
     }
 
     @Override
@@ -366,20 +375,17 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
             Toast.makeText(this,"Pulsaste el campo: "+String.valueOf(position),Toast.LENGTH_SHORT).show();
 
         } else {
-
             //Accedemos a la actividad de añadir plato
             Intent intent = new Intent(this, AnadirPlatoActivity.class);
             intent.putExtra("arrayListPlatos", platos);
+            intent.putExtra("arrayListComenComp", nombreCompartir);
+            intent.putExtra("comensalCode", comensal.getComensalCode());
             rLauncherPlatos.launch(intent);
-
-
 
         }
     }
     private void anadirPersonaABd(String nombre, String descripcion,String imagen) {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = auth.getCurrentUser();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
         if (currentUser != null) {
             // El usuario está autenticado

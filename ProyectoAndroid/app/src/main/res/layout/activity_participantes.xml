@@ -42,21 +42,21 @@
         />
 
     <!-- Login App -->
+
     <ImageView
 
-        android:id="@+id/ivLoginAnadirPlato"
+        android:id="@+id/ivParticipantesImagen"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="@drawable/login_style"
-        android:src="@drawable/nologinimg"
         android:scaleType="fitCenter"
+        android:src="@drawable/nologinimg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.96"
+        app:layout_constraintHorizontal_bias="0.955"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.02"
-
 
 
         />
@@ -64,11 +64,11 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPersonaParticipantes"
         android:layout_width="350dp"
-        android:layout_height="413dp"
+        android:layout_height="420dp"
 
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvTitleAnadirPlato" />
 
@@ -76,8 +76,8 @@
         android:id="@+id/textoFill"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-
+        android:layout_marginTop="12dp"
+        android:textColor="@color/black"
         android:text="Participantes añadidos anteriormente"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
@@ -86,9 +86,9 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPersonaParticipantesBd"
-        android:layout_width="350dp"
-        android:layout_height="115dp"
-        android:layout_marginTop="15dp"
+        android:layout_width="275dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="1dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -108,17 +108,5 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rvPersonaParticipantesBd" />
-
-    <TextView
-        android:id="@+id/tvLlenarTexto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.526"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.55" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

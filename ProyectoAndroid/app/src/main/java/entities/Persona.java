@@ -5,16 +5,20 @@ import java.util.ArrayList;
 
 public class Persona implements Serializable {
 
+    private int comensalCode;
+    private double monedero=0;
     private String nombre,descripcion, urlImage;
     private ArrayList<Plato> platos;
 
     public Persona () {}
 
-    public Persona (String nombre, String descripcion, String urlImage, ArrayList<Plato> platos) {
+    public Persona (int comensalCode,String nombre, String descripcion, String urlImage, ArrayList<Plato> platos,double monedero) {
+        this.comensalCode=comensalCode;
         this.nombre=nombre;
         this.descripcion=descripcion;
         this.urlImage=urlImage;
         this.platos=platos;
+        this.monedero=monedero;
     }
 
     //Método devuelve el total a pagar
@@ -38,6 +42,18 @@ public class Persona implements Serializable {
         }
         return false;
     }
+
+    public void sumarMonedero(double nuevoPrecio) {
+        monedero+=nuevoPrecio;
+    }
+
+    public double getMonedero() { return monedero; }
+
+    public void setMonedero(double monedero) { this.monedero = monedero; }
+
+    public int getComensalCode() { return comensalCode; }
+
+    public void setComensalCode(int comensalCode) { this.comensalCode = comensalCode; }
 
     public String getNombre() { return nombre; }
 

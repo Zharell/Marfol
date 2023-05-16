@@ -28,6 +28,9 @@
         <activity android:name="mainActivity.menu.Preferences" />
         <activity android:name="mainActivity.API.API" />
         <activity
+            android:name="mainActivity.detalle.CompartirListaActivity"
+            android:exported="false" />
+        <activity
             android:name="mainActivity.DesgloseActivity"
             android:exported="false" />
         <activity

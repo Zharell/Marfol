@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.tfg.marfol.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import adapters.DesgloseAdapter;
 import adapters.PersonaAdapter;
@@ -50,6 +51,9 @@ public class DesgloseActivity extends AppCompatActivity {
         //Método que asigna los efectos a los elementos
         asignarEfectos();
 
+        //Reparte los platos compartidos entre los comensales
+        repartirCompartido();
+
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
 
@@ -73,6 +77,34 @@ public class DesgloseActivity extends AppCompatActivity {
         //Añade el contenido al adapter, si está vacío el propio Adapter añade el " Añadir Persona "
         desgloseAdapter.setResultsPersona(listaComensales);
 
+    }
+
+    public void repartirCompartido() {
+
+        double precioPlato;
+        for (int i=0;i<comensales.size();i++) {
+
+            for (int j=0;j<comensales.get(i).getPlatos().size();j++) {
+
+                if (comensales.get(i).getPlatos().get(j).isCompartido()) {
+                    comensales.get(i).getPlatos().get(j).getPersonasCompartir().add(comensales.get(i)); // ---
+                    precioPlato = comensales.get(i).getPlatos().get(j).getPrecio() / (comensales.get(i).getPlatos().get(j).getPersonasCompartir().size());
+                    for (int h = 0; h < comensales.get(i).getPlatos().get(j).getPersonasCompartir().size(); h++) {
+
+                        for (int m=0;m<comensales.size();m++) {
+                            if (comensales.get(m).getComensalCode() == comensales.get(i).getPlatos().get(j).getPersonasCompartir().get(h).getComensalCode()) {
+                                comensales.get(m).sumarMonedero(precioPlato);
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        //Toast.makeText(this,"juan"+String.valueOf(comensales.get(1).getMonedero()),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"javier"+String.valueOf(comensales.get(2).getMonedero()),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"kayler"+String.valueOf(comensales.get(3).getMonedero()),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"mario"+String.valueOf(comensales.get(4).getMonedero()),Toast.LENGTH_SHORT).show();
     }
 
     public void asignarEfectos() {

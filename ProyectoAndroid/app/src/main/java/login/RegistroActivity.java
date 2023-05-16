@@ -46,7 +46,7 @@ public class RegistroActivity extends AppCompatActivity {
         //Registro
         btnRegistrarseRegistro.setOnClickListener(v -> {
             if (!(etRegistroEmailLogin.getText().toString().equals("") || etRegistroPasswordLogin.getText().toString().equals(""))) {
-                if (!(etRegistroPasswordLogin.getText().toString().equals(etRegistroPasswordLogin2.getText().toString()))) {
+                if (!(etRegistroPasswordLogin.getText().toString().equalsIgnoreCase(etRegistroPasswordLogin2.getText().toString()))) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage("Los campos contraseña son distintos")
                             .setCancelable(false)
@@ -55,8 +55,10 @@ public class RegistroActivity extends AppCompatActivity {
                                     dialog.dismiss();
                                 }
                             });
+
                     AlertDialog alerta = builder.create();
                     alerta.show();
+                    return;
                 }
                 FirebaseAuth.getInstance()
                         .createUserWithEmailAndPassword(etRegistroEmailLogin.getText().toString(),
@@ -69,6 +71,7 @@ public class RegistroActivity extends AppCompatActivity {
                                 Map<String, Object> datosPersona = new HashMap<>();
                                 datosPersona.put("name", nombre);
                                 datosPersona.put("phone", telefono);
+                                datosPersona.put("imagen","");
                                 db.collection("users").document(email).set(datosPersona)
                                         .addOnSuccessListener(anadido -> {
                                             showHome(it.getResult().getUser().getEmail(), ProviderType.BASIC);

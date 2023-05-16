@@ -56,4 +56,7 @@
     <string name="google_maps_key">AIzaSyC1JbQNg7WkFD4zGdVr1Y-RkaWtluXStKE</string>
     <string name="API">BUSCA DONDE COMER</string>
 
+
+    <string name="compartir_con">Compartir con</string>
+
 </resources>
