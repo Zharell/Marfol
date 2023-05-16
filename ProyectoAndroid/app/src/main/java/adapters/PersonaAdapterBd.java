@@ -11,12 +11,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.tfg.marfol.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import entities.Persona;
+import login.EditarDatos;
 
 public class PersonaAdapterBd extends RecyclerView.Adapter<PersonaAdapterBd.PersonaBdAdapterResultHolder> {
 
@@ -40,7 +42,9 @@ public class PersonaAdapterBd extends RecyclerView.Adapter<PersonaAdapterBd.Pers
         holder.tvPersonaRow.setText(resultsPersona.get(position).getNombre());
 
         //Insertamos para cada persona en el Recycler su imagen
-        holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
+        //holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
+        Glide.with(holder.itemView).load(Uri.parse(resultsPersona.get(position).getUrlImage())).circleCrop().into(holder.ivPersonaRow);
+
 
         //Método onclick
         holder.itemView.setOnClickListener(new View.OnClickListener() {

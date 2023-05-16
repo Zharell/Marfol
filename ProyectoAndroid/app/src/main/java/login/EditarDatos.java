@@ -70,7 +70,7 @@ public class EditarDatos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_datos);
 
-       asignarId();
+        asignarId();
 
 
         Bundle extras = getIntent().getExtras();
