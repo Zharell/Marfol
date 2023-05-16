@@ -49,6 +49,7 @@ public class IndexActivity extends AppCompatActivity {
     private TextView menuItemContactUs;
     private TextView menuItemPreferencias;
     private TextView menuItemHome;
+    private TextView tvLogoutIndex;
 
 
     @Override
@@ -178,6 +179,7 @@ public class IndexActivity extends AppCompatActivity {
         menuItemPreferencias = popupView.findViewById(R.id.menu_item2);
         menuItemAboutUs = popupView.findViewById(R.id.menu_item3);
         menuItemContactUs = popupView.findViewById(R.id.menu_item4);
+        tvLogoutIndex = popupView.findViewById(R.id.tvLogoutIndex);
 
         // Ajustar el tamaño del menú según tus preferencias
         int width = getResources().getDisplayMetrics().widthPixels * 7 / 10; // El 70% del ancho de la pantalla
@@ -254,5 +256,14 @@ public class IndexActivity extends AppCompatActivity {
                 popupWindow.dismiss();
             }
         });
+        tvLogoutIndex.setOnClickListener(v->{
+            FirebaseAuth.getInstance()
+                    .signOut();
+            Intent in = new Intent(this, IndexActivity.class);
+            startActivity(in);
+            finish();
+        });
     }
+
+
 }

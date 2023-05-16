@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.tfg.marfol.R;
 
+import login.HomeActivity;
 import mainActivity.IndexActivity;
 
 public class Preferences extends AppCompatActivity {
@@ -23,6 +24,7 @@ public class Preferences extends AppCompatActivity {
     private TextView menuItemContactUs;
     private TextView menuItemPreferencias;
     private TextView menuItemHome;
+    private TextView tvEditarDatos;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.preferencias);
@@ -33,6 +35,7 @@ public class Preferences extends AppCompatActivity {
         menuItemPreferencias = popupView.findViewById(R.id.menu_item2);
         menuItemAboutUs = popupView.findViewById(R.id.menu_item3);
         menuItemContactUs = popupView.findViewById(R.id.menu_item4);
+        tvEditarDatos = popupView.findViewById(R.id.tvEditarDatos);
         // Ajustar el tamaño del menú según tus preferencias
         int width = getResources().getDisplayMetrics().widthPixels * 7 / 10; // El 70% del ancho de la pantalla
         int height = getResources().getDisplayMetrics().heightPixels ; // El 70% del alto de la pantalla
@@ -100,6 +103,11 @@ public class Preferences extends AppCompatActivity {
             public void onClick(View v) {
                 popupWindow.dismiss();
             }
+        });
+        tvEditarDatos.setOnClickListener(v->{
+            Intent ed = new Intent(this, HomeActivity.class);
+            startActivity(ed);
+            popupWindow.dismiss();
         });
     }
 }

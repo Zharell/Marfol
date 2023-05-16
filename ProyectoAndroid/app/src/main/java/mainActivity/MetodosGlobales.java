@@ -28,7 +28,9 @@ public class MetodosGlobales {
                         if (document.exists()) {
                             String imagen = document.getString("imagen");
                             if (imagen != null) {
-                                iVimagen.setPadding(0, 0, 0, 0);
+                                iVimagen.setClickable(false);  // Deshabilitar el clic en la imagen
+                                iVimagen.setFocusable(false);
+                                iVimagen.setPadding(20,20 , 20, 20);
                                 Glide.with(context)
                                         .load(imagen)
                                         .circleCrop() // Aplica el formato redondeado
