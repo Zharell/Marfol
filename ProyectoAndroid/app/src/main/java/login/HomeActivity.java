@@ -37,8 +37,7 @@ public class HomeActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private HashMap<String, Object> map = new HashMap<>();
     private ProgressBar progressBar;
-    private ActivityResultLauncher rLauncherHome;
-    private String nombreEnviar,telefonoEnviar;
+
     private ImageView ivFotoPersonaHome;
 
 
@@ -59,27 +58,6 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
-        // Guardado de datos
-       /* rLauncherHome = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        // Aquí puedes obtener los datos de vuelta de la actividad de edición
-                        Intent data = result.getData();
-                        if (data != null) {
-                            // Obtén los datos enviados desde la actividad de edición
-                            String name = data.getStringExtra("name");
-                            String phone = data.getStringExtra("phone");
-                            String img = data.getStringExtra("img");
-                            // Por ejemplo, actualiza los TextView en esta actividad
-                            tvNombreUsuario.setText(name);
-                            tvTelefonoUsuario.setText(phone);
-                            Glide.with(HomeActivity.this).load(img).circleCrop().into(ivFotoPersonaHome);
-                        }
-                    }
-                }
-        );*/
-
-
     }
 
     private void asignarId() {
@@ -97,13 +75,6 @@ public class HomeActivity extends AppCompatActivity {
 
         btnEditarBD.setOnClickListener(v -> {
             Intent editar = new Intent(HomeActivity.this, EditarDatos.class);
-            //aqui parseo los datos para quitar Nombre: y Teléfono: y quedarme solo con el valor de dentro
-            nombreEnviar =  tvNombreUsuario.getText().toString();
-            telefonoEnviar = tvTelefonoUsuario.getText().toString();
-            //editar.putExtra("name", nombreEnviar);
-           // editar.putExtra("phone", telefonoEnviar);
-           // setResult(RESULT_OK, editar);
-           // rLauncherHome.launch(editar);
             startActivity(editar);
             finish();
         });
