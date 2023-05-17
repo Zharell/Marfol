@@ -15,6 +15,7 @@ import android.graphics.Shader;
 import android.os.Bundle;
 
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 
 import android.widget.Button;
@@ -32,6 +33,7 @@ import mainActivity.API.API;
 import mainActivity.menu.AboutUs;
 import mainActivity.menu.ContactUs;
 import mainActivity.menu.Preferences;
+
 
 public class IndexActivity extends AppCompatActivity {
 
@@ -52,6 +54,8 @@ public class IndexActivity extends AppCompatActivity {
     private TextView menuItemPreferencias;
     private TextView menuItemHome;
     private TextView tvLogoutIndex;
+    private PopupWindow popupWindow;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,11 +191,21 @@ public class IndexActivity extends AppCompatActivity {
         // Ajustar el tamaño del menú según tus preferencias
         int width = getResources().getDisplayMetrics().widthPixels * 7 / 10; // El 70% del ancho de la pantalla
         int height = getResources().getDisplayMetrics().heightPixels ; // El 70% del alto de la pantalla
-        
-        PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
+
+        popupWindow = new PopupWindow(popupView, width, height, true);
         popupWindow.setAnimationStyle(R.style.PopupAnimation);
 
         popupWindow.showAtLocation(view, Gravity.START, 0, 0);
+        popupView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (popupWindow != null && popupWindow.isShowing()) {
+                    popupWindow.dismiss();
+                    popupWindow = null;
+                }
+                return true;
+            }
+        });
 
         // Aplicar el degradado de colores a los textos del menú
         int[] colors = {
@@ -275,6 +289,10 @@ public class IndexActivity extends AppCompatActivity {
         });
         }
 
+
+        // Cerrar el PopupWindow cuando se destruya la actividad
+
+
     }
     private void comprobarLauncher(){
         if(MetodosGlobales.comprobarLogueado(IndexActivity.this,ivLoginIndex)){
@@ -285,6 +303,15 @@ public class IndexActivity extends AppCompatActivity {
 
         }
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (popupWindow != null && popupWindow.isShowing()) {
+            popupWindow.dismiss();
+            popupWindow = null;
+        }
+    }
+
 
 
 }
