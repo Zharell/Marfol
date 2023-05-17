@@ -63,7 +63,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     private TextView tvTitleAnadirP, tvSubTitP;
     private EditText etNombreAnadirP, etDescAnadirP;
     private Button btnContinuarAnadirP;
-    private ImageView ivLoginAnadirParticipante, ivPlatoAnadirP;
+    private ImageView ivAnadirPlatoImagen, ivPlatoAnadirP;
     private AnadirPersonaAdapter anadirPAdapter;
     private ActivityResultLauncher<Intent> camaraLauncher;
     private ActivityResultLauncher rLauncherPlatos;
@@ -99,7 +99,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         //Método que asigna los efectos a los elementos
         asignarEfectos();
         //Comprobar usuario si está logueado o no
-        MetodosGlobales.cambiarImagenSiLogueado(this, ivLoginAnadirParticipante);
+        comprobarLauncher();
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
@@ -111,14 +111,9 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                         data = result.getData();
                         platos = (ArrayList<Plato>) data.getSerializableExtra("arrayListPlatos");
                         anadirPAdapter.setResultsPlato(platos);
-                        MetodosGlobales.cambiarImagenSiLogueado(this, ivLoginAnadirParticipante);
+                        comprobarLauncher();
                     }
 
-                }
-        );
-        rLauncherLogin = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(), result -> {
-                    MetodosGlobales.cambiarImagenSiLogueado(this, ivLoginAnadirParticipante);
                 }
         );
 
@@ -169,13 +164,21 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             //Método encargado de crear un comensal
             anadirComensal();
         });
-        ivLoginAnadirParticipante.setOnClickListener(v -> {
-            rLauncherLogin.launch(inLogin);
-        });
-
-
+        rLauncherLogin = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    comprobarLauncher();
+                }
+        );
     }
-
+    private void comprobarLauncher(){
+        if(MetodosGlobales.comprobarLogueado(this,ivAnadirPlatoImagen)){
+            currentUser = mAuth.getCurrentUser();
+            botonImagenLogueado();
+        }else{
+            Glide.with(this).load(R.drawable.nologinimg).into(ivAnadirPlatoImagen);
+            botonImagenNoLogueado();
+        }
+    }
     public void anadirComensal() {
         boolean esValidado = true;
         String nombre = String.valueOf(etNombreAnadirP.getText());
@@ -238,7 +241,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
     public void asignarEfectos() {
         //Ajusta el tamaño de la imagen del login
-        ivLoginAnadirParticipante.setPadding(20, 20, 20, 20);
+        ivAnadirPlatoImagen.setPadding(20, 20, 20, 20);
 
         //Asigna el degradado de colores a los textos
         int[] colors = {getResources().getColor(R.color.redBorder),
@@ -271,7 +274,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         etNombreAnadirP = findViewById(R.id.etNombreAnadirPlato);
         etDescAnadirP = findViewById(R.id.etDescripcionAnadirPlato);
         tvSubTitP = findViewById(R.id.tvListaPlatosAnadirPlato);
-        ivLoginAnadirParticipante = findViewById(R.id.ivAnadirPlatoImagen);
+        ivAnadirPlatoImagen = findViewById(R.id.ivAnadirPlatoImagen);
         btnContinuarAnadirP = findViewById(R.id.btnPlatosAnadirPlato);
         ivPlatoAnadirP = findViewById(R.id.ivPlatoAnadirPlato);
         inLogin = new Intent(this, AuthActivity.class);
@@ -409,6 +412,22 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             // El ID de la persona es nulo o vacío, muestra un mensaje de error
             Toast.makeText(AnadirParticipanteActivity.this, "ID de persona inválido", Toast.LENGTH_SHORT).show();
         }
+    }
+    private void botonImagenNoLogueado(){
+        //Puesto provisional para probar cosas
+        ivAnadirPlatoImagen.setOnClickListener(view -> {
+            Intent intent = new Intent(this, login.AuthActivity.class);
+            rLauncherLogin.launch(intent);
+        });
+
+
+    }
+    private void botonImagenLogueado(){
+        //Puesto provisional para probar cosas
+        ivAnadirPlatoImagen.setOnClickListener(view -> {
+            Intent intent = new Intent(this, login.HomeActivity.class);
+            rLauncherLogin.launch(intent);
+        });
     }
 
 

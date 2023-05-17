@@ -63,101 +63,52 @@ public class IndexActivity extends AppCompatActivity {
         //Método que asigna efectos a los elementos (colores, etc)
         asignarEfectos();
         //si uno está logueado se comporta de una manera o otra
-        if(MetodosGlobales.comprobarLogueado(IndexActivity.this,ivLoginIndex)){
-            botonesLogueado();
-        }else{
-            Glide.with(this).load(R.drawable.nologinimg).into(ivLoginIndex);
-            botonesNoLogueado();
-
-        }
+        comprobarLauncher();
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-                    if(MetodosGlobales.comprobarLogueado(IndexActivity.this,ivLoginIndex)){
-                        //tvLogoutIndex.setVisibility(View.VISIBLE);
-                        //tvLogoutIndex.setClickable(true);
-
-                        botonesLogueado();
-                    }else{
-                        Glide.with(this).load(R.drawable.nologinimg).into(ivLoginIndex);
-                        botonesNoLogueado();
-
-                    }
-
-
+                    comprobarLauncher();
                 }
         );
+        //Botón que accede a la gestión de participantes
+        btnApIndex.setOnClickListener(view -> {
+            Intent intent = new Intent(this, ParticipantesActivity.class);
 
+            startActivity(intent);
 
+            //Aplica un efecto de desvanecimiento entre actividades y se cierra
+            overridePendingTransition(androidx.navigation.ui.R.anim.nav_default_enter_anim, androidx.navigation.ui.R.anim.nav_default_exit_anim);
+            finish();
+        });
 
+        btnApIndex2.setOnClickListener(view -> {
+            Intent intent = new Intent(this, API.class);
+            startActivity(intent);
+        });
+        //Botones para el popup de confirmación
+        //Confirmar cierra la APP
+        btnConfirmarIndex.setOnClickListener(view -> {
+            puVolverIndex.dismiss();
+            finishAffinity();
+        });
 
-
-
-
-
+        //Cancela, desaparece el popup y continúa en la actividad
+        btnCancelarIndex.setOnClickListener(view -> puVolverIndex.dismiss());
     }
-    private void botonesNoLogueado(){
+    private void botonImagenLogueado(){
         //Puesto provisional para probar cosas
         ivLoginIndex.setOnClickListener(view -> {
             Intent intent = new Intent(this, login.AuthActivity.class);
             rLauncherLogin.launch(intent);
         });
 
-        //Botón que accede a la gestión de participantes
-        btnApIndex.setOnClickListener(view -> {
-            Intent intent = new Intent(this, ParticipantesActivity.class);
 
-            startActivity(intent);
-
-            //Aplica un efecto de desvanecimiento entre actividades y se cierra
-            overridePendingTransition(androidx.navigation.ui.R.anim.nav_default_enter_anim, androidx.navigation.ui.R.anim.nav_default_exit_anim);
-            finish();
-        });
-
-        btnApIndex2.setOnClickListener(view -> {
-            Intent intent = new Intent(this, API.class);
-            startActivity(intent);
-        });
-        //Botones para el popup de confirmación
-        //Confirmar cierra la APP
-        btnConfirmarIndex.setOnClickListener(view -> {
-            puVolverIndex.dismiss();
-            finishAffinity();
-        });
-
-        //Cancela, desaparece el popup y continúa en la actividad
-        btnCancelarIndex.setOnClickListener(view -> puVolverIndex.dismiss());
     }
-    private void botonesLogueado(){
+    private void botonImagenNoLogueado(){
         //Puesto provisional para probar cosas
         ivLoginIndex.setOnClickListener(view -> {
             Intent intent = new Intent(this, login.HomeActivity.class);
             rLauncherLogin.launch(intent);
         });
-
-        //Botón que accede a la gestión de participantes
-        btnApIndex.setOnClickListener(view -> {
-            Intent intent = new Intent(this, ParticipantesActivity.class);
-
-            startActivity(intent);
-
-            //Aplica un efecto de desvanecimiento entre actividades y se cierra
-            overridePendingTransition(androidx.navigation.ui.R.anim.nav_default_enter_anim, androidx.navigation.ui.R.anim.nav_default_exit_anim);
-            finish();
-        });
-
-        btnApIndex2.setOnClickListener(view -> {
-            Intent intent = new Intent(this, API.class);
-            startActivity(intent);
-        });
-        //Botones para el popup de confirmación
-        //Confirmar cierra la APP
-        btnConfirmarIndex.setOnClickListener(view -> {
-            puVolverIndex.dismiss();
-            finishAffinity();
-        });
-
-        //Cancela, desaparece el popup y continúa en la actividad
-        btnCancelarIndex.setOnClickListener(view -> puVolverIndex.dismiss());
     }
 
     public void asignarId() {
@@ -325,7 +276,15 @@ public class IndexActivity extends AppCompatActivity {
         }
 
     }
+    private void comprobarLauncher(){
+        if(MetodosGlobales.comprobarLogueado(IndexActivity.this,ivLoginIndex)){
+            botonImagenNoLogueado();
+        }else{
+            Glide.with(this).load(R.drawable.nologinimg).into(ivLoginIndex);
+            botonImagenLogueado();
 
+        }
+    }
 
 
 }

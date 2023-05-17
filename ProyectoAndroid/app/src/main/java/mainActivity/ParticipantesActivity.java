@@ -1,7 +1,5 @@
 package mainActivity;
 
-import static android.content.ContentValues.TAG;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,13 +16,12 @@ import android.graphics.Shader;
 
 import android.os.Bundle;
 
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -32,7 +29,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.tfg.marfol.R;
 
 
@@ -69,7 +65,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private RecyclerView rvPersonaParticipantesBd;
     private Intent irLogin;
     private FirebaseFirestore db;
-    private FirebaseAuth auth ;
+    private FirebaseAuth mAuth;
     private FirebaseUser currentUser ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,11 +77,17 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
         //Método que asigna los efectos a los elementos
         asignarEfectos();
-        //comprobar si estoy logueado
-        MetodosGlobales.cambiarImagenSiLogueado(this,ivLoginParticipantes);
-
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
+        //comprobar si estoy logueado
+        if(MetodosGlobales.comprobarLogueado(this,ivLoginParticipantes)){
+            botonImagenLogueado();
+        }else{
+            Glide.with(this).load(R.drawable.nologinimg).into(ivLoginParticipantes);
+            botonImagenNoLogueado();
+        }
+
+
 
         //Laucher Result recibe el ArrayList con los nuevos comensales y los inserta en el adapter
         rLauncherAnadirComensal = registerForActivityResult(
@@ -94,7 +96,9 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                         Intent data = result.getData();
                         comensales = (ArrayList<Persona>) data.getSerializableExtra("arrayListComensales");
                         personaAdapter.setResultsPersona(comensales);
-                        MetodosGlobales.cambiarImagenSiLogueado(this,ivLoginParticipantes);
+                        comprobarLauncher();
+                    }else {
+                        comprobarLauncher();
                     }
                 }
         );
@@ -103,7 +107,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         rLauncherDetalleComensal = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        MetodosGlobales.comprobarLogueado(this,ivLoginParticipantes);
+                        comprobarLauncher();
                         Intent data = result.getData();
                         borrarComensal = data.getBooleanExtra("borrarComensal", false);
                         if (!borrarComensal) {
@@ -119,6 +123,8 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                                 comensales.get(i).setComensalCode(i);
                             }
                         }
+                    }else{
+                        comprobarLauncher();
                     }
                 }
         );
@@ -127,10 +133,12 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         rLauncherDesglose = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
+                        comprobarLauncher();
                         Intent data = result.getData();
                         comensales = (ArrayList<Persona>) data.getSerializableExtra("arrayListDesglose");
                         personaAdapter.setResultsPersona(comensales);
-                        MetodosGlobales.cambiarImagenSiLogueado(this,ivLoginParticipantes);
+                    }else{
+                        comprobarLauncher();
                     }
                 }
         );
@@ -138,9 +146,8 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-                        MetodosGlobales.comprobarLogueado(this,ivLoginParticipantes);
-                        currentUser = auth.getCurrentUser();
-                        cargarDatosBd(comensalesBd);
+                  comprobarLauncher();
+
                 }
         );
 
@@ -176,11 +183,23 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                 }
             }
         });
-        ivLoginParticipantes.setOnClickListener(view ->{
-            rLauncherLogin.launch(irLogin);
+    }
+    private void botonImagenNoLogueado(){
+        //Puesto provisional para probar cosas
+        ivLoginParticipantes.setOnClickListener(view -> {
+            Intent intent = new Intent(this, login.AuthActivity.class);
+            rLauncherLogin.launch(intent);
+        });
+
+
+    }
+    private void botonImagenLogueado(){
+        //Puesto provisional para probar cosas
+        ivLoginParticipantes.setOnClickListener(view -> {
+            Intent intent = new Intent(this, login.HomeActivity.class);
+            rLauncherLogin.launch(intent);
         });
     }
-
     public void borrarCompartidos() {
         for (int i=0;i<comensales.size();i++) {
             for (int j=0;j<comensales.get(i).getPlatos().size();j++) {
@@ -231,12 +250,10 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         puVolverParticipantes.setContentView(R.layout.popup_confirmacion);
         btnCancelarParticipantes = puVolverParticipantes.findViewById(R.id.btnCancelarPopup);
         btnConfirmarParticipantes = puVolverParticipantes.findViewById(R.id.btnConfirmarPopup);
-        auth = FirebaseAuth.getInstance();
-        currentUser = auth.getCurrentUser();
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
         comensales= new ArrayList<>();
         comensalesBd = new ArrayList<>();
-        textoFill= findViewById(R.id.textoFill);
-        textoFill.setVisibility(View.INVISIBLE);
     }
 
     public void asignarEfectos() {
@@ -288,11 +305,12 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         rvPersonaParticipantesBd.setAdapter(personaAdapterBd);
         personaAdapterBd.setmListener(this);
         if (currentUser != null) {
-            cargarDatosBd(comensalesBd);
+            cargarDatosBd();
         }
     }
-    private void cargarDatosBd(ArrayList<Persona> comensalesBd) {
+    private void cargarDatosBd() {
          if (currentUser != null) {
+            comensalesBd=new ArrayList<>();
             String usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
             DocumentReference id = db.collection("users").document(usuarioId);
 
@@ -306,8 +324,10 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                 if (task.isSuccessful()) {
                     // Limpiar el ArrayList antes de agregar los nuevos datos
                     int incremento=1;
+
                     // Recorrer los documentos obtenidos y agregar los datos al ArrayList
                     for (DocumentSnapshot document : task.getResult()) {
+
                         String nombre = document.getString("nombre");
                         String descripcion = document.getString("descripcion");
                         String imagen = document.getString("imagen");
@@ -349,32 +369,19 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         }
 
     }
-    private void llenarDatos(){
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = auth.getCurrentUser();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        if (currentUser != null) {
-            CollectionReference personaRef = db.collection("users").document(currentUser.getEmail()).collection("personas");
-            personaRef.get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    String datos = "";
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Persona persona = document.toObject(Persona.class);
-                        datos += persona.getNombre() + " - " + persona.getDescripcion() + "\n";
-                    }
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
-                }
-            });
-        } else {
-            // el usuario no está autenticado, muestra un mensaje o inicia sesión automáticamente
-            Toast.makeText(this, "Inicia sesión para ver los datos", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     @Override
     public void onItemClickBd(int position) {
         Toast.makeText(this,String.valueOf(position),Toast.LENGTH_SHORT).show();
+    }
+    private void comprobarLauncher(){
+        if(MetodosGlobales.comprobarLogueado(this,ivLoginParticipantes)){
+            currentUser = mAuth.getCurrentUser();
+            cargarDatosBd();
+            botonImagenLogueado();
+        }else{
+            Glide.with(this).load(R.drawable.nologinimg).into(ivLoginParticipantes);
+            botonImagenNoLogueado();
+        }
     }
 }
