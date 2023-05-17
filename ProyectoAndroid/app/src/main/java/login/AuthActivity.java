@@ -3,9 +3,7 @@ package login;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,13 +21,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firestore.admin.v1.Index;
 import com.tfg.marfol.R;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import mainActivity.IndexActivity;
 
 public class AuthActivity extends AppCompatActivity {
     private Button btnRegistrarseLogin;
@@ -81,7 +76,7 @@ public class AuthActivity extends AppCompatActivity {
                                 etPasswordLogin.getText().toString()).addOnCompleteListener(it->{
                             if(it.isSuccessful()){
 
-                                showIndex();
+                                finishActivity();
                             }else{
                                 showAlert();
                             }
@@ -113,12 +108,8 @@ public class AuthActivity extends AppCompatActivity {
         AlertDialog dialog= builder.create();
         dialog.show();
     }
-    private void showIndex(){
-        Intent homeIntent= new Intent(this, IndexActivity.class);
-
-        startActivity(homeIntent);
+    private void finishActivity(){
         finish();
-
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -141,7 +132,7 @@ public class AuthActivity extends AppCompatActivity {
                                             DocumentSnapshot document = documentTask.getResult();
                                             if (document.exists()) {
                                                 // El documento ya existe, continuar con el inicio de sesión
-                                                showIndex();
+                                                finishActivity();
                                             } else {
                                                 // El documento no existe, crear uno nuevo con datos vacíos
                                                 Map<String, Object> datosPersona = new HashMap<>();
@@ -154,7 +145,7 @@ public class AuthActivity extends AppCompatActivity {
                                                         .document(email)
                                                         .set(datosPersona)
                                                         .addOnSuccessListener(anadido -> {
-                                                            showIndex();
+                                                            finishActivity();
                                                         })
                                                         .addOnFailureListener(error -> {
                                                             showAlert();

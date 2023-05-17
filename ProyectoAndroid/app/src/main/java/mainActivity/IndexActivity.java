@@ -5,7 +5,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +21,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,10 +28,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.tfg.marfol.R;
 
 
-import java.util.ArrayList;
-
-import entities.Plato;
-import login.HomeActivity;
 import mainActivity.API.API;
 import mainActivity.menu.AboutUs;
 import mainActivity.menu.ContactUs;
@@ -52,7 +46,7 @@ public class IndexActivity extends AppCompatActivity {
     private TextView tvMessage1Popup, tvMessage2Popup, tvTitlePopup;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private ActivityResultLauncher rLauncherIndex;
+    private ActivityResultLauncher rLauncherLogin;
 
     private TextView menuItemAboutUs;
     private TextView menuItemContactUs;
@@ -69,7 +63,15 @@ public class IndexActivity extends AppCompatActivity {
 
         //Método que asigna efectos a los elementos (colores, etc)
         asignarEfectos();
-        rLauncherIndex = registerForActivityResult(
+        //si uno está logueado se comporta de una manera o otra
+        if(MetodosGlobales.comprobarLogueado(IndexActivity.this,ivLoginIndex)){
+            botonesLogueado();
+        }else{
+            Glide.with(this).load(R.drawable.nologinimg).into(ivLoginIndex);
+            botonesNoLogueado();
+
+        }
+        rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if(MetodosGlobales.comprobarLogueado(IndexActivity.this,ivLoginIndex)){
                         //tvLogoutIndex.setVisibility(View.VISIBLE);
@@ -85,17 +87,7 @@ public class IndexActivity extends AppCompatActivity {
 
                 }
         );
-        //si uno está logueado se comporta de una manera o otra
-        if(MetodosGlobales.comprobarLogueado(IndexActivity.this,ivLoginIndex)){
-            //tvLogoutIndex.setVisibility(View.VISIBLE);
-            //tvLogoutIndex.setClickable(true);
 
-            botonesLogueado();
-        }else{
-            Glide.with(this).load(R.drawable.nologinimg).into(ivLoginIndex);
-            botonesNoLogueado();
-
-        }
 
 
 
@@ -108,7 +100,7 @@ public class IndexActivity extends AppCompatActivity {
         //Puesto provisional para probar cosas
         ivLoginIndex.setOnClickListener(view -> {
             Intent intent = new Intent(this, login.AuthActivity.class);
-            rLauncherIndex.launch(intent);
+            rLauncherLogin.launch(intent);
         });
 
         //Botón que accede a la gestión de participantes
@@ -140,7 +132,7 @@ public class IndexActivity extends AppCompatActivity {
         //Puesto provisional para probar cosas
         ivLoginIndex.setOnClickListener(view -> {
             Intent intent = new Intent(this, login.HomeActivity.class);
-            rLauncherIndex.launch(intent);
+            rLauncherLogin.launch(intent);
         });
 
         //Botón que accede a la gestión de participantes

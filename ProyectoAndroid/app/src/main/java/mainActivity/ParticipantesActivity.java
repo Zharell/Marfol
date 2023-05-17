@@ -128,6 +128,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         );
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
+                    currentUser = auth.getCurrentUser();
                         MetodosGlobales.cambiarImagenSiLogueado(this,ivLoginParticipantes);
                 }
         );
@@ -261,9 +262,8 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         rvPersonaParticipantesBd.setAdapter(personaAdapterBd);
         personaAdapterBd.setmListener(this);
         if (currentUser != null) {
-            textoFill.setVisibility(View.VISIBLE);
             cargarDatosBd(comensalesBd);
-            personaAdapterBd.setResultsPersona(comensalesBd);
+
         } else {
             // El usuario no está logueado, no hagas nada o muestra un mensaje de aviso
             Toast.makeText(this, "Inicia sesión para cargar los datos", Toast.LENGTH_SHORT).show();
@@ -271,9 +271,10 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
     }
     private void cargarDatosBd(ArrayList<Persona> comensalesBd) {
-        String usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
-        DocumentReference id = db.collection("users").document(usuarioId);
+
         if (currentUser != null) {
+            String usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
+            DocumentReference id = db.collection("users").document(usuarioId);
             // Obtén la colección "personas" en Firestore
             CollectionReference personasRef = db.collection("personas");
 
@@ -295,7 +296,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                     }
 
                     // Notificar al adapter que los datos han cambiado
-                    personaAdapterBd.notifyDataSetChanged();
+                    personaAdapterBd.setResultsPersonaBd(comensalesBd);
                 } else {
                     // Ocurrió un error al obtener los documentos
 
