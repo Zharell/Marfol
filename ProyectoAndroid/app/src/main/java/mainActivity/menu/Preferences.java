@@ -35,7 +35,6 @@ public class Preferences extends AppCompatActivity {
         menuItemPreferencias = popupView.findViewById(R.id.menu_item2);
         menuItemAboutUs = popupView.findViewById(R.id.menu_item3);
         menuItemContactUs = popupView.findViewById(R.id.menu_item4);
-        tvEditarDatos = popupView.findViewById(R.id.tvEditarDatos);
         // Ajustar el tamaño del menú según tus preferencias
         int width = getResources().getDisplayMetrics().widthPixels * 7 / 10; // El 70% del ancho de la pantalla
         int height = getResources().getDisplayMetrics().heightPixels ; // El 70% del alto de la pantalla

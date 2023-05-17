@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firestore.admin.v1.Index;
 import com.tfg.marfol.R;
 
 import java.util.HashMap;
@@ -50,7 +51,8 @@ public class AuthActivity extends AppCompatActivity {
 
         //Setup
         setup();
-        session();
+
+
     }
 
     private void asignarId() {
@@ -62,15 +64,7 @@ public class AuthActivity extends AppCompatActivity {
         tvContrasenaOlvidada=findViewById(R.id.tvContrasenaOlvidada);
     }
 
-    private void session() {
-        SharedPreferences prefAux = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
-        String email = prefAux.getString("email",null);
-        String provider = prefAux.getString("provider",null);
-        if(email != null && provider != null){
 
-            showHome(email,ProviderType.valueOf(provider));
-        }
-    }
     //Este metodo crea un usuario con el correo pasandole las cajas y conectándose con firebase
     private void setup() {
         //Registro
@@ -87,7 +81,7 @@ public class AuthActivity extends AppCompatActivity {
                                 etPasswordLogin.getText().toString()).addOnCompleteListener(it->{
                             if(it.isSuccessful()){
 
-                                showHome(it.getResult().getUser().getEmail(),ProviderType.BASIC);
+                                showIndex();
                             }else{
                                 showAlert();
                             }
@@ -119,10 +113,9 @@ public class AuthActivity extends AppCompatActivity {
         AlertDialog dialog= builder.create();
         dialog.show();
     }
-    private void showHome(String email, ProviderType provider ){
-        Intent homeIntent= new Intent(this,HomeActivity.class);
-        homeIntent.putExtra("EMAIL",email);
-        homeIntent.putExtra("PROVIDER",provider.name());
+    private void showIndex(){
+        Intent homeIntent= new Intent(this, IndexActivity.class);
+
         startActivity(homeIntent);
         finish();
 
@@ -148,7 +141,7 @@ public class AuthActivity extends AppCompatActivity {
                                             DocumentSnapshot document = documentTask.getResult();
                                             if (document.exists()) {
                                                 // El documento ya existe, continuar con el inicio de sesión
-                                                showHome(email, ProviderType.GOOGLE);
+                                                showIndex();
                                             } else {
                                                 // El documento no existe, crear uno nuevo con datos vacíos
                                                 Map<String, Object> datosPersona = new HashMap<>();
@@ -161,7 +154,7 @@ public class AuthActivity extends AppCompatActivity {
                                                         .document(email)
                                                         .set(datosPersona)
                                                         .addOnSuccessListener(anadido -> {
-                                                            showHome(email, ProviderType.GOOGLE);
+                                                            showIndex();
                                                         })
                                                         .addOnFailureListener(error -> {
                                                             showAlert();

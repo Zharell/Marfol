@@ -31,7 +31,7 @@ enum ProviderType{
     GOOGLE
 }
 public class HomeActivity extends AppCompatActivity {
-    private Button btnLogoutHome, btnEditarBD;
+    private Button btnEditarBD;
     private TextView tvEmailHome;
     private TextView tvNombreUsuario, tvTelefonoUsuario;
     private FirebaseFirestore db;
@@ -49,15 +49,18 @@ public class HomeActivity extends AppCompatActivity {
         //asignarId
         asignarId();
         if(MetodosGlobales.comprobarLogueado(this,ivFotoPersonaHome)){
+
             MetodosGlobales.cargarDatosEnHomeSiLogueado(tvEmailHome,tvNombreUsuario,tvTelefonoUsuario);
+            setup( );
         }else{
 
+            finish();
         }
 
-        setup( );
+
 
         // Guardado de datos
-        rLauncherHome = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+       /* rLauncherHome = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
                         // Aquí puedes obtener los datos de vuelta de la actividad de edición
@@ -74,14 +77,13 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     }
                 }
-        );
+        );*/
 
 
     }
 
     private void asignarId() {
         db = FirebaseFirestore.getInstance();
-        btnLogoutHome = findViewById(R.id.btnLogoutHome);
         btnEditarBD = findViewById(R.id.btnEditarBD);
         tvEmailHome = findViewById(R.id.tvEmailHome);
         tvNombreUsuario = findViewById(R.id.tvNombreApellido);
@@ -93,29 +95,17 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setup() {
 
-
-
-        btnLogoutHome.setOnClickListener(v -> {
-            //Borrado de datos
-            SharedPreferences prefAux = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
-            SharedPreferences.Editor prefs = prefAux.edit();
-            prefs.clear();
-            prefs.apply();
-            FirebaseAuth.getInstance()
-                    .signOut();
-            Intent in = new Intent(this, IndexActivity.class);
-            startActivity(in);
-            finish();
-        });
         btnEditarBD.setOnClickListener(v -> {
             Intent editar = new Intent(HomeActivity.this, EditarDatos.class);
             //aqui parseo los datos para quitar Nombre: y Teléfono: y quedarme solo con el valor de dentro
             nombreEnviar =  tvNombreUsuario.getText().toString();
             telefonoEnviar = tvTelefonoUsuario.getText().toString();
-            editar.putExtra("name", nombreEnviar);
-            editar.putExtra("phone", telefonoEnviar);
-            setResult(RESULT_OK, editar);
-            rLauncherHome.launch(editar);
+            //editar.putExtra("name", nombreEnviar);
+           // editar.putExtra("phone", telefonoEnviar);
+           // setResult(RESULT_OK, editar);
+           // rLauncherHome.launch(editar);
+            startActivity(editar);
+            finish();
         });
 
     }

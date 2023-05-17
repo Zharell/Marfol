@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mainActivity.IndexActivity;
+import mainActivity.MetodosGlobales;
 
 
 public class EditarDatos extends AppCompatActivity {
@@ -55,10 +56,10 @@ public class EditarDatos extends AppCompatActivity {
     private String email, provider;
     private ImageView ivPlatoAnadirP;
     private ActivityResultLauncher rLauncherEditar;
-    private ActivityResultLauncher <Intent> camaraLauncher;
+    private ActivityResultLauncher<Intent> camaraLauncher;
     private FirebaseAuth mAuth;
     private static final int CAMERA_PERMISSION_CODE = 100;
-    private String uriCapturada="",storage_path="users/*",photo="photo";
+    private String uriCapturada = "", storage_path = "users/*", photo = "photo";
 
     private StorageReference storageReference;
     private static final int COD_SEL_IMAGE = 400;
@@ -71,76 +72,67 @@ public class EditarDatos extends AppCompatActivity {
         setContentView(R.layout.activity_editar_datos);
 
         asignarId();
+        if (MetodosGlobales.comprobarLogueadoEditar(EditarDatos.this, ivPlatoAnadirP)) {
+            MetodosGlobales.cargarDatosEnEditarSiLogueado(etNombreUsuario, etTelefonoUsuario);
+            imagenDeBd();
 
-
-        Bundle extras = getIntent().getExtras();
-        String name = extras.getString("name");
-        String phone = extras.getString("phone");
-        etNombreUsuario.setText(name);
-        etTelefonoUsuario.setText(phone);
-
-        // Obtenemos los datos del usuario
-        SharedPreferences prefAux = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
-        email = prefAux.getString("email", "");
-        provider = prefAux.getString("provider", "");
-
-        imagenDeBd();
-
-        // Configuramos el botón de guardar
-        btnGuardarBD.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                actualizarDatos();
-            }
-        });
-
-        // Registrar el launcher para la cámara
-        camaraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (result.getResultCode() == RESULT_OK) {
-
-                // Si la foto se toma correctamente, mostrar la vista previa en el ImageView
-                Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
-                // Insertar la imagen en la galería y obtenemos la URI transformada en String para almacenar en la BD
-                ContentValues values = new ContentValues();
-                values.put(MediaStore.Images.Media.TITLE, "personaMarfol.jpg");
-                Uri uri = getContentResolver(). insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
-                try {
-
-                    OutputStream outputStream = getContentResolver().openOutputStream(uri);
-                    photo.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-                    outputStream.close();
-
-                    //Obtenemos la ruta URI de la imagen seleccionada
-                    uriCapturada = uri.toString();
-                    Glide.with(EditarDatos.this).load(uriCapturada).circleCrop().into(ivPlatoAnadirP);
-                    Log.d("AAAAAAAAAAAAAA",uriCapturada);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
+            // Configuramos el botón de guardar
+            btnGuardarBD.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    actualizarDatos();
                 }
+            });
 
-            }
-        });
+            // Registrar el launcher para la cámara
+            camaraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK) {
 
-        //Añadimos onClick en el ImageView para activar la imagen
-        ivPlatoAnadirP.setOnClickListener(view -> {
-            // Solicitar permiso para acceder a la cámara
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
-                //Si no tenemos los permisos los obtenemos
-                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
-            } else {
-                // Si ya se tienen los permisos, abrir la cámara
-                abrirCamara();
-            }
-        });
+                    // Si la foto se toma correctamente, mostrar la vista previa en el ImageView
+                    Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
+                    // Insertar la imagen en la galería y obtenemos la URI transformada en String para almacenar en la BD
+                    ContentValues values = new ContentValues();
+                    values.put(MediaStore.Images.Media.TITLE, "personaMarfol.jpg");
+                    Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+                    try {
+
+                        OutputStream outputStream = getContentResolver().openOutputStream(uri);
+                        photo.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                        outputStream.close();
+
+                        //Obtenemos la ruta URI de la imagen seleccionada
+                        uriCapturada = uri.toString();
+                        Glide.with(EditarDatos.this).load(uriCapturada).circleCrop().into(ivPlatoAnadirP);
+                        Log.d("AAAAAAAAAAAAAA", uriCapturada);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+
+            //Añadimos onClick en el ImageView para activar la imagen
+            ivPlatoAnadirP.setOnClickListener(view -> {
+                // Solicitar permiso para acceder a la cámara
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+                    //Si no tenemos los permisos los obtenemos
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+                } else {
+                    // Si ya se tienen los permisos, abrir la cámara
+                    abrirCamara();
+                }
+            });
+        }
+
 
     }
 
     private void asignarId() {
         // Obtenemos la instancia de Firebase
         db = FirebaseFirestore.getInstance();
-        mAuth= FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
 
         // Obtenemos las referencias a los elementos del layout
@@ -150,7 +142,7 @@ public class EditarDatos extends AppCompatActivity {
         btnGuardarBD = findViewById(R.id.btnGuardarBD);
     }
 
-    private void imagenDeBd(){
+    private void imagenDeBd() {
         // Realizar consulta al documento del usuario
         if (email != null && !email.isEmpty()) {
             db.collection("users").document(email).get()
@@ -182,18 +174,20 @@ public class EditarDatos extends AppCompatActivity {
         }
 
     }
+
     private void actualizarDatos() {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         //METERLO EN STORAGE
-        String rute_storage_photo = storage_path+""+photo+""+mAuth.getUid();
+        String rute_storage_photo = storage_path + "" + photo + "" + mAuth.getUid();
         StorageReference reference = storageReference.child(rute_storage_photo);
         // Creamos el mapa con los datos a actualizar
         Map<String, Object> map = new HashMap<>();
-        map.put("provider", provider);
         map.put("name", etNombreUsuario.getText().toString());
         map.put("phone", etTelefonoUsuario.getText().toString());
 
         // Verificamos si el documento del usuario ya existe en la base de datos
-        db.collection("users").document(email).get()
+        db.collection("users").document(mAuth.getCurrentUser().getEmail()).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -201,7 +195,7 @@ public class EditarDatos extends AppCompatActivity {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
 
-                                imagenEnBd(reference,Uri.parse(uriCapturada));
+                                imagenEnBd(reference, Uri.parse(uriCapturada));
 
                                 // Verificar si no se seleccionó una nueva imagen y conservar el valor existente
                                 if (uriCapturada.isEmpty()) {
@@ -211,25 +205,15 @@ public class EditarDatos extends AppCompatActivity {
                                 }
 
                                 // El documento del usuario ya existe, actualizamos sus datos
-                                db.collection("users").document(email).update(map)
+                                db.collection("users").document(mAuth.getCurrentUser().getEmail()).update(map)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void unused) {
                                                 // Mostramos el mensaje de actualizado
                                                 Toast.makeText(EditarDatos.this, "Datos actualizados", Toast.LENGTH_SHORT).show();
-
+                                                Intent i = new Intent(EditarDatos.this, HomeActivity.class);
+                                                startActivity(i);
                                                 // Crear el Intent con los datos a enviar
-                                                Intent resultIntent = new Intent();
-                                                resultIntent.putExtra("name", etNombreUsuario.getText().toString());
-                                                resultIntent.putExtra("phone", etTelefonoUsuario.getText().toString());
-                                                if (uriCapturada.isEmpty()) {
-                                                    resultIntent.putExtra("img", document.getString("imagen"));
-                                                } else {
-                                                    resultIntent.putExtra("img", uriCapturada);
-                                                }
-
-                                                // Establecer el resultado y finalizar la actividad
-                                                setResult(RESULT_OK, resultIntent);
                                                 finish();
                                             }
                                         })
@@ -242,19 +226,14 @@ public class EditarDatos extends AppCompatActivity {
                                         });
                             } else {
                                 // El documento del usuario no existe, creamos uno nuevo con sus datos
-                                db.collection("users").document(email).set(map)
+                                db.collection("users").document(mAuth.getCurrentUser().getEmail()).set(map)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void unused) {
                                                 // Mostramos el mensaje de actualizado
                                                 Toast.makeText(EditarDatos.this, "Datos actualizados", Toast.LENGTH_SHORT).show();
                                                 // Crear el Intent con los datos a enviar
-                                                Intent resultIntent = new Intent();
-                                                resultIntent.putExtra("name", etNombreUsuario.getText().toString());
-                                                resultIntent.putExtra("phone", etTelefonoUsuario.getText().toString());
-                                                resultIntent.putExtra("imagen", uriCapturada);
-                                                // Establecer el resultado y finalizar la actividad
-                                                setResult(RESULT_OK, resultIntent);
+                                                Intent i = new Intent(EditarDatos.this, HomeActivity.class);
                                                 finish();
 
                                             }
@@ -280,6 +259,7 @@ public class EditarDatos extends AppCompatActivity {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         camaraLauncher.launch(cameraIntent);
     }
+
     private void imagenEnBd(StorageReference reference, Uri uri) {
         reference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -291,7 +271,7 @@ public class EditarDatos extends AppCompatActivity {
                         String download_uri = uri.toString();
                         HashMap<String, Object> map = new HashMap<>();
                         map.put("imagen", download_uri);
-                        db.collection("users").document(email).set(map, SetOptions.merge())
+                        db.collection("users").document(mAuth.getCurrentUser().getEmail()).set(map, SetOptions.merge())
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {

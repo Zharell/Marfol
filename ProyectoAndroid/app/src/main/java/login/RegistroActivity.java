@@ -74,7 +74,7 @@ public class RegistroActivity extends AppCompatActivity {
                                 datosPersona.put("imagen","");
                                 db.collection("users").document(email).set(datosPersona)
                                         .addOnSuccessListener(anadido -> {
-                                            showHome(it.getResult().getUser().getEmail(), ProviderType.BASIC);
+                                            showIndex();
                                         }).addOnFailureListener(error -> {
                                             showAlert();
                                         });
@@ -115,11 +115,9 @@ public class RegistroActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void showHome(String email, ProviderType provider) {
-        Intent homeIntent = new Intent(this, HomeActivity.class);
-        homeIntent.putExtra("EMAIL", email);
-        homeIntent.putExtra("PROVIDER", provider.name());
-        startActivity(homeIntent);
+    private void showIndex() {
+        Intent indexIntent = new Intent(this, IndexActivity.class);
+        startActivity(indexIntent);
         finish();
 
     }
