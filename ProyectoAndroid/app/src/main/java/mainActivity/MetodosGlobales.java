@@ -32,7 +32,8 @@ public class MetodosGlobales {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
                             String imagen = document.getString("imagen");
-                            if (imagen != null) {
+                            if (imagen != null&& !imagen.equalsIgnoreCase("")) {
+                                iVimagen.setBackground(null);
                                 iVimagen.setClickable(false);  // Deshabilitar el clic en la imagen
                                 iVimagen.setFocusable(false);
                                 iVimagen.setPadding(20, 20, 20, 20);
@@ -74,8 +75,9 @@ public class MetodosGlobales {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
                             String imagen = document.getString("imagen");
-                            if (imagen != null) {
+                            if (imagen != null&&!imagen.equalsIgnoreCase("")) {
                                 iVimagen.setPadding(20, 20, 20, 20);
+                                iVimagen.setBackground(null);
                                 Glide.with(context)
                                         .load(imagen)
                                         .circleCrop() // Aplica el formato redondeado
@@ -115,7 +117,8 @@ public class MetodosGlobales {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
                             String imagen = document.getString("imagen");
-                            if (imagen != null) {
+                            if (imagen != null&& !imagen.equalsIgnoreCase("")) {
+                                iVimagen.setBackground(null);
                                 iVimagen.setPadding(20, 20, 20, 20);
                                 Glide.with(context)
                                         .load(imagen)

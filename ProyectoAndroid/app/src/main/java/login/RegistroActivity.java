@@ -69,6 +69,7 @@ public class RegistroActivity extends AppCompatActivity {
                                 telefono = etTelefonoRegistro.getText().toString();
                                 //mapeo de datos
                                 Map<String, Object> datosPersona = new HashMap<>();
+                                datosPersona.put("email",email);
                                 datosPersona.put("name", nombre);
                                 datosPersona.put("phone", telefono);
                                 datosPersona.put("imagen","");
