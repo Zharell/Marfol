@@ -31,13 +31,13 @@ import java.util.Map;
 import mainActivity.IndexActivity;
 
 public class AuthActivity extends AppCompatActivity {
-    Button btnRegistrarseLogin;
-    ImageButton btnGoogleLogin;
-    Button btnEntrarLogin;
-    EditText etEmailLogin;
-    EditText etPasswordLogin;
+    private Button btnRegistrarseLogin;
+    private ImageButton btnGoogleLogin;
+    private Button btnEntrarLogin;
+    private EditText etEmailLogin;
+    private EditText etPasswordLogin;
 
-    TextView tvContrasenaOlvidada;
+    private TextView tvContrasenaOlvidada;
     private final int GOOGLE_SIGN_IN = 100;
 
     @Override
@@ -45,16 +45,21 @@ public class AuthActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
         //variables
+        asignarId();
+
+
+        //Setup
+        setup();
+        session();
+    }
+
+    private void asignarId() {
         btnRegistrarseLogin=findViewById(R.id.btnRegistrarseLogin);
         btnEntrarLogin=findViewById(R.id.btnEntrarLogin);
         etEmailLogin=findViewById(R.id.etEmailLogin);
         etPasswordLogin=findViewById(R.id.etPasswordLogin);
         btnGoogleLogin=findViewById(R.id.btnGoogleLogin);
         tvContrasenaOlvidada=findViewById(R.id.tvContrasenaOlvidada);
-
-        //Setup
-        setup();
-        session();
     }
 
     private void session() {

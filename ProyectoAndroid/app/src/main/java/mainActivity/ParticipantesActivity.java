@@ -4,7 +4,6 @@ import static android.content.ContentValues.TAG;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,10 +25,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-
-import com.google.android.gms.tasks.Task;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -38,7 +33,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.tfg.marfol.R;
 
 
@@ -89,7 +83,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         //Método que asigna los efectos a los elementos
         asignarEfectos();
         //comprobar si estoy logueado
-        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
+        MetodosGlobales.cambiarImagenSiLogueado(this,ivLoginParticipantes);
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
@@ -104,7 +98,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                         Intent data = result.getData();
                         comensales = (ArrayList<Persona>) data.getSerializableExtra("arrayListComensales");
                         personaAdapter.setResultsPersona(comensales);
-                        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
+                        MetodosGlobales.cambiarImagenSiLogueado(this,ivLoginParticipantes);
                     }
                 }
         );
@@ -116,7 +110,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                         Intent data = result.getData();
                         comensales.set(comensalPosicion,(Persona) data.getSerializableExtra("detalleComensal"));
                         personaAdapter.setResultsPersona(comensales);
-                        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
+                        MetodosGlobales.cambiarImagenSiLogueado(this,ivLoginParticipantes);
                     }
                 }
         );
@@ -128,13 +122,13 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                         Intent data = result.getData();
                         comensales = (ArrayList<Persona>) data.getSerializableExtra("arrayListDesglose");
                         personaAdapter.setResultsPersona(comensales);
-                        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
+                        MetodosGlobales.cambiarImagenSiLogueado(this,ivLoginParticipantes);
                     }
                 }
         );
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-                        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
+                        MetodosGlobales.cambiarImagenSiLogueado(this,ivLoginParticipantes);
                 }
         );
 

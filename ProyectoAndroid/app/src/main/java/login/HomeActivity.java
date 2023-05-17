@@ -94,32 +94,29 @@ public class HomeActivity extends AppCompatActivity {
         DocumentReference id = db.collection("users").document(email);
         progressBar.setVisibility(View.VISIBLE);
 
-        id.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    String name = documentSnapshot.getString("name");
-                    String phone = documentSnapshot.getString("phone");
-                    String imagen = documentSnapshot.getString("imagen");
-                    // Si no hay datos de nombre o teléfono, ocultar la progress bar
-                    if (name == null || phone == null) {
-                        progressBar.setVisibility(View.GONE);
-                        return;
-                    }
-
-                    // Actualizar los EditText con los datos recuperados
-                    tvEmailHome.setText(email);
-                    tvNombreUsuario.setText(name);
-                    tvTelefonoUsuario.setText(phone);
-                    Glide.with(HomeActivity.this).load(imagen).into(ivFotoPersonaHome);
-                    Log.d("AAAAAAAAAAAAAAAAAAAAA",imagen);
-                    //ivFotoPersonaHome.setImageURI(Uri.parse(img));
-
+        id.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                String name = documentSnapshot.getString("name");
+                String phone = documentSnapshot.getString("phone");
+                String imagen = documentSnapshot.getString("imagen");
+                // Si no hay datos de nombre o teléfono, ocultar la progress bar
+                if (name == null || phone == null) {
                     progressBar.setVisibility(View.GONE);
-                } else {
-                    Log.d(TAG, "No se encontró el documento");
-                    progressBar.setVisibility(View.GONE);
+                    return;
                 }
+
+                // Actualizar los EditText con los datos recuperados
+                tvEmailHome.setText(email);
+                tvNombreUsuario.setText(name);
+                tvTelefonoUsuario.setText(phone);
+                Glide.with(HomeActivity.this).load(imagen).into(ivFotoPersonaHome);
+                Log.d("AAAAAAAAAAAAAAAAAAAAA",imagen);
+                //ivFotoPersonaHome.setImageURI(Uri.parse(img));
+
+                progressBar.setVisibility(View.GONE);
+            } else {
+                Log.d(TAG, "No se encontró el documento");
+                progressBar.setVisibility(View.GONE);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

@@ -62,48 +62,56 @@ public class IndexActivity extends AppCompatActivity {
 
         //Método que asigna efectos a los elementos (colores, etc)
         asignarEfectos();
-        //Método para comprobar las imagenes del usuario
-        MetodosGlobales.comprobarUsuarioLogueado(IndexActivity.this,ivLoginIndex);
+        //si uno está logueado se comporta de una manera o otra
+        if(MetodosGlobales.comprobarLogueado(IndexActivity.this,ivLoginIndex)){
 
-        //Puesto provisional para probar cosas
-        ivLoginIndex.setOnClickListener(view -> {
-            Intent intent = new Intent(this, login.AuthActivity.class);
-            rLauncherIndex.launch(intent);
-        });
+        }else{
+            //Puesto provisional para probar cosas
+            ivLoginIndex.setOnClickListener(view -> {
+                Intent intent = new Intent(this, login.AuthActivity.class);
+                rLauncherIndex.launch(intent);
+            });
+
+            //Botón que accede a la gestión de participantes
+            btnApIndex.setOnClickListener(view -> {
+                Intent intent = new Intent(this, ParticipantesActivity.class);
+
+                startActivity(intent);
+
+                //Aplica un efecto de desvanecimiento entre actividades y se cierra
+                overridePendingTransition(androidx.navigation.ui.R.anim.nav_default_enter_anim, androidx.navigation.ui.R.anim.nav_default_exit_anim);
+                finish();
+            });
+
+            btnApIndex2.setOnClickListener(view -> {
+                Intent intent = new Intent(this, API.class);
+                startActivity(intent);
+            });
+            //Botones para el popup de confirmación
+            //Confirmar cierra la APP
+            btnConfirmarIndex.setOnClickListener(view -> {
+                puVolverIndex.dismiss();
+                finishAffinity();
+            });
+
+            //Cancela, desaparece el popup y continúa en la actividad
+            btnCancelarIndex.setOnClickListener(view -> puVolverIndex.dismiss());
+
+            //launcher result para comprobar las imagenes del usuario
+            rLauncherIndex = registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(), result -> {
+                        MetodosGlobales.cambiarImagenSiLogueado(IndexActivity.this,ivLoginIndex);
+                        Toast.makeText(this, "Launcher jiji", Toast.LENGTH_SHORT).show();
+                    }
+            );
+
+        }
 
 
-        //Botón que accede a la gestión de participantes
-        btnApIndex.setOnClickListener(view -> {
-            Intent intent = new Intent(this, ParticipantesActivity.class);
 
-            startActivity(intent);
 
-            //Aplica un efecto de desvanecimiento entre actividades y se cierra
-            overridePendingTransition(androidx.navigation.ui.R.anim.nav_default_enter_anim, androidx.navigation.ui.R.anim.nav_default_exit_anim);
-            finish();
-        });
 
-        btnApIndex2.setOnClickListener(view -> {
-            Intent intent = new Intent(this, API.class);
-            startActivity(intent);
-        });
-        //Botones para el popup de confirmación
-        //Confirmar cierra la APP
-        btnConfirmarIndex.setOnClickListener(view -> {
-            puVolverIndex.dismiss();
-            finishAffinity();
-        });
 
-        //Cancela, desaparece el popup y continúa en la actividad
-        btnCancelarIndex.setOnClickListener(view -> puVolverIndex.dismiss());
-
-        //launcher result para comprobar las imagenes del usuario
-        rLauncherIndex = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(), result -> {
-                    MetodosGlobales.comprobarUsuarioLogueado(IndexActivity.this,ivLoginIndex);
-                    Toast.makeText(this, "Launcher jiji", Toast.LENGTH_SHORT).show();
-                }
-        );
 
 
     }
