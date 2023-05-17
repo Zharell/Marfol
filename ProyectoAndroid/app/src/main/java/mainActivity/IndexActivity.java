@@ -35,12 +35,11 @@ public class IndexActivity extends AppCompatActivity {
     private Button btnApIndex;
 
     private Button btnApIndex2;
-    private TextView tvTitleIndex;
     private ImageView ivLoginIndex, ivMenuIndex;
     private RecyclerView rvPresetsIndex;
     private Dialog puVolverIndex;
     private Button btnCancelarIndex, btnConfirmarIndex;
-    private TextView tvMessage1Popup, tvMessage2Popup, tvTitlePopup;
+    private TextView tvMessage1Popup, tvMessage2Popup, tvTitlePopup, btnAPIndex, tvTitleIndex;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private ActivityResultLauncher rLauncherIndex;
@@ -110,8 +109,7 @@ public class IndexActivity extends AppCompatActivity {
     public void asignarId() {
         //Asigna Ids a los elementos de la actividad
         btnApIndex = findViewById(R.id.btnApIndex);
-        btnApIndex2 = findViewById(R.id.btnApIndex2);
-
+        btnApIndex2 = findViewById(R.id.btnAPIndex);
         ivLoginIndex = findViewById(R.id.ivAnadirPlatoImagen);
 
         ivMenuIndex = findViewById(R.id.ivMenuAnadirPlato);
@@ -148,9 +146,9 @@ public class IndexActivity extends AppCompatActivity {
 
         tvTitleIndex.getPaint().setShader(gradient);
         btnApIndex.getPaint().setShader(gradient);
+        btnApIndex2.getPaint().setShader(gradient);
         btnConfirmarIndex.getPaint().setShader(gradient);
         btnCancelarIndex.getPaint().setShader(gradient);
-
 
         // Asigna sombreado al texto
         float shadowRadius = 10f;

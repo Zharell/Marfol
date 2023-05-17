@@ -55,6 +55,7 @@ import mainActivity.detalle.DetallePersonaActivity;
 public class ParticipantesActivity extends AppCompatActivity implements PersonaAdapter.onItemClickListener, PersonaAdapterBd.onItemClickListenerBd {
 
     private final int MINIMO_PLATOS = 1;
+    private boolean borrarComensal = false;
     private int numPlatos=0;
     private ImageView ivLoginParticipantes, ivMenuParticipantes;
     private TextView tvTitleParticipantes,textoFill;
@@ -70,9 +71,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private ActivityResultLauncher rLauncherLogin;
     private ArrayList<Persona> comensales;
     private int comensalPosicion;
-
     private ArrayList<Persona> comensalesBd;
-
     private RecyclerView rvPersonaParticipantesBd;
     private Intent irLogin;
     private FirebaseFirestore db;
@@ -114,9 +113,21 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
-                        comensales.set(comensalPosicion,(Persona) data.getSerializableExtra("detalleComensal"));
-                        personaAdapter.setResultsPersona(comensales);
-                        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
+                        borrarComensal = data.getBooleanExtra("borrarComensal", false);
+                        if (!borrarComensal) {
+                            comensales.set(comensalPosicion,(Persona) data.getSerializableExtra("detalleComensal"));
+                            personaAdapter.setResultsPersona(comensales);
+                            MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
+                        } else {
+                            //Método que comprueba con quien has compartido y lo borra de ser necesario
+                            borrarCompartidos();
+                            comensales.remove(comensalPosicion);
+                            personaAdapter.setResultsPersona(comensales);
+                            //Importantísimo, reorganiza los ComensalCodes al borrar un comensal
+                            for (int i=1;i<comensales.size();i++) {
+                                comensales.get(i).setComensalCode(i);
+                            }
+                        }
                     }
                 }
         );
@@ -132,12 +143,15 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                     }
                 }
         );
+
+
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                         MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
+                        currentUser = auth.getCurrentUser();
+                        cargarDatosBd(comensalesBd);
                 }
         );
-
 
         //Botones para el popup de confirmación
         //Confirmar, retrocede, cierra la actividad y pierde los datos introducidos - se debe cerrar con dismiss() para evitar fugas de memoria
@@ -152,7 +166,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
         //Botón de continuar, avanza a la siguiente actividad
         // 1 - Debe haber mínimo un comensal
-        // 2 - Debe haber mínimo un plato
+        // 2 - Debe haber mínimo un plato ( la primera vez )
         btnContinuarParticipantes.setOnClickListener(view -> {
             //Obtenemos todos los platos
             int numPlatos = obtenerPlatos();
@@ -164,7 +178,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
             } else {
                 //Comprobamos qué elemento nos falta para avanzar al desglose
                 if (comensales.size()<2) {
-                    Toast.makeText(this,"Debe añadir al menos un comensales",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this,"Debe añadir al menos un comensal",Toast.LENGTH_SHORT).show();
                 }
                 if (numPlatos < MINIMO_PLATOS) {
                     Toast.makeText(this,"Debe añadir al menos un plato",Toast.LENGTH_SHORT).show();
@@ -176,6 +190,22 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         });
     }
 
+    public void borrarCompartidos() {
+        for (int i=0;i<comensales.size();i++) {
+            for (int j=0;j<comensales.get(i).getPlatos().size();j++) {
+                if (comensales.get(i).getPlatos().get(j).isCompartido()) {
+                    for (int h = 0; h < comensales.get(i).getPlatos().get(j).getPersonasCompartir().size(); h++) {
+                        if (comensales.get(i).getPlatos().get(j).getPersonasCompartir().get(h).getComensalCode()==comensales.get(comensalPosicion).getComensalCode()) {
+                            comensales.get(i).getPlatos().get(j).getPersonasCompartir().remove(h);
+                            if (comensales.get(i).getPlatos().get(j).getPersonasCompartir().size()<=1) {
+                                comensales.get(i).getPlatos().get(j).setCompartido(false);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     //Comprueba si se han añadido platos para avanzar al Desglose
     public int obtenerPlatos() {
@@ -269,7 +299,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         if (currentUser != null) {
             textoFill.setVisibility(View.VISIBLE);
             cargarDatosBd(comensalesBd);
-            personaAdapterBd.setResultsPersona(comensalesBd);
         } else {
             // El usuario no está logueado, no hagas nada o muestra un mensaje de aviso
             Toast.makeText(this, "Inicia sesión para cargar los datos", Toast.LENGTH_SHORT).show();
@@ -277,9 +306,11 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
     }
     private void cargarDatosBd(ArrayList<Persona> comensalesBd) {
-        String usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
-        DocumentReference id = db.collection("users").document(usuarioId);
         if (currentUser != null) {
+
+            String usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
+            DocumentReference id = db.collection("users").document(usuarioId);
+
             // Obtén la colección "personas" en Firestore
             CollectionReference personasRef = db.collection("personas");
 
@@ -301,23 +332,17 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                     }
 
                     // Notificar al adapter que los datos han cambiado
-                    personaAdapterBd.notifyDataSetChanged();
+                    personaAdapterBd.setResultsPersona(comensalesBd);
+
                 } else {
                     // Ocurrió un error al obtener los documentos
-
                 }
             });
         } else {
-
             // El usuario no está autenticado, muestra un mensaje o inicia sesión automáticamente
             Toast.makeText(this, "Inicia sesión para cargar los datos", Toast.LENGTH_SHORT).show();
         }
     }
-
-
-
-
-
 
     @Override
     public void onItemClick(int position) {
@@ -335,27 +360,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
             Intent intent = new Intent(this, AnadirParticipanteActivity.class);
             intent.putExtra("arrayListComensales", comensales);
             rLauncherAnadirComensal.launch(intent);
-
-            /*
-            comensales.add(new Persona("Juan", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Gayler", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Fer", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Javier", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Juan", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Gayler", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Fer", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Javier", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Juan", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Gayler", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Fer", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Javier", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Juan", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Gayler", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Fer", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            comensales.add(new Persona("Javier", "Le gusta comer", "no hay URL", new ArrayList<>()));
-            //Añade el contenido al adapter, si está vacío el propio Adapter añade el " Añadir Persona "
-            personaAdapter.setResultsPersona(comensales);
-            */
 
         }
 
@@ -382,8 +386,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
             // el usuario no está autenticado, muestra un mensaje o inicia sesión automáticamente
             Toast.makeText(this, "Inicia sesión para ver los datos", Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
     @Override

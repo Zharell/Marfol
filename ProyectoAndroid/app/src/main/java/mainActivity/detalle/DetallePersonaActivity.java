@@ -72,14 +72,12 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
     private static final int CAMERA_PERMISSION_CODE = 100;
     private ActivityResultLauncher <Intent> camaraLauncher;
     private ActivityResultLauncher rLauncherPlatos;
-    private Button btnContinuarDetalle;
+    private Button btnContinuarDetalle, btnBorrarDetalle;
     private String uriCapturada="";
     private FirebaseFirestore db;
     private FirebaseAuth auth ;
     private FirebaseUser currentUser;
     private String email;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,8 +155,18 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
             }
         });
 
+        //Botón de borrar, llama a un método que a además de borrar, reordena los comensalID
+        btnBorrarDetalle.setOnClickListener(view -> {
+            borrarComensal();
+        });
 
+    }
 
+    public void borrarComensal(){
+        Intent borrarComensal = new Intent();
+        borrarComensal.putExtra("borrarComensal", true);
+        setResult(Activity.RESULT_OK, borrarComensal);
+        finish();
     }
 
     public void editarComensal() {
@@ -356,7 +364,10 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
-
+        if (auth.getCurrentUser() != null) {
+            email = currentUser.getEmail();
+        }
+        btnBorrarDetalle = findViewById(R.id.btnBorrarDetalle);
         ivLoginDetalle = findViewById(R.id.ivLoginDetallePersona);
         ivMenuDetalle = findViewById(R.id.ivMenuDetallePersona);
         ivFotoDetalle = findViewById(R.id.ivFotoPersonaDetalle);
@@ -364,7 +375,6 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         etDescripcionDetalle = findViewById(R.id.etDescripcionDetallePersona);
         rvAnadirPlatoDetalle = findViewById(R.id.rvAnadirPlatoDetalle);
         btnContinuarDetalle = findViewById(R.id.btnEditarDetalle);
-        email = currentUser.getEmail();
     }
 
     @Override

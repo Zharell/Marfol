@@ -1,8 +1,6 @@
 package adapters;
 
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tfg.marfol.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import entities.Persona;
 import entities.Plato;
@@ -39,7 +36,6 @@ public class AnadirPersonaAdapter extends RecyclerView.Adapter<AnadirPersonaAdap
 
     @Override
     public void onBindViewHolder(@NonNull AnadirPersonaAdapterResultHolder holder, int position) {
-
         //Insertamos para cada persona en el Recycler su nombre
         holder.tvPlatoRow.setText(resultsPlato.get(position).getNombre());
 
@@ -47,6 +43,7 @@ public class AnadirPersonaAdapter extends RecyclerView.Adapter<AnadirPersonaAdap
         if (position==0) {
             holder.ivPlatoRow.setImageURI(Uri.parse(resultsPlato.get(0).getUrlImage()));
         } else {
+            asignarColores(holder, position);
             //Se deben limpiar las imágenes insertadas erroneamente (Fallos del propio onBindViewHolder)
             holder.ivPlatoRow.setImageURI(null);
         }
@@ -63,6 +60,13 @@ public class AnadirPersonaAdapter extends RecyclerView.Adapter<AnadirPersonaAdap
 
     }
 
+    public void asignarColores(AnadirPersonaAdapterResultHolder holder, int position) {
+        if (resultsPlato.get(position).isCompartido()) {
+            holder.ivPlatoRow.setBackgroundResource(R.drawable.platorow_stylecomp);
+        } else {
+            holder.ivPlatoRow.setBackgroundResource(R.drawable.platorow_style);
+        }
+    }
 
     @Override
     public int getItemCount() {
