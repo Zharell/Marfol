@@ -49,24 +49,14 @@ public class HomeActivity extends AppCompatActivity {
         //asignarId
         asignarId();
         if(MetodosGlobales.comprobarLogueado(this,ivFotoPersonaHome)){
-
+            MetodosGlobales.cargarDatosEnHomeSiLogueado(tvEmailHome,tvNombreUsuario,tvTelefonoUsuario);
         }else{
 
         }
-        Bundle extras = getIntent().getExtras();
-        String email = extras.getString("EMAIL");
-        String provider = extras.getString("PROVIDER");
-        //setup
 
-
-        setup(email, provider);
+        setup( );
 
         // Guardado de datos
-        SharedPreferences prefAux = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
-        SharedPreferences.Editor prefs = prefAux.edit();
-        prefs.putString("email", email);
-        prefs.putString("provider", provider);
-        prefs.apply();
         rLauncherHome = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
@@ -101,40 +91,10 @@ public class HomeActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
     }
 
-    private void setup(String email, String provider) {
-        DocumentReference id = db.collection("users").document(email);
-        progressBar.setVisibility(View.VISIBLE);
+    private void setup() {
 
-        id.get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                String name = documentSnapshot.getString("name");
-                String phone = documentSnapshot.getString("phone");
-                String imagen = documentSnapshot.getString("imagen");
-                // Si no hay datos de nombre o teléfono, ocultar la progress bar
-                if (name == null || phone == null) {
-                    progressBar.setVisibility(View.GONE);
-                    return;
-                }
 
-                // Actualizar los EditText con los datos recuperados
-                tvEmailHome.setText(email);
-                tvNombreUsuario.setText(name);
-                tvTelefonoUsuario.setText(phone);
-                Glide.with(HomeActivity.this).load(imagen).into(ivFotoPersonaHome);
-                Log.d("AAAAAAAAAAAAAAAAAAAAA",imagen);
-                //ivFotoPersonaHome.setImageURI(Uri.parse(img));
 
-                progressBar.setVisibility(View.GONE);
-            } else {
-                Log.d(TAG, "No se encontró el documento");
-                progressBar.setVisibility(View.GONE);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                progressBar.setVisibility(View.GONE);
-            }
-        });
         btnLogoutHome.setOnClickListener(v -> {
             //Borrado de datos
             SharedPreferences prefAux = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
