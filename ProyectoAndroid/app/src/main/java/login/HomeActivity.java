@@ -24,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.tfg.marfol.R;
 import java.util.HashMap;
 import mainActivity.IndexActivity;
+import mainActivity.MetodosGlobales;
 
 enum ProviderType{
     BASIC,
@@ -45,20 +46,18 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        //asignarId
+        asignarId();
+        if(MetodosGlobales.comprobarLogueado(this,ivFotoPersonaHome)){
 
-        db = FirebaseFirestore.getInstance();
-        btnLogoutHome = findViewById(R.id.btnLogoutHome);
-        btnEditarBD = findViewById(R.id.btnEditarBD);
-        tvEmailHome = findViewById(R.id.tvEmailHome);
-        tvNombreUsuario = findViewById(R.id.tvNombreApellido);
-        tvTelefonoUsuario = findViewById(R.id.tvTelefono);
-        ivFotoPersonaHome = findViewById(R.id.ivFotoPersonaHome);
+        }else{
+
+        }
         Bundle extras = getIntent().getExtras();
         String email = extras.getString("EMAIL");
         String provider = extras.getString("PROVIDER");
         //setup
-        progressBar = findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
+
 
         setup(email, provider);
 
@@ -88,6 +87,18 @@ public class HomeActivity extends AppCompatActivity {
         );
 
 
+    }
+
+    private void asignarId() {
+        db = FirebaseFirestore.getInstance();
+        btnLogoutHome = findViewById(R.id.btnLogoutHome);
+        btnEditarBD = findViewById(R.id.btnEditarBD);
+        tvEmailHome = findViewById(R.id.tvEmailHome);
+        tvNombreUsuario = findViewById(R.id.tvNombreApellido);
+        tvTelefonoUsuario = findViewById(R.id.tvTelefono);
+        ivFotoPersonaHome = findViewById(R.id.ivFotoPersonaHome);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
     }
 
     private void setup(String email, String provider) {
