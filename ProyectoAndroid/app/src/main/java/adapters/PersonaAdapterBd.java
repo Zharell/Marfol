@@ -22,7 +22,7 @@ import login.EditarDatos;
 
 public class PersonaAdapterBd extends RecyclerView.Adapter<PersonaAdapterBd.PersonaBdAdapterResultHolder> {
 
-    private List<Persona> resultsPersona = new ArrayList<>();
+    private List<Persona> resultsPersonaBd = new ArrayList<>();
 
     private onItemClickListenerBd mListener;
 
@@ -39,12 +39,15 @@ public class PersonaAdapterBd extends RecyclerView.Adapter<PersonaAdapterBd.Pers
     public void onBindViewHolder(@NonNull PersonaBdAdapterResultHolder holder, int position) {
 
         //Insertamos para cada persona en el Recycler su nombre
-        holder.tvPersonaRow.setText(resultsPersona.get(position).getNombre());
+        holder.tvPersonaRow.setText(resultsPersonaBd.get(position).getNombre());
 
         //Insertamos para cada persona en el Recycler su imagen
-        if (resultsPersona.get(position).getUrlImage() != null) {
-            Glide.with(holder.itemView).load(Uri.parse(resultsPersona.get(position).getUrlImage())).circleCrop().into(holder.ivPersonaRow);
+
+        //holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
+        if(resultsPersonaBd.get(position).getUrlImage()!=null) {
+            Glide.with(holder.itemView).load(Uri.parse(resultsPersonaBd.get(position).getUrlImage())).circleCrop().into(holder.ivPersonaRow);
         }
+
         //Método onclick
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,13 +65,12 @@ public class PersonaAdapterBd extends RecyclerView.Adapter<PersonaAdapterBd.Pers
 
     @Override
     public int getItemCount() {
-        return resultsPersona.size();
+        return resultsPersonaBd.size();
     }
 
-    public void setResultsPersona(List<Persona> resultsPersona) {
-        this.resultsPersona = resultsPersona;
+    public void setResultsPersonaBd(List<Persona> resultsPersona) {
+        this.resultsPersonaBd = resultsPersona;
         notifyDataSetChanged();
-
     }
 
     public void setmListener(onItemClickListenerBd mListener) {

@@ -49,6 +49,7 @@
         android:layout_height="50dp"
         android:background="@drawable/login_style"
         android:scaleType="fitCenter"
+        android:clickable="true"
         android:src="@drawable/nologinimg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

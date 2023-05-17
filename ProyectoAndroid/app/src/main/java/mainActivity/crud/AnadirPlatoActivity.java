@@ -22,7 +22,6 @@ import android.graphics.Shader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -86,7 +85,7 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
         //Comprobar usuario logueado
-        MetodosGlobales.comprobarUsuarioLogueado(AnadirPlatoActivity.this, ivAnadirPlatoImagen);
+        MetodosGlobales.cambiarImagenSiLogueado(AnadirPlatoActivity.this, ivAnadirPlatoImagen);
 
         //Botón encargado de añadir el plato
         btnContinuarAnadirP.setOnClickListener(view -> { anadirPlato(); });
@@ -160,7 +159,7 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
         });
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-                    MetodosGlobales.comprobarUsuarioLogueado(this, ivAnadirPlatoImagen);
+                    MetodosGlobales.cambiarImagenSiLogueado(this, ivAnadirPlatoImagen);
                 }
         );
         ivAnadirPlatoImagen.setOnClickListener(v->{

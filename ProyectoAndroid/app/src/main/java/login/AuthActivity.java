@@ -3,9 +3,7 @@ package login;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,16 +26,14 @@ import com.tfg.marfol.R;
 import java.util.HashMap;
 import java.util.Map;
 
-import mainActivity.IndexActivity;
-
 public class AuthActivity extends AppCompatActivity {
-    Button btnRegistrarseLogin;
-    ImageButton btnGoogleLogin;
-    Button btnEntrarLogin;
-    EditText etEmailLogin;
-    EditText etPasswordLogin;
+    private Button btnRegistrarseLogin;
+    private ImageButton btnGoogleLogin;
+    private Button btnEntrarLogin;
+    private EditText etEmailLogin;
+    private EditText etPasswordLogin;
 
-    TextView tvContrasenaOlvidada;
+    private TextView tvContrasenaOlvidada;
     private final int GOOGLE_SIGN_IN = 100;
 
     @Override
@@ -45,27 +41,25 @@ public class AuthActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
         //variables
+        asignarId();
+
+
+        //Setup
+        setup();
+
+
+    }
+
+    private void asignarId() {
         btnRegistrarseLogin=findViewById(R.id.btnRegistrarseLogin);
         btnEntrarLogin=findViewById(R.id.btnEntrarLogin);
         etEmailLogin=findViewById(R.id.etEmailLogin);
         etPasswordLogin=findViewById(R.id.etPasswordLogin);
         btnGoogleLogin=findViewById(R.id.btnGoogleLogin);
         tvContrasenaOlvidada=findViewById(R.id.tvContrasenaOlvidada);
-
-        //Setup
-        setup();
-        session();
     }
 
-    private void session() {
-        SharedPreferences prefAux = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
-        String email = prefAux.getString("email",null);
-        String provider = prefAux.getString("provider",null);
-        if(email != null && provider != null){
 
-            showHome(email,ProviderType.valueOf(provider));
-        }
-    }
     //Este metodo crea un usuario con el correo pasandole las cajas y conectándose con firebase
     private void setup() {
         //Registro
@@ -82,7 +76,7 @@ public class AuthActivity extends AppCompatActivity {
                                 etPasswordLogin.getText().toString()).addOnCompleteListener(it->{
                             if(it.isSuccessful()){
 
-                                showHome(it.getResult().getUser().getEmail(),ProviderType.BASIC);
+                                finishActivity();
                             }else{
                                 showAlert();
                             }
@@ -114,13 +108,8 @@ public class AuthActivity extends AppCompatActivity {
         AlertDialog dialog= builder.create();
         dialog.show();
     }
-    private void showHome(String email, ProviderType provider ){
-        Intent homeIntent= new Intent(this,HomeActivity.class);
-        homeIntent.putExtra("EMAIL",email);
-        homeIntent.putExtra("PROVIDER",provider.name());
-        startActivity(homeIntent);
+    private void finishActivity(){
         finish();
-
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -143,7 +132,7 @@ public class AuthActivity extends AppCompatActivity {
                                             DocumentSnapshot document = documentTask.getResult();
                                             if (document.exists()) {
                                                 // El documento ya existe, continuar con el inicio de sesión
-                                                showHome(email, ProviderType.GOOGLE);
+                                                finishActivity();
                                             } else {
                                                 // El documento no existe, crear uno nuevo con datos vacíos
                                                 Map<String, Object> datosPersona = new HashMap<>();
@@ -156,7 +145,7 @@ public class AuthActivity extends AppCompatActivity {
                                                         .document(email)
                                                         .set(datosPersona)
                                                         .addOnSuccessListener(anadido -> {
-                                                            showHome(email, ProviderType.GOOGLE);
+                                                            finishActivity();
                                                         })
                                                         .addOnFailureListener(error -> {
                                                             showAlert();

@@ -4,7 +4,6 @@ import static android.content.ContentValues.TAG;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,10 +25,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-
-import com.google.android.gms.tasks.Task;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -38,7 +33,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.tfg.marfol.R;
 
 
@@ -88,13 +82,10 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         //Método que asigna los efectos a los elementos
         asignarEfectos();
         //comprobar si estoy logueado
-        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
+        MetodosGlobales.cambiarImagenSiLogueado(this,ivLoginParticipantes);
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
-
-        //Método BD
-        llenarDatos();
 
         //Laucher Result recibe el ArrayList con los nuevos comensales y los inserta en el adapter
         rLauncherAnadirComensal = registerForActivityResult(
@@ -103,7 +94,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                         Intent data = result.getData();
                         comensales = (ArrayList<Persona>) data.getSerializableExtra("arrayListComensales");
                         personaAdapter.setResultsPersona(comensales);
-                        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
+                        MetodosGlobales.cambiarImagenSiLogueado(this,ivLoginParticipantes);
                     }
                 }
         );
@@ -112,12 +103,12 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         rLauncherDetalleComensal = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
+                        MetodosGlobales.comprobarLogueado(this,ivLoginParticipantes);
                         Intent data = result.getData();
                         borrarComensal = data.getBooleanExtra("borrarComensal", false);
                         if (!borrarComensal) {
                             comensales.set(comensalPosicion,(Persona) data.getSerializableExtra("detalleComensal"));
                             personaAdapter.setResultsPersona(comensales);
-                            MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
                         } else {
                             //Método que comprueba con quien has compartido y lo borra de ser necesario
                             borrarCompartidos();
@@ -139,7 +130,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                         Intent data = result.getData();
                         comensales = (ArrayList<Persona>) data.getSerializableExtra("arrayListDesglose");
                         personaAdapter.setResultsPersona(comensales);
-                        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
+                        MetodosGlobales.cambiarImagenSiLogueado(this,ivLoginParticipantes);
                     }
                 }
         );
@@ -147,7 +138,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-                        MetodosGlobales.comprobarUsuarioLogueado(this,ivLoginParticipantes);
+                        MetodosGlobales.comprobarLogueado(this,ivLoginParticipantes);
                         currentUser = auth.getCurrentUser();
                         cargarDatosBd(comensalesBd);
                 }
@@ -297,17 +288,11 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         rvPersonaParticipantesBd.setAdapter(personaAdapterBd);
         personaAdapterBd.setmListener(this);
         if (currentUser != null) {
-            textoFill.setVisibility(View.VISIBLE);
             cargarDatosBd(comensalesBd);
-        } else {
-            // El usuario no está logueado, no hagas nada o muestra un mensaje de aviso
-            Toast.makeText(this, "Inicia sesión para cargar los datos", Toast.LENGTH_SHORT).show();
         }
-
     }
     private void cargarDatosBd(ArrayList<Persona> comensalesBd) {
-        if (currentUser != null) {
-
+         if (currentUser != null) {
             String usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
             DocumentReference id = db.collection("users").document(usuarioId);
 
@@ -332,7 +317,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                     }
 
                     // Notificar al adapter que los datos han cambiado
-                    personaAdapterBd.setResultsPersona(comensalesBd);
+                    personaAdapterBd.setResultsPersonaBd(comensalesBd);
 
                 } else {
                     // Ocurrió un error al obtener los documentos

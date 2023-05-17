@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.tfg.marfol.R;
 
+import login.HomeActivity;
 import mainActivity.IndexActivity;
 
 public class Preferences extends AppCompatActivity {
@@ -23,6 +24,7 @@ public class Preferences extends AppCompatActivity {
     private TextView menuItemContactUs;
     private TextView menuItemPreferencias;
     private TextView menuItemHome;
+    private TextView tvEditarDatos;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.preferencias);
@@ -100,6 +102,11 @@ public class Preferences extends AppCompatActivity {
             public void onClick(View v) {
                 popupWindow.dismiss();
             }
+        });
+        tvEditarDatos.setOnClickListener(v->{
+            Intent ed = new Intent(this, HomeActivity.class);
+            startActivity(ed);
+            popupWindow.dismiss();
         });
     }
 }

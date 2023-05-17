@@ -18,11 +18,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -56,7 +54,6 @@ import adapters.AnadirPersonaAdapter;
 import entities.Persona;
 import entities.Plato;
 import login.AuthActivity;
-import login.EditarDatos;
 import mainActivity.MetodosGlobales;
 
 public class AnadirParticipanteActivity extends AppCompatActivity implements AnadirPersonaAdapter.onItemClickListener {
@@ -102,7 +99,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         //Método que asigna los efectos a los elementos
         asignarEfectos();
         //Comprobar usuario si está logueado o no
-        MetodosGlobales.comprobarUsuarioLogueado(this, ivLoginAnadirParticipante);
+        MetodosGlobales.cambiarImagenSiLogueado(this, ivLoginAnadirParticipante);
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
@@ -114,14 +111,14 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                         data = result.getData();
                         platos = (ArrayList<Plato>) data.getSerializableExtra("arrayListPlatos");
                         anadirPAdapter.setResultsPlato(platos);
-                        MetodosGlobales.comprobarUsuarioLogueado(this, ivLoginAnadirParticipante);
+                        MetodosGlobales.cambiarImagenSiLogueado(this, ivLoginAnadirParticipante);
                     }
 
                 }
         );
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-                    MetodosGlobales.comprobarUsuarioLogueado(this, ivLoginAnadirParticipante);
+                    MetodosGlobales.cambiarImagenSiLogueado(this, ivLoginAnadirParticipante);
                 }
         );
 
