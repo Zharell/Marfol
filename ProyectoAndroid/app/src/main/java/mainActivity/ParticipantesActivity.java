@@ -182,15 +182,13 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     }
 
     public void borrarCompartidos() {
-        for (int i=0;i<comensales.size();i++) {
-            for (int j=0;j<comensales.get(i).getPlatos().size();j++) {
+        for (int i=1;i<comensales.size();i++) {
+            for (int j=1;j<comensales.get(i).getPlatos().size();j++) {
                 if (comensales.get(i).getPlatos().get(j).isCompartido()) {
                     for (int h = 0; h < comensales.get(i).getPlatos().get(j).getPersonasCompartir().size(); h++) {
                         if (comensales.get(i).getPlatos().get(j).getPersonasCompartir().get(h).getComensalCode()==comensales.get(comensalPosicion).getComensalCode()) {
-                            comensales.get(i).getPlatos().get(j).getPersonasCompartir().remove(h);
-                            if (comensales.get(i).getPlatos().get(j).getPersonasCompartir().size()<=1) {
-                                comensales.get(i).getPlatos().get(j).setCompartido(false);
-                            }
+                            comensales.get(i).getPlatos().remove(j);
+                            break;
                         }
                     }
                 }

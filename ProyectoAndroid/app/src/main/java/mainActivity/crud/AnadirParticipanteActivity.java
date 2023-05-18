@@ -55,6 +55,7 @@ import entities.Persona;
 import entities.Plato;
 import login.AuthActivity;
 import mainActivity.MetodosGlobales;
+import mainActivity.detalle.DetallePlatoActivity;
 
 public class AnadirParticipanteActivity extends AppCompatActivity implements AnadirPersonaAdapter.onItemClickListener {
 
@@ -286,7 +287,10 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
         //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
         if (position > 0) {
-            Toast.makeText(this, "Pulsaste el campo: " + String.valueOf(position), Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(this, DetallePlatoActivity.class);
+            startActivity(intent);
+
         } else {
             //Accedemos a la actividad de añadir plato
             intent = new Intent(this, AnadirPlatoActivity.class);

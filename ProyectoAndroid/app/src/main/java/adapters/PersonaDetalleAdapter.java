@@ -44,6 +44,7 @@ public class PersonaDetalleAdapter extends RecyclerView.Adapter<adapters.Persona
         if (position == 0) {
             holder.ivPlatoRow.setImageURI(Uri.parse(resultsPlato.get(0).getUrlImage()));
         } else {
+            asignarColores(holder, position);
             //Se deben limpiar las imágenes insertadas erroneamente (Fallos del propio onBindViewHolder)
             holder.ivPlatoRow.setImageURI(null);
         }
@@ -60,6 +61,13 @@ public class PersonaDetalleAdapter extends RecyclerView.Adapter<adapters.Persona
 
     }
 
+    public void asignarColores(PersonaDetalleAdapterResultHolder holder, int position) {
+        if (resultsPlato.get(position).isCompartido()) {
+            holder.ivPlatoRow.setImageResource(R.drawable.platorow_stylecomp);
+        } else {
+            holder.ivPlatoRow.setImageDrawable(null);
+        }
+    }
 
     @Override
     public int getItemCount() {

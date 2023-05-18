@@ -1,17 +1,18 @@
 package mainActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
-import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,15 +20,16 @@ import android.widget.Toast;
 import com.tfg.marfol.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import adapters.DesgloseAdapter;
-import adapters.PersonaAdapter;
 import entities.Persona;
-import entities.Plato;
 
 public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapter.onItemClickListener {
 
+    private TextView tvMessage1Popup, tvMessage2Popup;
+    private EditText etNombrePopup;
+    private Dialog puGuardarDesglose;
+    private Button btnCancelarDesglose, btnConfirmarDesglose;
     private Button btnGuardarRestaurante;
     private RecyclerView rvPersonaDesglose;
     private TextView tvTitleDesglose;
@@ -57,14 +59,30 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
 
+        //Botón para guardar restaurante, añadimos el texto deseado al pop up
+        btnGuardarRestaurante.setOnClickListener(view -> {
+            tvMessage1Popup.setText(getString(R.string.popup_text1_desglose));
+            tvMessage2Popup.setText(getString(R.string.popup_text2_desglose));
+            puGuardarDesglose.show();
+        });
+
+        //Guarda el restaurante en la BD :)
+        btnConfirmarDesglose.setOnClickListener(view -> {
 
 
+            //Kayler MÉTODOS PARA GUARDAR EN LA BASE DE DATOS AQUÍ
+            Toast.makeText(this,String.valueOf(etNombrePopup.getText()),Toast.LENGTH_SHORT).show();
+
+
+        });
+
+        //Método cancelar para no guardar en la bd
+        btnCancelarDesglose.setOnClickListener(view -> puGuardarDesglose.dismiss());
 
     }
 
     //Método que prepara el recycler y el adaptador para su uso
     public void mostrarAdapter() {
-
         //Se debe borrar la primera posición ya que es el elemento de añadir y no tiene valores
         listaComensales = comensales;
         listaComensales.remove(0);
@@ -77,7 +95,6 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
 
         //Añade el contenido al adapter, si está vacío el propio Adapter añade el " Añadir Persona "
         desgloseAdapter.setResultsPersona(listaComensales);
-
     }
 
     public void repartirCompartido() {
@@ -116,12 +133,16 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                 Shader.TileMode.REPEAT);
         tvTitleDesglose.getPaint().setShader(gradient);
         btnGuardarRestaurante.getPaint().setShader(gradient);
+        btnConfirmarDesglose.getPaint().setShader(gradient);
+        btnCancelarDesglose.getPaint().setShader(gradient);
+
         // Asigna sombreado al texto
         float shadowRadius = 10f;
         float shadowDx = 0f;
         float shadowDy = 5f;
         int shadowColor = Color.BLACK;
         tvTitleDesglose.getPaint().setShadowLayer(shadowRadius, shadowDx, shadowDy, shadowColor);
+
     }
 
     public void asignarId() {
@@ -130,6 +151,16 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
         tvTitleDesglose = findViewById(R.id.tvTitleDesglose);
         ivMenuDesglose = findViewById(R.id.ivMenuDesglose);
         ivLoginDesglose = findViewById(R.id.ivLoginDesglose);
+
+        //Asigna IDs de los elementos del popup
+        puGuardarDesglose = new Dialog(this);
+        puGuardarDesglose.setContentView(R.layout.popup_confirmacion_guardar);
+        btnCancelarDesglose = puGuardarDesglose.findViewById(R.id.btnCancelarPopup);
+        btnConfirmarDesglose = puGuardarDesglose.findViewById(R.id.btnConfirmarPopup);
+        tvMessage1Popup = puGuardarDesglose.findViewById(R.id.tvMessage1Popup);
+        tvMessage2Popup = puGuardarDesglose.findViewById(R.id.tvMessage2Popup);
+        etNombrePopup = puGuardarDesglose.findViewById(R.id.etNombrePopup);
+
     }
 
     @Override

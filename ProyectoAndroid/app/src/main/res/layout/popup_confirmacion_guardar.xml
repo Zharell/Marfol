@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/pipopup_check"
+    android:orientation="vertical"
+    android:padding="20dp"
+    >
+
+    <EditText
+        android:id="@+id/etNombrePopup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:hint="@string/popup_edit_desglose"
+        android:shadowColor="#1C1C1C"
+        android:textColor="@color/redLight"
+        android:textColorHint="@color/redSLight"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvMessage1Popup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textColor="@color/redTitle"
+        android:text="@string/desea_volver"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/tvMessage2Popup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textColor="@color/redTitle"
+        android:text="@string/confirmacion_volver"
+        android:textSize="17sp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        >
+
+        <Button
+            android:id="@+id/btnCancelarPopup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_index"
+            android:text="@string/pop_cancelar1"
+            android:textColor="@color/redBorder"
+            android:textSize="18sp"
+            />
+
+        <Button
+            android:id="@+id/btnConfirmarPopup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/button_index"
+            android:text="@string/pop_confirmacion1"
+            android:textColor="@color/redBorder"
+            android:textSize="18sp"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

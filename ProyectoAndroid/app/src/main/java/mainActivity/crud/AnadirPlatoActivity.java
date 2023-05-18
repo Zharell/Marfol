@@ -40,6 +40,7 @@ import entities.Plato;
 import mainActivity.detalle.CompartirListaActivity;
 import login.AuthActivity;
 import mainActivity.MetodosGlobales;
+import mainActivity.detalle.DetallePlatoActivity;
 
 public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCompartirAdapter.onItemClickListener {
 
@@ -289,7 +290,7 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
     public void onItemClick(int position) {
         //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
         if (position>0) {
-            Toast.makeText(this,"Pulsaste el campo: "+String.valueOf(position),Toast.LENGTH_SHORT).show();
+
         } else {
 
             //Método que comprueba si hay repetidos en la lista de compartidos (no aparezcan de nuevo)

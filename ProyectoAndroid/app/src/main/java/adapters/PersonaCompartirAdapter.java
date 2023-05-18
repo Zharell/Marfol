@@ -29,7 +29,7 @@ public class PersonaCompartirAdapter extends RecyclerView.Adapter<PersonaCompart
     @Override
     public PersonaCompartirAdapterResultHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.row_platoanadirpersona, parent, false);
+                .inflate(R.layout.row_platoanadircyan, parent, false);
 
         return new PersonaCompartirAdapterResultHolder(itemView);
     }

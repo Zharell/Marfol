@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@drawable/background_style"
+tools:context="mainActivity.detalle.DetallePlatoActivity">
+
+<!-- Menu APP -->
+    <EditText
+        android:id="@+id/etTitleDetallePlato"
+        android:layout_width="wrap_content"
+        android:layout_height="55dp"
+        android:fontFamily="serif"
+        android:gravity="center"
+        android:textColor="@color/redBorder"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.02"
+
+        />
+
+    <EditText
+        android:id="@+id/etDescripcionDetallePlato"
+        android:layout_width="320dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/editext_index"
+        android:fontFamily="serif"
+        android:gravity="top|left"
+        android:hint="@string/etdescripcionanadir_participante"
+        android:maxLength="80"
+        android:padding="10dp"
+        android:paddingStart="15dp"
+
+        android:textColor="@color/redTitle"
+        android:textColorHint="@color/redSLight"
+        android:textSize="22dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivFotoPersonaPlato" />
+
+    <ImageView
+        android:id="@+id/ivFotoPersonaPlato"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="15dp"
+
+        android:background="@drawable/button_index"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etTitleDetallePlato" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvAnadirPlato"
+        android:layout_width="280dp"
+        android:layout_height="230dp"
+
+        android:layout_marginTop="15dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etDescripcionDetallePlato" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnEditarPlato"
+        android:layout_width="150dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button_index"
+        android:text="@string/btneditar_detalle"
+        android:textColor="@color/redTitle"
+        android:textSize="22dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rvAnadirPlato" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnBorrarPlato"
+        android:layout_width="150dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button_borrar"
+        android:text="@string/btnborrar_detalle"
+        android:textColor="@color/yellowMargin"
+        android:textSize="22dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.875"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rvAnadirPlato" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

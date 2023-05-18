@@ -56,5 +56,10 @@
     <string name="google_maps_key">AIzaSyC1JbQNg7WkFD4zGdVr1Y-RkaWtluXStKE</string>
     <string name="API">Restaurantes\ncercanos</string>
     <string name="compartir_con">Compartir con</string>
-
+    <!-- STRING PARA PUP UP DESGLOSE -->
+    <string name="popup_guardar_desglose">Guardar</string>
+    <string name="popup_text1_desglose">¿ Deseas guardar el restaurante ?</string>
+    <string name="popup_text2_desglose">Podrás recordar los platos muy fácilmente</string>
+    <string name="popup_edit_desglose">Nombre restaurante</string>
+    <!-- FIN STRING PARA PUP UP DESGLOSE -->
 </resources>

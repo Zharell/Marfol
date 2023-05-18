@@ -1,5 +1,6 @@
 package adapters;
 
+import android.graphics.Color;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,9 +63,9 @@ public class AnadirPersonaAdapter extends RecyclerView.Adapter<AnadirPersonaAdap
 
     public void asignarColores(AnadirPersonaAdapterResultHolder holder, int position) {
         if (resultsPlato.get(position).isCompartido()) {
-            holder.ivPlatoRow.setBackgroundResource(R.drawable.platorow_stylecomp);
+            holder.ivPlatoRow.setImageResource(R.drawable.platorow_stylecomp);
         } else {
-            holder.ivPlatoRow.setBackgroundResource(R.drawable.platorow_style);
+            holder.ivPlatoRow.setImageDrawable(null);
         }
     }
 
