@@ -4,7 +4,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -13,28 +12,20 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.os.Bundle;
-
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
-
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tfg.marfol.R;
-
-
 import mainActivity.API.API;
 import mainActivity.menu.AboutUs;
 import mainActivity.menu.ContactUs;
 import mainActivity.menu.Preferences;
-
-
 public class IndexActivity extends AppCompatActivity {
 
     private Button btnApIndex;
@@ -55,7 +46,7 @@ public class IndexActivity extends AppCompatActivity {
     private TextView menuItemHome;
     private TextView tvLogoutIndex;
     private PopupWindow popupWindow;
-
+    private Intent homeIntent,authIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,20 +89,22 @@ public class IndexActivity extends AppCompatActivity {
         //Cancela, desaparece el popup y continúa en la actividad
         btnCancelarIndex.setOnClickListener(view -> puVolverIndex.dismiss());
     }
-    private void botonImagenLogueado(){
+
+    private void botonImagenNoLogueado() {
         //Puesto provisional para probar cosas
         ivLoginIndex.setOnClickListener(view -> {
-            Intent intent = new Intent(this, login.AuthActivity.class);
-            rLauncherLogin.launch(intent);
+            authIntent = new Intent(this, login.AuthActivity.class);
+            rLauncherLogin.launch(authIntent);
         });
 
 
     }
-    private void botonImagenNoLogueado(){
+
+    private void botonImagenLogueado() {
         //Puesto provisional para probar cosas
         ivLoginIndex.setOnClickListener(view -> {
-            Intent intent = new Intent(this, login.HomeActivity.class);
-            rLauncherLogin.launch(intent);
+            homeIntent = new Intent(this, login.HomeActivity.class);
+            rLauncherLogin.launch(homeIntent);
         });
     }
 
@@ -124,7 +117,6 @@ public class IndexActivity extends AppCompatActivity {
         ivMenuIndex = findViewById(R.id.ivMenuAnadirPlato);
         rvPresetsIndex = findViewById(R.id.rvPresetsIndex);
         tvTitleIndex = findViewById(R.id.tvTitleAnadirPlato);
-
         //Asigna IDs de los elementos del popup
         puVolverIndex = new Dialog(this);
         puVolverIndex.setContentView(R.layout.popup_confirmacion);
@@ -133,7 +125,6 @@ public class IndexActivity extends AppCompatActivity {
         tvMessage1Popup = puVolverIndex.findViewById(R.id.tvMessage1Popup);
         tvMessage2Popup = puVolverIndex.findViewById(R.id.tvMessage2Popup);
         tvTitlePopup = puVolverIndex.findViewById(R.id.tvTitlePopup);
-
     }
 
     public void asignarEfectos() {
@@ -180,6 +171,7 @@ public class IndexActivity extends AppCompatActivity {
         tvMessage2Popup.setText("¿ Estás seguro ?");
         puVolverIndex.show();
     }
+
     public void showPopupMenu(View view) {
         View popupView = getLayoutInflater().inflate(R.layout.popup_menu, null);
         menuItemHome = popupView.findViewById(R.id.menu_item1);
@@ -190,23 +182,19 @@ public class IndexActivity extends AppCompatActivity {
         tvLogoutIndex.setVisibility(View.INVISIBLE);
         // Ajustar el tamaño del menú según tus preferencias
         int width = getResources().getDisplayMetrics().widthPixels * 7 / 10; // El 70% del ancho de la pantalla
-        int height = getResources().getDisplayMetrics().heightPixels ; // El 70% del alto de la pantalla
+        int height = getResources().getDisplayMetrics().heightPixels; // El 70% del alto de la pantalla
 
         popupWindow = new PopupWindow(popupView, width, height, true);
         popupWindow.setAnimationStyle(R.style.PopupAnimation);
 
         popupWindow.showAtLocation(view, Gravity.START, 0, 0);
-        popupView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (popupWindow != null && popupWindow.isShowing()) {
-                    popupWindow.dismiss();
-                    popupWindow = null;
-                }
-                return true;
+        popupView.setOnTouchListener((v, event) -> {
+            if (popupWindow != null && popupWindow.isShowing()) {
+                popupWindow.dismiss();
+                popupWindow = null;
             }
+            return true;
         });
-
         // Aplicar el degradado de colores a los textos del menú
         int[] colors = {
                 getResources().getColor(R.color.redBorder),
@@ -227,80 +215,60 @@ public class IndexActivity extends AppCompatActivity {
         menuItemAboutUs.getPaint().setShader(gradient);
         menuItemContactUs.getPaint().setShader(gradient);
 
-        menuItemAboutUs.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Acción al hacer clic en "AboutUs"
-                Intent intent = new Intent(IndexActivity.this, AboutUs.class);
-                startActivity(intent);
+        menuItemAboutUs.setOnClickListener(v -> {
+            // Acción al hacer clic en "AboutUs"
+            Intent intent = new Intent(IndexActivity.this, AboutUs.class);
+            startActivity(intent);
 
-                // Cerrar el menú emergente
-                popupWindow.dismiss();
-            }
+            // Cerrar el menú emergente
+            popupWindow.dismiss();
         });
 
-        menuItemContactUs.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Acción al hacer clic en "ContactUs"
-                Intent intent = new Intent(IndexActivity.this, ContactUs.class);
-                startActivity(intent);
+        menuItemContactUs.setOnClickListener(v -> {
+            // Acción al hacer clic en "ContactUs"
+            Intent intent = new Intent(IndexActivity.this, ContactUs.class);
+            startActivity(intent);
 
-                // Cerrar el menú emergente
-                popupWindow.dismiss();
-            }
+            // Cerrar el menú emergente
+            popupWindow.dismiss();
         });
 
-        menuItemHome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Acción al hacer clic en "Home" (IndexActivity)
-                // No es necesario iniciar una nueva actividad, ya que ya estás en IndexActivity
-
-                // Cerrar el menú emergente
-                popupWindow.dismiss();
-            }
+        menuItemHome.setOnClickListener(v -> {
+            // Cerrar el menú emergente
+            popupWindow.dismiss();
         });
 
-        menuItemPreferencias.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Acción al hacer clic en "Preferences"
-                Intent intent = new Intent(IndexActivity.this, Preferences.class);
-                startActivity(intent);
-
-                // Cerrar el menú emergente
-                popupWindow.dismiss();
-            }
+        menuItemPreferencias.setOnClickListener(v -> {
+            // Acción al hacer clic en "Preferences"
+            Intent intent = new Intent(IndexActivity.this, Preferences.class);
+            startActivity(intent);
+            // Cerrar el menú emergente
+            popupWindow.dismiss();
         });
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        if(mAuth.getCurrentUser()!=null){
-        tvLogoutIndex.setVisibility(View.VISIBLE);
-        tvLogoutIndex.setOnClickListener(v->{
-            SharedPreferences prefAux = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
-            SharedPreferences.Editor prefs = prefAux.edit();
-            prefs.clear();
-            prefs.apply();
-            FirebaseAuth.getInstance()
-                    .signOut();
-            Intent in = new Intent(this, IndexActivity.class);
-            startActivity(in);
-            finish();
-        });
+        if (mAuth.getCurrentUser() != null) {
+            tvLogoutIndex.setVisibility(View.VISIBLE);
+            tvLogoutIndex.setOnClickListener(v -> {
+                SharedPreferences prefAux = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
+                SharedPreferences.Editor prefs = prefAux.edit();
+                prefs.clear();
+                prefs.apply();
+                FirebaseAuth.getInstance()
+                        .signOut();
+                Intent in = new Intent(this, IndexActivity.class);
+                startActivity(in);
+                finish();
+            });
         }
-
-
         // Cerrar el PopupWindow cuando se destruya la actividad
-
-
     }
-    private void comprobarLauncher(){
-        if(MetodosGlobales.comprobarLogueado(IndexActivity.this,ivLoginIndex)){
-            botonImagenNoLogueado();
-        }else{
-            Glide.with(this).load(R.drawable.nologinimg).into(ivLoginIndex);
-            botonImagenLogueado();
 
+    private void comprobarLauncher() {
+        if (MetodosGlobales.comprobarLogueado(IndexActivity.this, ivLoginIndex)) {
+            botonImagenLogueado();
+        } else {
+            Glide.with(this).load(R.drawable.nologinimg).into(ivLoginIndex);
+            botonImagenNoLogueado();
         }
     }
     @Override
@@ -311,7 +279,6 @@ public class IndexActivity extends AppCompatActivity {
             popupWindow = null;
         }
     }
-
 
 
 }
