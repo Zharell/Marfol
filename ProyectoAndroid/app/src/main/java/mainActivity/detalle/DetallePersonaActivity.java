@@ -42,6 +42,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tfg.marfol.R;
@@ -420,7 +421,6 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
                             nuevaPersona.put("nombre", nombre);
                             nuevaPersona.put("descripcion", descripcion);
                             nuevaPersona.put("usuarioId", usuarioId);
-                            nuevaPersona.put("imagen", uriCapturada);
 
                             // Agrega la nueva persona con un ID único generado automáticamente
                             personasRef.add(nuevaPersona)
@@ -428,6 +428,8 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
                                         @Override
                                         public void onSuccess(DocumentReference documentReference) {
                                             // La persona se agregó exitosamente
+                                            String personaId = documentReference.getId();
+                                            subirImagenPersona(personaId, imagen);
                                             Toast.makeText(DetallePersonaActivity.this, "Se agregó la persona exitosamente", Toast.LENGTH_SHORT).show();
                                         }
                                     })
@@ -451,6 +453,61 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         } else {
             // El usuario no está autenticado, muestra un mensaje o inicia sesión automáticamente
             Toast.makeText(this, "Inicia sesión para agregar una persona", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void subirImagenPersona(String personaId, String imagen) {
+        if (personaId != null && !personaId.isEmpty()) {
+            // Obtiene una referencia al Storage de Firebase
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+
+            // Define una referencia a la imagen en Storage utilizando el ID de la persona
+            String rutaImagen = "personas/" + personaId + ".jpg";
+            StorageReference imagenRef = storageRef.child(rutaImagen);
+
+            // Sube la imagen a Storage
+            Uri imagenUri = Uri.parse(imagen);
+            UploadTask uploadTask = imagenRef.putFile(imagenUri);
+
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {            // La imagen se subió exitosamente
+                    Toast.makeText(DetallePersonaActivity.this, "Imagen subida exitosamente", Toast.LENGTH_SHORT).show();
+
+                    // Obtiene la URL de descarga de la imagen
+                    imagenRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            // La URL de descarga de la imagen está disponible
+                            String imagenUrl = uri.toString();
+
+                            // Actualiza el campo "imagen" en Firestore con la URL de descarga de la imagen
+                            db.collection("personas").document(personaId)
+                                    .update("imagen", imagenUrl)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            // La URL de la imagen se actualizó exitosamente en Firestore
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // Ocurrió un error al actualizar el campo "imagen" en Firestore
+                                        }
+                                    });
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    // Ocurrió un error al subir la imagen
+                    Toast.makeText(DetallePersonaActivity.this, "Error al subir la imagen", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            // El ID de la persona es nulo o vacío, muestra un mensaje de error
+            Toast.makeText(DetallePersonaActivity.this, "ID de persona inválido", Toast.LENGTH_SHORT).show();
         }
     }
 }

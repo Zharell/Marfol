@@ -320,6 +320,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                             // Crea un objeto HashMap para almacenar los datos de la nueva persona
                             Map<String, Object> nuevaPersona = new HashMap<>();
                             nuevaPersona.put("nombre", nombre);
+                            nuevaPersona.put("imagen","");
                             nuevaPersona.put("descripcion", descripcion);
                             nuevaPersona.put("usuarioId", usuarioId);
 
