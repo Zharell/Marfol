@@ -103,47 +103,6 @@ public class MetodosGlobales {
             return false;
         }
     }
-    public static boolean comprobarLogueadoEditar(Context context, ImageView iVimagen) {
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        if (mAuth.getCurrentUser() != null) {
-            FirebaseUser currentUser = mAuth.getCurrentUser();
-            DocumentReference userRef = db.collection("users").document(currentUser.getEmail());
-            userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            String imagen = document.getString("imagen");
-                            if (imagen != null&& !imagen.equalsIgnoreCase("")) {
-                                iVimagen.setBackground(null);
-                                iVimagen.setPadding(20, 20, 20, 20);
-                                Glide.with(context)
-                                        .load(imagen)
-                                        .circleCrop() // Aplica el formato redondeado
-                                        .into(iVimagen);
-                            } else {
-                                Glide.with(context)
-                                        .load(R.drawable.nologinimg)
-                                        .circleCrop() // Aplica el formato redondeado
-                                        .into(iVimagen);
-                            }
-                        } else {
-                            Glide.with(context).load(R.drawable.nologinimg).into(iVimagen);
-                        }
-                    } else {
-                        Toast.makeText(context, "Error al obtener los datos del usuario", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-            return true;
-        } else {
-            Toast.makeText(context, "No estás logueado", Toast.LENGTH_SHORT).show();
-            Glide.with(context).load(R.drawable.nologinimg).into(iVimagen);
-            return false;
-        }
-    }
 
 }

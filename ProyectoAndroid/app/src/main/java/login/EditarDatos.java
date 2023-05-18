@@ -55,10 +55,9 @@ public class EditarDatos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_datos);
         asignarId();
-        if (MetodosGlobales.comprobarLogueadoEditar(EditarDatos.this, ivPlatoAnadirP)) {
+        if (MetodosGlobales.comprobarLogueado(EditarDatos.this, ivPlatoAnadirP)) {
             //este metodo va a firebase y carga los datos del usuario en esta clase
             cargarDatosDesdeBD(etNombreUsuario, etTelefonoUsuario);
-
             // Configuramos el botón de guardar
             btnGuardarBD.setOnClickListener(v -> actualizarDatos());
             // Registrar el launcher para la cámara
