@@ -15,6 +15,7 @@ import android.graphics.Shader;
 import android.os.Bundle;
 
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 
 import android.widget.Button;
@@ -32,6 +33,7 @@ import mainActivity.API.API;
 import mainActivity.menu.AboutUs;
 import mainActivity.menu.ContactUs;
 import mainActivity.menu.Preferences;
+
 
 public class IndexActivity extends AppCompatActivity {
 
@@ -52,6 +54,8 @@ public class IndexActivity extends AppCompatActivity {
     private TextView menuItemPreferencias;
     private TextView menuItemHome;
     private TextView tvLogoutIndex;
+    private PopupWindow popupWindow;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,101 +67,52 @@ public class IndexActivity extends AppCompatActivity {
         //Método que asigna efectos a los elementos (colores, etc)
         asignarEfectos();
         //si uno está logueado se comporta de una manera o otra
-        if(MetodosGlobales.comprobarLogueado(IndexActivity.this,ivLoginIndex)){
-            botonesLogueado();
-        }else{
-            Glide.with(this).load(R.drawable.nologinimg).into(ivLoginIndex);
-            botonesNoLogueado();
-
-        }
+        comprobarLauncher();
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-                    if(MetodosGlobales.comprobarLogueado(IndexActivity.this,ivLoginIndex)){
-                        //tvLogoutIndex.setVisibility(View.VISIBLE);
-                        //tvLogoutIndex.setClickable(true);
-
-                        botonesLogueado();
-                    }else{
-                        Glide.with(this).load(R.drawable.nologinimg).into(ivLoginIndex);
-                        botonesNoLogueado();
-
-                    }
-
-
+                    comprobarLauncher();
                 }
         );
+        //Botón que accede a la gestión de participantes
+        btnApIndex.setOnClickListener(view -> {
+            Intent intent = new Intent(this, ParticipantesActivity.class);
 
+            startActivity(intent);
 
+            //Aplica un efecto de desvanecimiento entre actividades y se cierra
+            overridePendingTransition(androidx.navigation.ui.R.anim.nav_default_enter_anim, androidx.navigation.ui.R.anim.nav_default_exit_anim);
+            finish();
+        });
 
+        btnApIndex2.setOnClickListener(view -> {
+            Intent intent = new Intent(this, API.class);
+            startActivity(intent);
+        });
+        //Botones para el popup de confirmación
+        //Confirmar cierra la APP
+        btnConfirmarIndex.setOnClickListener(view -> {
+            puVolverIndex.dismiss();
+            finishAffinity();
+        });
 
-
-
-
-
+        //Cancela, desaparece el popup y continúa en la actividad
+        btnCancelarIndex.setOnClickListener(view -> puVolverIndex.dismiss());
     }
-    private void botonesNoLogueado(){
+    private void botonImagenLogueado(){
         //Puesto provisional para probar cosas
         ivLoginIndex.setOnClickListener(view -> {
             Intent intent = new Intent(this, login.AuthActivity.class);
             rLauncherLogin.launch(intent);
         });
 
-        //Botón que accede a la gestión de participantes
-        btnApIndex.setOnClickListener(view -> {
-            Intent intent = new Intent(this, ParticipantesActivity.class);
 
-            startActivity(intent);
-
-            //Aplica un efecto de desvanecimiento entre actividades y se cierra
-            overridePendingTransition(androidx.navigation.ui.R.anim.nav_default_enter_anim, androidx.navigation.ui.R.anim.nav_default_exit_anim);
-            finish();
-        });
-
-        btnApIndex2.setOnClickListener(view -> {
-            Intent intent = new Intent(this, API.class);
-            startActivity(intent);
-        });
-        //Botones para el popup de confirmación
-        //Confirmar cierra la APP
-        btnConfirmarIndex.setOnClickListener(view -> {
-            puVolverIndex.dismiss();
-            finishAffinity();
-        });
-
-        //Cancela, desaparece el popup y continúa en la actividad
-        btnCancelarIndex.setOnClickListener(view -> puVolverIndex.dismiss());
     }
-    private void botonesLogueado(){
+    private void botonImagenNoLogueado(){
         //Puesto provisional para probar cosas
         ivLoginIndex.setOnClickListener(view -> {
             Intent intent = new Intent(this, login.HomeActivity.class);
             rLauncherLogin.launch(intent);
         });
-
-        //Botón que accede a la gestión de participantes
-        btnApIndex.setOnClickListener(view -> {
-            Intent intent = new Intent(this, ParticipantesActivity.class);
-
-            startActivity(intent);
-
-            //Aplica un efecto de desvanecimiento entre actividades y se cierra
-            overridePendingTransition(androidx.navigation.ui.R.anim.nav_default_enter_anim, androidx.navigation.ui.R.anim.nav_default_exit_anim);
-            finish();
-        });
-
-        btnApIndex2.setOnClickListener(view -> {
-            Intent intent = new Intent(this, API.class);
-            startActivity(intent);
-        });
-        //Botones para el popup de confirmación
-        //Confirmar cierra la APP
-        btnConfirmarIndex.setOnClickListener(view -> {
-            puVolverIndex.dismiss();
-            finishAffinity();
-        });
-
-        //Cancela, desaparece el popup y continúa en la actividad
-        btnCancelarIndex.setOnClickListener(view -> puVolverIndex.dismiss());
     }
 
     public void asignarId() {
@@ -236,11 +191,21 @@ public class IndexActivity extends AppCompatActivity {
         // Ajustar el tamaño del menú según tus preferencias
         int width = getResources().getDisplayMetrics().widthPixels * 7 / 10; // El 70% del ancho de la pantalla
         int height = getResources().getDisplayMetrics().heightPixels ; // El 70% del alto de la pantalla
-        
-        PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
+
+        popupWindow = new PopupWindow(popupView, width, height, true);
         popupWindow.setAnimationStyle(R.style.PopupAnimation);
 
         popupWindow.showAtLocation(view, Gravity.START, 0, 0);
+        popupView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (popupWindow != null && popupWindow.isShowing()) {
+                    popupWindow.dismiss();
+                    popupWindow = null;
+                }
+                return true;
+            }
+        });
 
         // Aplicar el degradado de colores a los textos del menú
         int[] colors = {
@@ -324,6 +289,27 @@ public class IndexActivity extends AppCompatActivity {
         });
         }
 
+
+        // Cerrar el PopupWindow cuando se destruya la actividad
+
+
+    }
+    private void comprobarLauncher(){
+        if(MetodosGlobales.comprobarLogueado(IndexActivity.this,ivLoginIndex)){
+            botonImagenNoLogueado();
+        }else{
+            Glide.with(this).load(R.drawable.nologinimg).into(ivLoginIndex);
+            botonImagenLogueado();
+
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (popupWindow != null && popupWindow.isShowing()) {
+            popupWindow.dismiss();
+            popupWindow = null;
+        }
     }
 
 
