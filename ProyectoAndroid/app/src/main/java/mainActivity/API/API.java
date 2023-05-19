@@ -37,7 +37,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
-public class API extends AppCompatActivity implements OnMapReadyCallback {
+public abstract class API extends AppCompatActivity implements OnMapReadyCallback {
+    /*
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
     private GoogleMap googleMap;
@@ -149,7 +150,7 @@ public class API extends AppCompatActivity implements OnMapReadyCallback {
             updateMapRunnable = null;
         }
     }
-
+/*
     private void showNearbyRestaurants(LatLng latLng) {
         String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?" +
                 "location=" + latLng.latitude + "," + latLng.longitude +
@@ -212,5 +213,5 @@ public class API extends AppCompatActivity implements OnMapReadyCallback {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }
