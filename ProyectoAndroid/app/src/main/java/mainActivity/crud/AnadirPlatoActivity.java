@@ -50,7 +50,7 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
     private PersonaCompartirAdapter anadirPAdapter;
     private EditText  etNombreAnadirP, etDescAnadirP, etPrecioAnadirP;
     private Button btnContinuarAnadirP;
-    private ImageView ivAnadirPlatoImagen, ivPlatoAnadirP;
+    private ImageView ivPlatoAnadirP;
     private final int CAMERA_PERMISSION_CODE = 100;
     private ArrayList <Plato> platos;
     private ArrayList<Persona> nombreCompartir;
@@ -85,8 +85,6 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
-        //Comprobar usuario logueado
-        MetodosGlobales.cambiarImagenSiLogueado(AnadirPlatoActivity.this, ivAnadirPlatoImagen);
 
         //Botón encargado de añadir el plato
         btnContinuarAnadirP.setOnClickListener(view -> { anadirPlato(); });
@@ -158,14 +156,6 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
 
             }
         });
-        rLauncherLogin = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(), result -> {
-                    MetodosGlobales.cambiarImagenSiLogueado(this, ivAnadirPlatoImagen);
-                }
-        );
-        ivAnadirPlatoImagen.setOnClickListener(v->{
-            rLauncherLogin.launch(inLogin);
-        });
 
     }
 
@@ -235,9 +225,6 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
 
     public void asignarEfectos() {
 
-        //Ajusta el tamaño de la imagen del login
-        ivAnadirPlatoImagen.setPadding(20, 20, 20, 20);
-
         //Asigna el degradado de colores a los textos
         int[] colors = {getResources().getColor(R.color.redBorder),
                 getResources().getColor(R.color.redTitle)
@@ -278,11 +265,9 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
         etDescAnadirP = findViewById(R.id.etDescripcionAnadirPlato);
         etPrecioAnadirP = findViewById(R.id.etPlatoPrecio);
         tvSubTitP = findViewById(R.id.tvListaPlatosAnadirPlato);
-        ivAnadirPlatoImagen = findViewById(R.id.ivAnadirPlatoImagen);
         btnContinuarAnadirP = findViewById(R.id.btnPlatosAnadirPlato);
         ivPlatoAnadirP = findViewById(R.id.ivPlatoAnadirPlato);
         swCompartirPlato = findViewById(R.id.swCompartirAnadirPlato);
-         inLogin= new Intent(this, AuthActivity.class);
 
     }
 

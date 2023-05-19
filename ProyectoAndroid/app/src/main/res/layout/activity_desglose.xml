@@ -44,7 +44,7 @@ tools:context="mainActivity.DesgloseActivity">
 <!-- Login App -->
 <ImageView
 
-    android:id="@+id/ivLoginDesglose"
+    android:id="@+id/ivDesgloseImagen"
     android:layout_width="50dp"
     android:layout_height="50dp"
     android:background="@drawable/login_style"
