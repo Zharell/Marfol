@@ -59,7 +59,7 @@ tools:context="mainActivity.detalle.DetallePlatoActivity">
         app:layout_constraintTop_toBottomOf="@+id/etTitleDetallePlato" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvAnadirPlato"
+        android:id="@+id/rvAnadirDetallePlato"
         android:layout_width="280dp"
         android:layout_height="230dp"
 
@@ -83,7 +83,7 @@ tools:context="mainActivity.detalle.DetallePlatoActivity">
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rvAnadirPlato" />
+        app:layout_constraintTop_toBottomOf="@+id/rvAnadirDetallePlato" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnBorrarPlato"
@@ -98,6 +98,6 @@ tools:context="mainActivity.detalle.DetallePlatoActivity">
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.875"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rvAnadirPlato" />
+        app:layout_constraintTop_toBottomOf="@+id/rvAnadirDetallePlato" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

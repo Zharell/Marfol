@@ -87,8 +87,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
             botonImagenNoLogueado();
         }
 
-
-
         //Laucher Result recibe el ArrayList con los nuevos comensales y los inserta en el adapter
         rLauncherAnadirComensal = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -143,7 +141,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                 }
         );
 
-
+        //Comprueba si estás logueado
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                   comprobarLauncher();

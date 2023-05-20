@@ -59,7 +59,6 @@ import mainActivity.detalle.DetallePlatoActivity;
 
 public class AnadirParticipanteActivity extends AppCompatActivity implements AnadirPersonaAdapter.onItemClickListener {
 
-    private final boolean PRIMER_USO = true;
     private RecyclerView rvPlatosAnadirParticipante;
     private TextView tvTitleAnadirP, tvSubTitP;
     private EditText etNombreAnadirP, etDescAnadirP;
@@ -69,10 +68,13 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     private ActivityResultLauncher<Intent> camaraLauncher;
     private ActivityResultLauncher rLauncherPlatos;
     private ActivityResultLauncher rLauncherLogin;
+    private ActivityResultLauncher rLauncherDetallePlato;
     private static final int CAMERA_PERMISSION_CODE = 100;
     private String uriCapturada = "";
     private ArrayList<Persona> comensales;
     private int comensalPosicion;
+    private boolean borrarPlato;
+    private int platoPosicion;
     private ArrayList<Plato> platos;
     private Intent intentComensal;
     private Intent intent;
@@ -105,6 +107,30 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
 
+        //Launcher detallePlato se actualiza al recibir la modificación
+        rLauncherDetallePlato = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        borrarPlato = data.getBooleanExtra("borrarPlato", false);
+                        if (!borrarPlato) {
+                            //Sustituye el plato de la posición elegida anteriormente
+                            platos.set(platoPosicion,(Plato) data.getSerializableExtra("detallePlato"));
+                            anadirPAdapter.setResultsPlato(platos);
+                        } else {
+
+                            //Borra el plato de la posición elegida anteriormente
+                            platos.remove(platoPosicion);
+                            anadirPAdapter.setResultsPlato(platos);
+                            //Importantísimo, reorganiza los ComensalCodes al borrar un comensal
+                            for (int i=1;i<comensales.size();i++) {
+                                comensales.get(i).setComensalCode(i);
+                            }
+                        }
+                    }
+                }
+        );
+
         //Laucher Result - recibe los platos del usuario creado
         rLauncherPlatos = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -114,7 +140,6 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                         anadirPAdapter.setResultsPlato(platos);
                         comprobarLauncher();
                     }
-
                 }
         );
 
@@ -288,12 +313,11 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     public void onItemClick(int position) {
         comensalPosicion = position;
 
-        //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
+        //Si pulsas "Añadir Plato" ( 0 ), accederás a la actividad añadir plato
         if (position > 0) {
-
-            Intent intent = new Intent(this, DetallePlatoActivity.class);
-            startActivity(intent);
-
+            Intent intentDetalle = new Intent(this, DetallePlatoActivity.class);
+            intentDetalle.putExtra("platoDetalle", platos.get(position));
+            rLauncherDetallePlato.launch(intentDetalle);
         } else {
             //Accedemos a la actividad de añadir plato
             intent = new Intent(this, AnadirPlatoActivity.class);
