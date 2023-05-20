@@ -19,15 +19,28 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.tfg.marfol.R;
+
+import java.util.ArrayList;
+
+import adapters.RestaurantesAdapter;
+import entities.Persona;
+import entities.Restaurantes;
 import mainActivity.API.API;
 import mainActivity.menu.AboutUs;
 import mainActivity.menu.ContactUs;
 import mainActivity.menu.Preferences;
-public class IndexActivity extends AppCompatActivity {
+public class IndexActivity extends AppCompatActivity implements RestaurantesAdapter.onItemClickListenerRestaurantes {
 
     private Button btnApIndex;
 
@@ -39,6 +52,7 @@ public class IndexActivity extends AppCompatActivity {
     private TextView tvMessage1Popup, tvMessage2Popup, tvTitlePopup, btnAPIndex, tvTitleIndex;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private FirebaseUser currentUser;
     private ActivityResultLauncher rLauncherLogin;
 
     private TextView menuItemAboutUs;
@@ -48,6 +62,8 @@ public class IndexActivity extends AppCompatActivity {
     private TextView tvLogoutIndex;
     private PopupWindow popupWindow;
     private Intent homeIntent,authIntent;
+    private RestaurantesAdapter restaurantesAdapter;
+    private ArrayList<Restaurantes> restaurantesBd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +79,7 @@ public class IndexActivity extends AppCompatActivity {
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     comprobarLauncher();
+
                 }
         );
         //Botón que accede a la gestión de participantes
@@ -126,6 +143,9 @@ public class IndexActivity extends AppCompatActivity {
         tvMessage1Popup = puVolverIndex.findViewById(R.id.tvMessage1Popup);
         tvMessage2Popup = puVolverIndex.findViewById(R.id.tvMessage2Popup);
         tvTitlePopup = puVolverIndex.findViewById(R.id.tvTitlePopup);
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
     }
 
     public void asignarEfectos() {
@@ -276,6 +296,38 @@ public class IndexActivity extends AppCompatActivity {
 
     private void mostrarAdapterRestaurantes() {
         rvRestaurantesUsuario.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false));
+        restaurantesAdapter = new RestaurantesAdapter();
+        rvRestaurantesUsuario.setAdapter(restaurantesAdapter);
+        restaurantesAdapter.setmListener(this);
+        if(currentUser != null){
+            cargarRestaurantesBd();
+        }
+
+    }
+
+    private void cargarRestaurantesBd() {
+        if(currentUser != null){
+            restaurantesBd = new ArrayList<>();
+            String usuarioId = currentUser.getEmail();
+            DocumentReference id = db.collection("users").document(usuarioId);
+
+            CollectionReference restaurantesRef = db.collection("restaurantes");
+
+            Query consulta = restaurantesRef.whereEqualTo("usuarioId",usuarioId);
+
+            consulta.get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()){
+                    for (DocumentSnapshot document : task.getResult()) {
+
+                        String nombreRestaurante = document.getString("nombreRestaurante");
+                        Restaurantes restaurante = new Restaurantes(nombreRestaurante,"");
+                        restaurantesBd.add(restaurante);
+                    }
+                    restaurantesAdapter.setResultsRestaurantes(restaurantesBd);
+                }
+            });
+
+        }
     }
 
     @Override
@@ -288,4 +340,8 @@ public class IndexActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onItemClick(int position) {
+        Toast.makeText(this,String.valueOf(position),Toast.LENGTH_SHORT).show();
+    }
 }

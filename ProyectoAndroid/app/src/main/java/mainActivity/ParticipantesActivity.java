@@ -306,7 +306,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     }
     private void cargarDatosBd() {
          if (currentUser != null) {
-            comensalesBd=new ArrayList<>();
+            comensalesBd = new ArrayList<>();
             String usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
             DocumentReference id = db.collection("users").document(usuarioId);
 
