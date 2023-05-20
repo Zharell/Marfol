@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,26 +25,33 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.tfg.marfol.R;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -84,7 +92,8 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     private FirebaseUser currentUser;
     private FirebaseFirestore db;
     private StorageReference storageReference;
-
+    private boolean importado;
+    private Persona personaBd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +102,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         //Recibe la lista de comensales para empezar a añadir
         intent = getIntent();
         comensales = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComensales");
-
+        importado = intent.getBooleanExtra("importado",false);
         //Método que asigna IDs a los elementos
         asignarId();
 
@@ -104,6 +113,8 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
+        //Trae desde el clic de personas ya añadidas recientemente los participantes para añadirlos
+        insertarDesdeBd();
 
         //Laucher Result - recibe los platos del usuario creado
         rLauncherPlatos = registerForActivityResult(
@@ -171,6 +182,15 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                 }
         );
     }
+
+    private void insertarDesdeBd() {
+        if(importado){
+            personaBd=(Persona)intent.getSerializableExtra("comensalesBd");
+            etNombreAnadirP.setText(personaBd.getNombre());
+            etDescAnadirP.setText(personaBd.getDescripcion());
+        }
+    }
+
     private void comprobarLauncher(){
         if(MetodosGlobales.comprobarLogueado(this,ivAnadirPlatoImagen)){
             currentUser = mAuth.getCurrentUser();

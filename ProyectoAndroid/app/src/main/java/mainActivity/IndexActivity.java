@@ -79,7 +79,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     comprobarLauncher();
-
                 }
         );
         //Botón que accede a la gestión de participantes
@@ -325,6 +324,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
                     }
                     restaurantesAdapter.setResultsRestaurantes(restaurantesBd);
                 }
+
             });
 
         }
