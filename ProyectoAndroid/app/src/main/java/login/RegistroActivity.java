@@ -59,7 +59,7 @@ public class RegistroActivity extends AppCompatActivity {
                                 datosPersona.put("imagen","");
                                 db.collection("users").document(email).set(datosPersona)
                                         .addOnSuccessListener(anadido -> {
-                                            showIndex();
+                                            finish();
                                         }).addOnFailureListener(error -> {
                                             showAlert();
                                         });
@@ -93,10 +93,5 @@ public class RegistroActivity extends AppCompatActivity {
         builder.setPositiveButton("Aceptar", null);
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
-    private void showIndex() {
-        Intent indexIntent = new Intent(this, IndexActivity.class);
-        startActivity(indexIntent);
-        finish();
     }
 }
