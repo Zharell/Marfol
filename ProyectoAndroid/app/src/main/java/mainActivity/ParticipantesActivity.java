@@ -48,7 +48,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private boolean borrarComensal = false;
     private int numPlatos=0;
     private ImageView ivLoginParticipantes, ivMenuParticipantes;
-    private TextView tvTitleParticipantes,textoFill;
+    private TextView tvTitleParticipantes;
     private Dialog puVolverParticipantes;
     private Button btnCancelarParticipantes, btnConfirmarParticipantes, btnContinuarParticipantes;
     private Intent volverIndex;
@@ -188,8 +188,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
             Intent intent = new Intent(this, login.AuthActivity.class);
             rLauncherLogin.launch(intent);
         });
-
-
     }
     private void botonImagenLogueado(){
         //Puesto provisional para probar cosas
@@ -240,12 +238,12 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         btnContinuarParticipantes = findViewById(R.id.btnContinuarParticipantes);
         volverIndex = new Intent(this, IndexActivity.class);
         irLogin = new Intent(this, AuthActivity.class);
-        db = FirebaseFirestore.getInstance();
         //Asigna IDs de los elementos del popup
         puVolverParticipantes = new Dialog(this);
         puVolverParticipantes.setContentView(R.layout.popup_confirmacion);
         btnCancelarParticipantes = puVolverParticipantes.findViewById(R.id.btnCancelarPopup);
         btnConfirmarParticipantes = puVolverParticipantes.findViewById(R.id.btnConfirmarPopup);
+        db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         comensales= new ArrayList<>();

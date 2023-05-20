@@ -1,46 +1,34 @@
 package login;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.Shader;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tfg.marfol.R;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import mainActivity.IndexActivity;
-
 public class RegistroActivity extends AppCompatActivity {
-
     private Button btnRegistrarseRegistro;
     private EditText etRegistroEmailLogin;
     private EditText etTelefonoRegistro;
     private EditText etNombreRegistro;
     private EditText etRegistroPasswordLogin;
     private EditText etRegistroPasswordLogin2;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db;
     private String nombre, telefono,email;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro);
+        //Método que asigna los ids a todas las variables
         asignarId();
         //Setup
         setup();
     }
-
     //Este metodo crea un usuario con el correo pasandole las cajas y conectándose con firebase
     private void setup() {
         //Registro
@@ -50,11 +38,7 @@ public class RegistroActivity extends AppCompatActivity {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage("Los campos contraseña son distintos")
                             .setCancelable(false)
-                            .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.dismiss();
-                                }
-                            });
+                            .setPositiveButton("Aceptar", (dialog, id) -> dialog.dismiss());
 
                     AlertDialog alerta = builder.create();
                     alerta.show();
@@ -87,17 +71,12 @@ public class RegistroActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("Los campos de correo electrónico y contraseña no pueden estar vacíos")
                         .setCancelable(false)
-                        .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
+                        .setPositiveButton("Aceptar", (dialog, id) -> dialog.dismiss());
                 AlertDialog alerta = builder.create();
                 alerta.show();
             }
         });
     }
-
     private void asignarId() {
         btnRegistrarseRegistro = findViewById(R.id.btnRegistrarseRegistro);
         etRegistroEmailLogin = findViewById(R.id.etRegistroEmailLogin);
@@ -105,8 +84,8 @@ public class RegistroActivity extends AppCompatActivity {
         etRegistroPasswordLogin2 = findViewById(R.id.etRegistroPasswordLogin2);
         etTelefonoRegistro = findViewById(R.id.etTelefonoRegistro);
         etNombreRegistro = findViewById(R.id.etNombreRegistro);
+        db = FirebaseFirestore.getInstance();
     }
-
     private void showAlert() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Error");
@@ -115,12 +94,9 @@ public class RegistroActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
     private void showIndex() {
         Intent indexIntent = new Intent(this, IndexActivity.class);
         startActivity(indexIntent);
         finish();
-
     }
-
 }

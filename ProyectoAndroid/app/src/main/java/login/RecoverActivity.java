@@ -1,19 +1,14 @@
 package login;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.tfg.marfol.R;
-
 public class RecoverActivity extends AppCompatActivity {
-    EditText etContrasenaOlvidadaRecover;
-    Button btnEnviarRecover;
+    private EditText etContrasenaOlvidadaRecover;
+    private Button btnEnviarRecover;
     private FirebaseAuth mAuth;
     private String email="";
 
@@ -21,9 +16,8 @@ public class RecoverActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recover);
-        mAuth=FirebaseAuth.getInstance();
-        etContrasenaOlvidadaRecover=findViewById(R.id.etContrasenaOlvidadaRecover);
-        btnEnviarRecover=findViewById(R.id.btnEnviarRecover);
+        //asigna id a las variables
+        asignarId();
         btnEnviarRecover.setOnClickListener(v->{
             email= etContrasenaOlvidadaRecover.getText().toString();
             if(!email.isEmpty()){
@@ -32,11 +26,15 @@ public class RecoverActivity extends AppCompatActivity {
             }else {
                 Toast.makeText(this, "Debe ingresar email",Toast.LENGTH_SHORT).show();
             }
-
         });
     }
-
+    private void asignarId() {
+        mAuth=FirebaseAuth.getInstance();
+        etContrasenaOlvidadaRecover=findViewById(R.id.etContrasenaOlvidadaRecover);
+        btnEnviarRecover=findViewById(R.id.btnEnviarRecover);
+    }
     private void resetPassword() {
+        //envía un correo al usuario de la caja de texto,(en caso de que el usuario esté registrado), y manda un reset de contraseña
         mAuth.setLanguageCode("es");
         mAuth.sendPasswordResetEmail(email).addOnCompleteListener(l->{
             if(l.isSuccessful()){

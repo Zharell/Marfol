@@ -26,17 +26,12 @@ public class HomeActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private ImageView ivFotoPersonaHome;
     private String emailId,userEmail,userNombre,userTelefono;
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
         // Asignar ID
         asignarId();
-
         // Verificar si el usuario está logueado
         if (MetodosGlobales.comprobarLogueado(this, ivFotoPersonaHome)) {
             cargarDatosEnHomeSiLogueado(tvEmailHome, tvNombreUsuario, tvTelefonoUsuario);
@@ -45,7 +40,6 @@ public class HomeActivity extends AppCompatActivity {
             finish();
         }
     }
-
     private void asignarId() {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
@@ -57,7 +51,6 @@ public class HomeActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
     }
-
     private void setup() {
         btnEditarBD.setOnClickListener(v -> {
             Intent editar = new Intent(HomeActivity.this, EditarDatos.class);
@@ -65,14 +58,13 @@ public class HomeActivity extends AppCompatActivity {
             finish();
         });
     }
-
     /**
      * Carga los datos del usuario logueado en la interfaz de HomeActivity.
      * @param email TextView para mostrar el correo electrónico del usuario.
      * @param nombre TextView para mostrar el nombre del usuario.
      * @param telefono TextView para mostrar el número de teléfono del usuario.
      */
-    public void cargarDatosEnHomeSiLogueado(TextView email, TextView nombre, TextView telefono) {
+    private void cargarDatosEnHomeSiLogueado(TextView email, TextView nombre, TextView telefono) {
         if (mAuth.getCurrentUser() != null) {
             // Obtener el usuario actualmente logueado
             currentUser = mAuth.getCurrentUser();
@@ -90,7 +82,6 @@ public class HomeActivity extends AppCompatActivity {
                         userEmail = document.getString("email");
                         userNombre = document.getString("name");
                         userTelefono = document.getString("phone");
-
                         // Establecer los valores en los TextView correspondientes
                         if (userEmail != null) {
                             email.setText(userEmail);

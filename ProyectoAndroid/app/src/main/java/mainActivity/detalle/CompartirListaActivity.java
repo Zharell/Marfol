@@ -27,7 +27,6 @@ import mainActivity.crud.AnadirPlatoActivity;
 public class CompartirListaActivity extends AppCompatActivity implements ListaCompartirAdapter.onItemClickListener {
 
     private ArrayList<Persona> nombreCompartir;
-    private ImageView ivLoginListComp, ivMenuListComp;
     private TextView tvTitleListComp;
     private ListaCompartirAdapter listaAdapter;
     private RecyclerView rvPersonaCompartir;
@@ -63,9 +62,6 @@ public class CompartirListaActivity extends AppCompatActivity implements ListaCo
     }
 
     public void asignarEfectos() {
-        //Ajusta el tamaño de la imagen del login
-        ivLoginListComp.setPadding(20, 20, 20, 20);
-
         //Asigna el degradado de colores a los textos
         int[] colors = {getResources().getColor(R.color.redBorder),
                 getResources().getColor(R.color.redTitle)
@@ -88,8 +84,6 @@ public class CompartirListaActivity extends AppCompatActivity implements ListaCo
 
     public void asignarId() {
         //Asigna Ids a los elementos de la actividad
-        ivLoginListComp = findViewById(R.id.ivLoginCompartir);
-        ivMenuListComp = findViewById(R.id.ivMenuCompartir);
         tvTitleListComp = findViewById(R.id.tvTitleCompartir);
         rvPersonaCompartir = findViewById(R.id.rvPersonaCompartir);
     }

@@ -30,36 +30,8 @@
 
 
     <!-- Menu APP -->
-    <ImageView
-        android:id="@+id/ivMenuAnadirPlato"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02"
-        android:src="@android:drawable/ic_menu_sort_by_size"
-
-        />
 
     <!-- Login App -->
-    <ImageView
-        android:id="@+id/ivAnadirPlatoImagen"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/login_style"
-        android:src="@drawable/nologinimg"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.96"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02"
-
-        />
 
     <EditText
         android:id="@+id/etNombreAnadirPlato"
