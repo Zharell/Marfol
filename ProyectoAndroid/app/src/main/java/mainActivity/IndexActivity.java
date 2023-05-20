@@ -3,6 +3,7 @@ package mainActivity;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.app.Dialog;
 import android.content.Context;
@@ -32,7 +33,7 @@ public class IndexActivity extends AppCompatActivity {
 
     private Button btnApIndex2;
     private ImageView ivLoginIndex, ivMenuIndex;
-    private RecyclerView rvPresetsIndex;
+    private RecyclerView rvRestaurantesUsuario;
     private Dialog puVolverIndex;
     private Button btnCancelarIndex, btnConfirmarIndex;
     private TextView tvMessage1Popup, tvMessage2Popup, tvTitlePopup, btnAPIndex, tvTitleIndex;
@@ -115,7 +116,7 @@ public class IndexActivity extends AppCompatActivity {
         ivLoginIndex = findViewById(R.id.ivAnadirPlatoImagen);
         Glide.with(this).load(R.drawable.nologinimg).into(ivLoginIndex);
         ivMenuIndex = findViewById(R.id.ivMenuAnadirPlato);
-        rvPresetsIndex = findViewById(R.id.rvPresetsIndex);
+        rvRestaurantesUsuario = findViewById(R.id.rvRestaurantesUsuario);
         tvTitleIndex = findViewById(R.id.tvTitleAnadirPlato);
         //Asigna IDs de los elementos del popup
         puVolverIndex = new Dialog(this);
@@ -266,11 +267,17 @@ public class IndexActivity extends AppCompatActivity {
     private void comprobarLauncher() {
         if (MetodosGlobales.comprobarLogueado(IndexActivity.this, ivLoginIndex)) {
             botonImagenLogueado();
+            mostrarAdapterRestaurantes();
         } else {
             Glide.with(this).load(R.drawable.nologinimg).into(ivLoginIndex);
             botonImagenNoLogueado();
         }
     }
+
+    private void mostrarAdapterRestaurantes() {
+        rvRestaurantesUsuario.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false));
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

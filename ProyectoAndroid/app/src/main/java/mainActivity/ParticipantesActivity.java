@@ -48,7 +48,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private boolean borrarComensal = false;
     private int numPlatos=0;
     private ImageView ivLoginParticipantes, ivMenuParticipantes;
-    private TextView tvTitleParticipantes,textoFill;
+    private TextView tvTitleParticipantes;
     private Dialog puVolverParticipantes;
     private Button btnCancelarParticipantes, btnConfirmarParticipantes, btnContinuarParticipantes;
     private Intent volverIndex;
