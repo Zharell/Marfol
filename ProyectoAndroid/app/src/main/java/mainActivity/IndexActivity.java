@@ -1,5 +1,4 @@
 package mainActivity;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,16 +28,14 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.tfg.marfol.R;
-
 import java.util.ArrayList;
-
 import adapters.RestaurantesAdapter;
-import entities.Persona;
 import entities.Restaurantes;
 import mainActivity.API.API;
 import mainActivity.menu.AboutUs;
 import mainActivity.menu.ContactUs;
 import mainActivity.menu.Preferences;
+
 public class IndexActivity extends AppCompatActivity implements RestaurantesAdapter.onItemClickListenerRestaurantes {
 
     private Button btnApIndex;
@@ -48,7 +44,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     private ImageView ivLoginIndex, ivMenuIndex;
     private RecyclerView rvRestaurantesUsuario;
     private Dialog puVolverIndex;
-    private Button btnCancelarIndex, btnConfirmarIndex;
+    private Button btnCancelarIndex, btnConfirmarIndex, btnProvisional;
     private TextView tvMessage1Popup, tvMessage2Popup, tvTitlePopup, btnAPIndex, tvTitleIndex;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -61,7 +57,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     private TextView menuItemHome;
     private TextView tvLogoutIndex;
     private PopupWindow popupWindow;
-    private Intent homeIntent,authIntent;
+    private Intent homeIntent, authIntent;
     private RestaurantesAdapter restaurantesAdapter;
     private ArrayList<Restaurantes> restaurantesBd;
 
@@ -105,6 +101,10 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
         //Cancela, desaparece el popup y continúa en la actividad
         btnCancelarIndex.setOnClickListener(view -> puVolverIndex.dismiss());
+        btnProvisional.setOnClickListener(view -> {
+            Intent a = new Intent(this, mainActivity.menu.crudBd.Seleccion.class);
+            startActivity(a);
+        });
     }
 
     private void botonImagenNoLogueado() {
@@ -145,6 +145,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+        btnProvisional = findViewById(R.id.btnProvisional);
     }
 
     public void asignarEfectos() {
@@ -294,32 +295,32 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     }
 
     private void mostrarAdapterRestaurantes() {
-        rvRestaurantesUsuario.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false));
+        rvRestaurantesUsuario.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         restaurantesAdapter = new RestaurantesAdapter();
         rvRestaurantesUsuario.setAdapter(restaurantesAdapter);
         restaurantesAdapter.setmListener(this);
-        if(currentUser != null){
+        if (currentUser != null) {
             cargarRestaurantesBd();
         }
 
     }
 
     private void cargarRestaurantesBd() {
-        if(currentUser != null){
+        if (currentUser != null) {
             restaurantesBd = new ArrayList<>();
             String usuarioId = currentUser.getEmail();
             DocumentReference id = db.collection("users").document(usuarioId);
 
             CollectionReference restaurantesRef = db.collection("restaurantes");
 
-            Query consulta = restaurantesRef.whereEqualTo("usuarioId",usuarioId);
+            Query consulta = restaurantesRef.whereEqualTo("usuarioId", usuarioId);
 
             consulta.get().addOnCompleteListener(task -> {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     for (DocumentSnapshot document : task.getResult()) {
 
                         String nombreRestaurante = document.getString("nombreRestaurante");
-                        Restaurantes restaurante = new Restaurantes(nombreRestaurante,"");
+                        Restaurantes restaurante = new Restaurantes(nombreRestaurante, "");
                         restaurantesBd.add(restaurante);
                     }
                     restaurantesAdapter.setResultsRestaurantes(restaurantesBd);
@@ -342,6 +343,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
     @Override
     public void onItemClick(int position) {
-        Toast.makeText(this,String.valueOf(position),Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, String.valueOf(position), Toast.LENGTH_SHORT).show();
     }
 }
