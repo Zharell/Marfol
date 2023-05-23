@@ -72,6 +72,7 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         rvCrudPersonas = findViewById(R.id.rvCrudPersonas);
+
     }
 
     private void cargarDatosBd() {

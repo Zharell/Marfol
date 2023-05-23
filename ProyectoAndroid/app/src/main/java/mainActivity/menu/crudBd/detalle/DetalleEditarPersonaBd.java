@@ -47,16 +47,7 @@ import com.tfg.marfol.R;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import adapters.PersonaDetalleAdapter;
 import entities.Persona;
-import entities.Plato;
-import login.EditarDatos;
-import mainActivity.crud.AnadirPlatoActivity;
-import mainActivity.detalle.DetallePersonaActivity;
 
 public class DetalleEditarPersonaBd extends AppCompatActivity {
     private Persona comensalBd;
@@ -153,7 +144,7 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
         etDetalleNombreEditarPersona.setText(comensalBd.getNombre());
         etDetalleDescripcionEditarPersona.setText(comensalBd.getDescripcion());
         imagen = comensalBd.getUrlImage();
-        if (imagen != null) {
+        if (imagen != null||!imagen.equalsIgnoreCase("")) {
             Glide.with(DetalleEditarPersonaBd.this).load(imagen).circleCrop().into(ivDetalleFotoEditarPersona);
         }else{
             Glide.with(DetalleEditarPersonaBd.this).load(R.drawable.nologinimg).circleCrop().into(ivDetalleFotoEditarPersona);
