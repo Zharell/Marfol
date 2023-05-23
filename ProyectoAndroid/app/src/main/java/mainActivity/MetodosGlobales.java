@@ -27,18 +27,27 @@ public class MetodosGlobales {
                             iVimagen.setClickable(false);  // Deshabilitar el clic en la imagen
                             iVimagen.setFocusable(false);
                             iVimagen.setPadding(20, 20, 20, 20);
-                            Glide.with(context)
-                                    .load(imagen)
-                                    .circleCrop() // Aplica el formato redondeado
-                                    .into(iVimagen);
+                            try {
+                                Glide.with(context)
+                                        .load(imagen)
+                                        .circleCrop() // Aplica el formato redondeado
+                                        .into(iVimagen);
+                            } catch (IllegalArgumentException e) {
+                            }
                         } else {
-                            Glide.with(context)
-                                    .load(R.drawable.nologinimg)
-                                    .circleCrop() // Aplica el formato redondeado
-                                    .into(iVimagen);
+                            try {
+                                Glide.with(context)
+                                        .load(R.drawable.nologinimg)
+                                        .circleCrop() // Aplica el formato redondeado
+                                        .into(iVimagen);
+                            } catch (IllegalArgumentException e) {
+                            }
                         }
                     } else {
-                        Glide.with(context).load(R.drawable.nologinimg).into(iVimagen);
+                        try {
+                            Glide.with(context).load(R.drawable.nologinimg).into(iVimagen);
+                        } catch (IllegalArgumentException e) {
+                        }
                     }
                 } else {
                     Toast.makeText(context, "Error al obtener los datos del usuario", Toast.LENGTH_SHORT).show();
@@ -46,7 +55,10 @@ public class MetodosGlobales {
             });
         } else {
             Toast.makeText(context, "No estás logueado", Toast.LENGTH_SHORT).show();
-            Glide.with(context).load(R.drawable.nologinimg).into(iVimagen);
+            try {
+                Glide.with(context).load(R.drawable.nologinimg).into(iVimagen);
+            } catch (IllegalArgumentException e) {
+            }
         }
     }
     public static boolean comprobarLogueado(Context context, ImageView iVimagen) {
@@ -63,18 +75,27 @@ public class MetodosGlobales {
                         if (imagen != null&&!imagen.equalsIgnoreCase("")) {
                             iVimagen.setPadding(20, 20, 20, 20);
                             iVimagen.setBackground(null);
-                            Glide.with(context)
-                                    .load(imagen)
-                                    .circleCrop() // Aplica el formato redondeado
-                                    .into(iVimagen);
+                            try {
+                                Glide.with(context)
+                                        .load(imagen)
+                                        .circleCrop() // Aplica el formato redondeado
+                                        .into(iVimagen);
+                            } catch (IllegalArgumentException e) {
+                            }
                         } else {
-                            Glide.with(context)
-                                    .load(R.drawable.nologinimg)
-                                    .circleCrop() // Aplica el formato redondeado
-                                    .into(iVimagen);
+                            try {
+                                Glide.with(context)
+                                        .load(R.drawable.nologinimg)
+                                        .circleCrop() // Aplica el formato redondeado
+                                        .into(iVimagen);
+                            } catch (IllegalArgumentException e) {
+                            }
                         }
                     } else {
-                        Glide.with(context).load(R.drawable.nologinimg).into(iVimagen);
+                        try {
+                            Glide.with(context).load(R.drawable.nologinimg).into(iVimagen);
+                        } catch (IllegalArgumentException e) {
+                        }
                     }
                 } else {
                     Toast.makeText(context, "Error al obtener los datos del usuario", Toast.LENGTH_SHORT).show();

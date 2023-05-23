@@ -1,38 +1,56 @@
 package mainActivity.detalle;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tfg.marfol.R;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
+import adapters.ListaCompartirAdapter;
+import adapters.PersonaCompartirAdapter;
 import adapters.PersonaDetalleAdapter;
 import entities.Persona;
 import entities.Plato;
 
-public class DetallePlatoActivity extends AppCompatActivity {
+public class DetallePlatoActivity extends AppCompatActivity implements PersonaCompartirAdapter.onItemClickListener {
 
+    private Switch swCompartirPlato;
     private ImageView ivFotoDetalle;
-    private EditText etTitleDetalle, etDescripcionDetalle;
+    private ActivityResultLauncher rLauncherComp;
+    private TextView tvListaEditarPlato;
+    private EditText etTitleDetalle, etDescripcionDetalle, etPrecioDetalle;
     private RecyclerView rvAnadirPlatoDetalle;
     private static final int CAMERA_PERMISSION_CODE = 100;
+    private int personaCode;
+    private ArrayList <Persona> noRepComList;
+    private ArrayList <Persona> nombreCompartir;
     private ActivityResultLauncher<Intent> camaraLauncher;
     private ActivityResultLauncher rLauncherPlatos;
-    private Button btnContinuarDetalle, btnBorrarDetalle;
+    private PersonaCompartirAdapter anadirPAdapter;
+    private boolean esCompartido;
+    private Button btnEditarDetalle, btnBorrarDetalle;
     private String uriCapturada = "";
     private Plato plato;
 
@@ -44,6 +62,13 @@ public class DetallePlatoActivity extends AppCompatActivity {
         //Recibe la lista de comensales para empezar a añadir
         Intent intent = getIntent();
         plato = (Plato) intent.getSerializableExtra("platoDetalle");
+        nombreCompartir = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComenComp");
+        personaCode = intent.getIntExtra("comensalCode",0);
+        esCompartido = plato.isCompartido();
+
+        for (Persona e : nombreCompartir) {
+            Toast.makeText(this,String.valueOf(e.getNombre()),Toast.LENGTH_SHORT).show();
+        }
 
         //Método que asigna IDs a los elementos
         asignarId();
@@ -57,17 +82,112 @@ public class DetallePlatoActivity extends AppCompatActivity {
         //Método que inserta la información a los comensales
         insertarComensal();
 
+        //Botón de borrar, envía a la actividad padre un boolean indicando si debe borrar
+        btnBorrarDetalle.setOnClickListener(view -> {
+            borrarPlato();
+        });
+
+        //Botón de editar, envía un nuevo plato tras ser validado y sustituye el antiguo
+        btnEditarDetalle.setOnClickListener(view -> {
+            editarPlato();
+        });
+
+        //Comprueba si el switch compartir está activo o no para mostrar su información
+        swCompartirPlato.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            if (isChecked) {
+                tvListaEditarPlato.setVisibility(View.VISIBLE);
+                rvAnadirPlatoDetalle.setVisibility(View.VISIBLE);
+                esCompartido = true;
+            } else {
+                tvListaEditarPlato.setVisibility(View.INVISIBLE);
+                rvAnadirPlatoDetalle.setVisibility(View.INVISIBLE);
+                esCompartido = false;
+            }
+        });
+
+        //Laucher Result recibe las personas de la listas que van a compartir
+        rLauncherComp = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        //Método de cálculo aquí también
+                        Intent data = result.getData();
+                        plato.getPersonasCompartir().add((Persona) data.getSerializableExtra("personaCompartir"));
+                        anadirPAdapter.setResultsPersonaCom(plato.getPersonasCompartir());
+                    }
+                }
+        );
+
+    }
+
+    public void editarPlato() {
+        boolean esValidado = true;
+        String nombre = String.valueOf(etTitleDetalle.getText());
+        String descripcion = String.valueOf(etDescripcionDetalle.getText());
+        double precio;
+        Plato platoEditado;
+
+        //Comprueba si el editText está vacío, de estarlo el programa lo entiende como un 0, además, remplaza <,> por <.> para evitar errores
+        precio = etPrecioDetalle.getText().toString().equalsIgnoreCase("") ? 0 : Double.parseDouble(etPrecioDetalle.getText().toString().replace(",", "."));
+
+        //Comprueba si has añadido un nombre
+        if (etTitleDetalle.getText().toString().length() == 0) {
+            Toast.makeText(this, "Debe introducir un nombre", Toast.LENGTH_SHORT).show();
+            esValidado = false;
+        }
+
+        if (precio <= 0) {
+            Toast.makeText(this, "Debe introducir un precio mayor a 0", Toast.LENGTH_SHORT).show();
+            esValidado = false;
+        }
+
+        //Comprueba si ha validado, añade la persona, envía al padre el ArrayList de comensales, platos y cierra la actividad
+        if (esValidado) {
+            //Dependiendo si es compartido o no
+            if (esCompartido) {
+                //Eliminamos la posición 0 ya que es un botón
+                plato.getPersonasCompartir().remove(0);
+
+                //Hacemos una última comprobación si ha añadido personas en compartir, si no ha añadido se añade un plato NO compartido
+                if (plato.getPersonasCompartir().size() > 0) {
+                    //Añado a la lista la persona creada                                           - lista de personas que van a compartir el plato
+                    platoEditado = new Plato(nombre, descripcion, precio, precio, uriCapturada, esCompartido, plato.getPersonasCompartir());
+                } else {
+                    //Añado a la lista la persona creada
+                    esCompartido = false;                                                         //Solo se crea el plato si en el compartido
+                    platoEditado = new Plato(nombre, descripcion, precio, precio, uriCapturada, esCompartido, new ArrayList<>());
+                }
+            } else {
+                //Añado a la lista la persona creada                                       //Solo se crea el plato si en el compartido
+                platoEditado = new Plato(nombre, descripcion, precio, precio, uriCapturada, esCompartido, new ArrayList<>());
+
+            }
+
+            Intent intentComensal = new Intent();
+            intentComensal.putExtra("detallePlato", platoEditado);
+            setResult(Activity.RESULT_OK, intentComensal);
+            finish();
+
+        }
+
+    }
+
+    public void borrarPlato() {
+        Intent borrarPlato = new Intent();
+        borrarPlato.putExtra("borrarPlato", true);
+        setResult(Activity.RESULT_OK, borrarPlato);
+        finish();
     }
 
     public void insertarComensal() {
         etTitleDetalle.setText(plato.getNombre());
         etDescripcionDetalle.setText(plato.getDescripcion());
-        uriCapturada  = plato.getUrlImage();
+        etPrecioDetalle.setText(String.valueOf(plato.getPrecio()));
+        uriCapturada = plato.getUrlImage();
         if (!plato.getUrlImage().equalsIgnoreCase("")) {
             ivFotoDetalle.setImageURI(Uri.parse(plato.getUrlImage()));
         } else {
             //Inserta Imagen photo
-            ivFotoDetalle.setImageURI(Uri.parse("android.resource://com.tfg.marfol/"+R.drawable.camera));
+            ivFotoDetalle.setImageURI(Uri.parse("android.resource://com.tfg.marfol/" + R.drawable.camera));
             ivFotoDetalle.setPadding(30, 30, 30, 30);
         }
     }
@@ -100,9 +220,23 @@ public class DetallePlatoActivity extends AppCompatActivity {
     }
 
     public void mostrarAdapter() {
-        if (plato.isCompartido()) {
+        //Se añade la posición 0 el objeto para añadir personas ( compartir )
+        //Se añade el objeto Persona, " Añadir Persona " por si el usuario desea compartir en editar
+        plato.getPersonasCompartir().add(0, new Persona(0, "", "", "android.resource://com.tfg.marfol/" + R.drawable.add_icon, new ArrayList<>(), 0));
+
+        //Prepara el Adapter para su uso
+        rvAnadirPlatoDetalle.setLayoutManager(new LinearLayoutManager(this));
+        anadirPAdapter = new PersonaCompartirAdapter();
+        rvAnadirPlatoDetalle.setAdapter(anadirPAdapter);
+        anadirPAdapter.setmListener(this::onItemClick);
+        anadirPAdapter.setResultsPersonaCom(plato.getPersonasCompartir());
+
+        //Solo aparece activado si es compartido
+        if(plato.isCompartido()) {
+            //Si el plato es compartido, activamos el switch y los elementos de compartir
             rvAnadirPlatoDetalle.setVisibility(View.VISIBLE);
-            //Métodos del adapter solo si es compartido
+            tvListaEditarPlato.setVisibility(View.VISIBLE);
+            swCompartirPlato.setChecked(true);
         }
     }
 
@@ -111,8 +245,30 @@ public class DetallePlatoActivity extends AppCompatActivity {
         etTitleDetalle = findViewById(R.id.etTitleDetallePlato);
         etDescripcionDetalle = findViewById(R.id.etDescripcionDetallePlato);
         rvAnadirPlatoDetalle = findViewById(R.id.rvAnadirDetallePlato);
-        btnContinuarDetalle = findViewById(R.id.btnEditarPlato);
+        btnEditarDetalle = findViewById(R.id.btnEditarPlato);
         btnBorrarDetalle = findViewById(R.id.btnBorrarPlato);
+        etPrecioDetalle = findViewById(R.id.etPrecioEditarPlato);
+        swCompartirPlato = findViewById(R.id.swCompartirEditarPlato);
+        tvListaEditarPlato = findViewById(R.id.tvListaEditarPlato);
     }
 
+    @Override
+    public void onItemClick(int position) {
+        if (position==0) {
+            //Método que comprueba si hay repetidos en la lista de compartidos (no aparezcan de nuevo)
+            //Además, comprueba que no esté el propio usuario a la hora de repartir
+            noRepComList=nombreCompartir;
+
+            for (Persona p : plato.getPersonasCompartir()) {
+                noRepComList.removeIf(persona -> persona.getComensalCode()==p.getComensalCode());
+                noRepComList.removeIf(persona -> persona.getComensalCode()==personaCode);
+            }
+
+            //Accedemos a la actividad de compartir plato
+            Intent intent = new Intent(this, CompartirListaActivity.class);
+            intent.putExtra("arrayListComenComp", noRepComList);
+            rLauncherComp.launch(intent);
+
+        }
+    }
 }

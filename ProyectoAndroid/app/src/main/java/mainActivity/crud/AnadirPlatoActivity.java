@@ -111,7 +111,6 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
                         Intent data = result.getData();
                         comensalCompartirList.add((Persona) data.getSerializableExtra("personaCompartir"));
                         anadirPAdapter.setResultsPersonaCom(comensalCompartirList);
-
                     }
                 }
         );
@@ -142,7 +141,6 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
                 Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
                 try {
-
                     OutputStream outputStream = getContentResolver().openOutputStream(uri);
                     photo.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                     outputStream.close();
@@ -201,8 +199,15 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
                 //Eliminamos la posición 0 ya que es un botón
                 comensalCompartirList.remove(0);
 
-                //Añado a la lista la persona creada                                           - lista de personas que van a compartir el plato
-                platos.add(new Plato(nombre,descripcion,precio,precio,uriCapturada,esCompartido, comensalCompartirList));
+                //Hacemos una última comprobación si ha añadido personas en compartir, si no ha añadido se añade un plato NO compartido
+                if (comensalCompartirList.size()>0) {
+                    //Añado a la lista la persona creada                                           - lista de personas que van a compartir el plato
+                    platos.add(new Plato(nombre,descripcion,precio,precio,uriCapturada,esCompartido, comensalCompartirList));
+                } else {
+                    //Añado a la lista la persona creada                                          //Se añade vacío ya que no es compartido
+                    esCompartido=false;
+                    platos.add(new Plato(nombre,descripcion,precio,precio,uriCapturada,esCompartido, new ArrayList<>()));
+                }
             } else {
                 //Añado a la lista la persona creada                                          //Se crea el plato si en el compartido
                 platos.add(new Plato(nombre,descripcion,precio,precio,uriCapturada,esCompartido, new ArrayList<>()));
@@ -268,29 +273,24 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
         btnContinuarAnadirP = findViewById(R.id.btnPlatosAnadirPlato);
         ivPlatoAnadirP = findViewById(R.id.ivPlatoAnadirPlato);
         swCompartirPlato = findViewById(R.id.swCompartirAnadirPlato);
-
     }
 
     @Override
     public void onItemClick(int position) {
-        //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
-        if (position>0) {
-
-        } else {
-
+        if (position==0) {
             //Método que comprueba si hay repetidos en la lista de compartidos (no aparezcan de nuevo)
             //Además, comprueba que no esté el propio usuario a la hora de repartir
             noRepCompartirList = nombreCompartir;
+
             for (Persona p : comensalCompartirList) {
                 noRepCompartirList.removeIf(persona -> persona.getComensalCode()==p.getComensalCode());
                 noRepCompartirList.removeIf(persona -> persona.getComensalCode()==personaCode);
             }
 
             //Accedemos a la actividad de compartir plato
-                Intent intent = new Intent(this, CompartirListaActivity.class);
-                intent.putExtra("arrayListComenComp", noRepCompartirList);
-                rLauncherComp.launch(intent);
-
+            Intent intent = new Intent(this, CompartirListaActivity.class);
+            intent.putExtra("arrayListComenComp", noRepCompartirList);
+            rLauncherComp.launch(intent);
         }
     }
 

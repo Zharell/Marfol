@@ -63,7 +63,7 @@ import mainActivity.crud.AnadirPlatoActivity;
 
 public class DetallePersonaActivity extends AppCompatActivity implements PersonaDetalleAdapter.onItemClickListener {
 
-    private Persona comensal,comensalBd;
+    private Persona comensal, comensalBd;
     private ImageView ivLoginDetalle, ivMenuDetalle, ivFotoDetalle;
     private EditText etTitleDetalle, etDescripcionDetalle;
     private RecyclerView rvAnadirPlatoDetalle;
@@ -71,12 +71,15 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
     private ArrayList<Plato> platos;
     private ArrayList<Persona> nombreCompartir;
     private static final int CAMERA_PERMISSION_CODE = 100;
-    private ActivityResultLauncher <Intent> camaraLauncher;
+    private boolean borrarPlato;
+    private int platoPosicion;
+    private ActivityResultLauncher<Intent> camaraLauncher;
     private ActivityResultLauncher rLauncherPlatos;
+    private ActivityResultLauncher rLauncherDetallePlato;
     private Button btnContinuarDetalle, btnBorrarDetalle;
-    private String uriCapturada="";
+    private String uriCapturada = "";
     private FirebaseFirestore db;
-    private FirebaseAuth auth ;
+    private FirebaseAuth auth;
     private FirebaseUser currentUser;
     private String email;
 
@@ -89,7 +92,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         Intent intent = getIntent();
         comensal = (Persona) intent.getSerializableExtra("comensalDetalle");
         nombreCompartir = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComenComp");
-        comensalBd=comensal;
+        comensalBd = comensal;
 
         //Método que asigna IDs a los elementos
         asignarId();
@@ -102,6 +105,25 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
 
         //Método que inserta la información a los comensales
         insertarComensal();
+
+        //Launcher detallePlato se actualiza al recibir la modificación
+        rLauncherDetallePlato = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        borrarPlato = data.getBooleanExtra("borrarPlato", false);
+                        if (!borrarPlato) {
+                            //Sustituye el plato de la posición elegida anteriormente ( EDITAR PLATO )
+                            platos.set(platoPosicion, (Plato) data.getSerializableExtra("detallePlato"));
+                            adapterDetalle.setResultsPlato(platos);
+                        } else {
+                            //Borra el plato de la posición elegida anteriormente ( BORRAR PLATO )
+                            platos.remove(platoPosicion);
+                            adapterDetalle.setResultsPlato(platos);
+                        }
+                    }
+                }
+        );
 
         //Laucher Result - recibe los platos del usuario creado
         rLauncherPlatos = registerForActivityResult(
@@ -119,7 +141,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
             // Solicitar permiso para acceder a la cámara
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
                 //Si no tenemos los permisos los obtenemos
-                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
             } else {
                 // Si ya se tienen los permisos, abrir la cámara
                 abrirCamara();
@@ -163,7 +185,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
 
     }
 
-    public void borrarComensal(){
+    public void borrarComensal() {
         Intent borrarComensal = new Intent();
         borrarComensal.putExtra("borrarComensal", true);
         setResult(Activity.RESULT_OK, borrarComensal);
@@ -171,31 +193,32 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
     }
 
     public void editarComensal() {
-        boolean esValidado=true;
+        boolean esValidado = true;
         String nombre = String.valueOf(etTitleDetalle.getText());
         String descripcion = String.valueOf(etDescripcionDetalle.getText());
 
         //Comprueba si has añadido un nombre
         if (etTitleDetalle.getText().toString().length() == 0) {
-            Toast.makeText(this,"Debe introducir un nombre", Toast.LENGTH_SHORT).show();
-            esValidado=false;
+            Toast.makeText(this, "Debe introducir un nombre", Toast.LENGTH_SHORT).show();
+            esValidado = false;
         }
         //Comprueba si ha validado, añade la persona, envía al padre el ArrayList y cierra la actividad
         if (esValidado) {
             //AÑADIR A BD
             editarComensalBd();
             //Añado a la lista la persona creada
-            Persona personaEditada = new Persona(comensal.getComensalCode(),nombre, descripcion, uriCapturada, platos, 0);
+            Persona personaEditada = new Persona(comensal.getComensalCode(), nombre, descripcion, uriCapturada, platos, 0);
             Intent intentComensal = new Intent();
             intentComensal.putExtra("detalleComensal", personaEditada);
             setResult(Activity.RESULT_OK, intentComensal);
             finish();
         }
     }
+
     private void editarComensalBd() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
-        if (currentUser == null){
+        if (currentUser == null) {
             Toast.makeText(DetallePersonaActivity.this, "Los datos no se guardarán en bd", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -224,24 +247,24 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
                                             for (QueryDocumentSnapshot document : task.getResult()) {
                                                 String personaId = document.getId(); // Obtiene el ID del documento de la persona
                                                 DocumentReference personaRef = personasRef.document(personaId);
-                                                    personaRef.update("nombre", nombreNuevo, "descripcion", descripcionNueva, "imagen", uriCapturada)
-                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                @Override
-                                                                public void onSuccess(Void aVoid) {
-                                                                    // La actualización se realizó exitosamente
-                                                                    Toast.makeText(DetallePersonaActivity.this, "Los datos se actualizaron correctamente", Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            })
-                                                            .addOnFailureListener(new OnFailureListener() {
-                                                                @Override
-                                                                public void onFailure(@NonNull Exception e) {
-                                                                    // Ocurrió un error al actualizar los datos
-                                                                    Toast.makeText(DetallePersonaActivity.this, "Error al actualizar los datos", Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            });
+                                                personaRef.update("nombre", nombreNuevo, "descripcion", descripcionNueva, "imagen", uriCapturada)
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                // La actualización se realizó exitosamente
+                                                                Toast.makeText(DetallePersonaActivity.this, "Los datos se actualizaron correctamente", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                // Ocurrió un error al actualizar los datos
+                                                                Toast.makeText(DetallePersonaActivity.this, "Error al actualizar los datos", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
 
-                                                    break; // Si se encuentra una persona, se actualiza solo el primer documento y se sale del bucle
-                                                }
+                                                break; // Si se encuentra una persona, se actualiza solo el primer documento y se sale del bucle
+                                            }
                                         } else {
                                             // Ocurrió un error al obtener los documentos
                                             Toast.makeText(DetallePersonaActivity.this, "Error al obtener los documentos", Toast.LENGTH_SHORT).show();
@@ -256,7 +279,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                             // La actualización se realizó exitosamente
-                                            anadirPersonaABd(nombreNuevo,descripcionNueva,uriCapturada);
+                                            anadirPersonaABd(nombreNuevo, descripcionNueva, uriCapturada);
                                             Toast.makeText(DetallePersonaActivity.this, "Se actualizaron nuevos datos", Toast.LENGTH_SHORT).show();
                                         }
                                     })
@@ -266,7 +289,8 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
                                             // Ocurrió un error al actualizar los datos
                                             Toast.makeText(DetallePersonaActivity.this, "No se borró", Toast.LENGTH_SHORT).show();
                                         }
-                                    });;
+                                    });
+                            ;
                         }
                         // Ya existe una persona con el mismo nombre, no se realiza ninguna acción
                         Toast.makeText(DetallePersonaActivity.this, "Ya existe una persona con el mismo nombre", Toast.LENGTH_SHORT).show();
@@ -281,8 +305,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
     }
 
 
-
-        // Método para abrir la cámara
+    // Método para abrir la cámara
     private void abrirCamara() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         camaraLauncher.launch(cameraIntent);
@@ -351,12 +374,12 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
     public void insertarComensal() {
         etTitleDetalle.setText(comensal.getNombre());
         etDescripcionDetalle.setText(comensal.getDescripcion());
-        uriCapturada  = comensal.getUrlImage();
+        uriCapturada = comensal.getUrlImage();
         if (!comensal.getUrlImage().equalsIgnoreCase("")) {
             ivFotoDetalle.setImageURI(Uri.parse(comensal.getUrlImage()));
         } else {
             //Inserta Imagen photo
-            ivFotoDetalle.setImageURI(Uri.parse("android.resource://com.tfg.marfol/"+R.drawable.camera));
+            ivFotoDetalle.setImageURI(Uri.parse("android.resource://com.tfg.marfol/" + R.drawable.camera));
             ivFotoDetalle.setPadding(30, 30, 30, 30);
         }
     }
@@ -380,11 +403,14 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
 
     @Override
     public void onItemClick(int position) {
+        platoPosicion = position;
         //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
-        if (position>0) {
-
-            Toast.makeText(this,"Pulsaste el campo: "+String.valueOf(position),Toast.LENGTH_SHORT).show();
-
+        if (position > 0) {
+            Intent intentDetalle = new Intent(this, DetallePlatoActivity.class);
+            intentDetalle.putExtra("platoDetalle", platos.get(position));
+            intentDetalle.putExtra("arrayListComenComp", nombreCompartir);
+            intentDetalle.putExtra("comensalCode", comensal.getComensalCode());
+            rLauncherDetallePlato.launch(intentDetalle);
         } else {
             //Accedemos a la actividad de añadir plato
             Intent intent = new Intent(this, AnadirPlatoActivity.class);
@@ -395,7 +421,8 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
 
         }
     }
-    private void anadirPersonaABd(String nombre, String descripcion,String imagen) {
+
+    private void anadirPersonaABd(String nombre, String descripcion, String imagen) {
 
 
         if (currentUser != null) {
@@ -455,6 +482,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
             Toast.makeText(this, "Inicia sesión para agregar una persona", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void subirImagenPersona(String personaId, String imagen) {
         if (personaId != null && !personaId.isEmpty()) {
             // Obtiene una referencia al Storage de Firebase
@@ -464,47 +492,50 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
             String rutaImagen = "personas/" + personaId + ".jpg";
             StorageReference imagenRef = storageRef.child(rutaImagen);
 
-            // Sube la imagen a Storage
-            Uri imagenUri = Uri.parse(imagen);
-            UploadTask uploadTask = imagenRef.putFile(imagenUri);
+            UploadTask uploadTask = null;
+            // Sube la imagen a Storage si tiene valor
+            if (!imagen.equalsIgnoreCase("")) {
+                Uri imagenUri = Uri.parse(imagen);
+                uploadTask = imagenRef.putFile(imagenUri);
 
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {            // La imagen se subió exitosamente
-                    Toast.makeText(DetallePersonaActivity.this, "Imagen subida exitosamente", Toast.LENGTH_SHORT).show();
+                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {            // La imagen se subió exitosamente
+                        Toast.makeText(DetallePersonaActivity.this, "Imagen subida exitosamente", Toast.LENGTH_SHORT).show();
 
-                    // Obtiene la URL de descarga de la imagen
-                    imagenRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            // La URL de descarga de la imagen está disponible
-                            String imagenUrl = uri.toString();
+                        // Obtiene la URL de descarga de la imagen
+                        imagenRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                // La URL de descarga de la imagen está disponible
+                                String imagenUrl = uri.toString();
 
-                            // Actualiza el campo "imagen" en Firestore con la URL de descarga de la imagen
-                            db.collection("personas").document(personaId)
-                                    .update("imagen", imagenUrl)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            // La URL de la imagen se actualizó exitosamente en Firestore
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            // Ocurrió un error al actualizar el campo "imagen" en Firestore
-                                        }
-                                    });
-                        }
-                    });
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    // Ocurrió un error al subir la imagen
-                    Toast.makeText(DetallePersonaActivity.this, "Error al subir la imagen", Toast.LENGTH_SHORT).show();
-                }
-            });
+                                // Actualiza el campo "imagen" en Firestore con la URL de descarga de la imagen
+                                db.collection("personas").document(personaId)
+                                        .update("imagen", imagenUrl)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                // La URL de la imagen se actualizó exitosamente en Firestore
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                // Ocurrió un error al actualizar el campo "imagen" en Firestore
+                                            }
+                                        });
+                            }
+                        });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Ocurrió un error al subir la imagen
+                        Toast.makeText(DetallePersonaActivity.this, "Error al subir la imagen", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         } else {
             // El ID de la persona es nulo o vacío, muestra un mensaje de error
             Toast.makeText(DetallePersonaActivity.this, "ID de persona inválido", Toast.LENGTH_SHORT).show();

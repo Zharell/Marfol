@@ -40,11 +40,12 @@ public class PersonaCompartirAdapter extends RecyclerView.Adapter<PersonaCompart
         //Insertamos para cada persona en el Recycler su nombre
         holder.tvPersonaRow.setText(resultsPersonaCom.get(position).getNombre());
 
-        //Insertamos precio para cada persona a compartir
-        //holder.tvPrecioRow.setText();
-
-        //Insertamos para cada persona en el Recycler su imagen
-        holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersonaCom.get(position).getUrlImage()));
+        if (position==0) {
+            //Insertamos para cada persona en el Recycler su imagen
+            holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersonaCom.get(position).getUrlImage()));
+        } else {
+            holder.ivPersonaRow.setImageURI(null);
+        }
 
         //Método onclick
         holder.itemView.setOnClickListener(view -> {

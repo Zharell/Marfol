@@ -79,6 +79,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         asignarEfectos();
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
+
         //comprobar si estoy logueado
         if(MetodosGlobales.comprobarLogueado(this,ivLoginParticipantes)){
             botonImagenLogueado();
@@ -145,7 +146,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                   comprobarLauncher();
-
                 }
         );
 

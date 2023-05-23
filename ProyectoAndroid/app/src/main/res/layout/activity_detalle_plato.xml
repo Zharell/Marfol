@@ -28,7 +28,7 @@ tools:context="mainActivity.detalle.DetallePlatoActivity">
     <EditText
         android:id="@+id/etDescripcionDetallePlato"
         android:layout_width="320dp"
-        android:layout_height="100dp"
+        android:layout_height="90dp"
         android:layout_marginTop="15dp"
         android:background="@drawable/editext_index"
         android:fontFamily="serif"
@@ -46,29 +46,85 @@ tools:context="mainActivity.detalle.DetallePlatoActivity">
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivFotoPersonaPlato" />
 
+    <Switch
+        android:id="@+id/swCompartirEditarPlato"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textColor="@color/redTitle"
+        android:textColorHint="@color/redSLight"
+
+        android:textSize="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.876"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etDescripcionDetallePlato" />
+
     <ImageView
         android:id="@+id/ivFotoPersonaPlato"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="15dp"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="16dp"
 
         android:background="@drawable/button_index"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.199"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etTitleDetallePlato" />
+
+    <TextView
+        android:id="@+id/tvListaEditarPlato"
+        android:layout_width="240dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/editext_index"
+        android:fontFamily="serif"
+        android:gravity="center"
+        android:maxLength="16"
+        android:padding="10dp"
+        android:text="@string/tvrow_compartir"
+        android:textColor="@color/redTitle"
+
+        android:textColorHint="@color/redSLight"
+        android:textSize="18dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.269"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etDescripcionDetallePlato" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAnadirDetallePlato"
         android:layout_width="280dp"
-        android:layout_height="230dp"
+        android:layout_height="200dp"
 
         android:layout_marginTop="15dp"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etDescripcionDetallePlato" />
+        app:layout_constraintTop_toBottomOf="@+id/tvListaEditarPlato" />
+
+    <EditText
+        android:id="@+id/etPrecioEditarPlato"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="144dp"
+        android:background="@drawable/button_index"
+        android:gravity="center"
+        android:hint="@string/tvPrecio"
+        android:inputType="numberDecimal"
+        android:maxLength="16"
+
+        android:padding="10dp"
+        android:textColor="@color/redTitle"
+        android:textColorHint="@color/redSLight"
+        android:textSize="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.855"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etTitleDetallePlato" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnEditarPlato"
