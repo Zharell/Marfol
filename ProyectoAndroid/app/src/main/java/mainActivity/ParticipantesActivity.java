@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 
+import android.net.Uri;
 import android.os.Bundle;
 
 import android.widget.Button;
@@ -67,6 +68,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -304,7 +306,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     }
     private void cargarDatosBd() {
          if (currentUser != null) {
-            comensalesBd=new ArrayList<>();
+            comensalesBd = new ArrayList<>();
             String usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
             DocumentReference id = db.collection("users").document(usuarioId);
 
@@ -366,8 +368,15 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
     @Override
     public void onItemClickBd(int position) {
-        Toast.makeText(this,String.valueOf(position),Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, String.valueOf(position), Toast.LENGTH_SHORT).show();
+        Intent i= new Intent(this, AnadirParticipanteActivity.class);
+        i.putExtra("importado",true);
+        i.putExtra("arrayListComensales", comensales);
+        i.putExtra("comensalesBd",comensalesBd.get(position));
+        rLauncherAnadirComensal.launch(i);
+
     }
+
     private void comprobarLauncher(){
         if(MetodosGlobales.comprobarLogueado(this,ivLoginParticipantes)){
             currentUser = mAuth.getCurrentUser();

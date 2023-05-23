@@ -12,7 +12,13 @@ public class Persona implements Serializable {
 
     public Persona () {}
 
-    public Persona (int comensalCode,String nombre, String descripcion, String urlImage, ArrayList<Plato> platos,double monedero) {
+    public Persona(String nombre, String descripcion, String urlImage) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.urlImage = urlImage;
+    }
+
+    public Persona (int comensalCode, String nombre, String descripcion, String urlImage, ArrayList<Plato> platos, double monedero) {
         this.comensalCode=comensalCode;
         this.nombre=nombre;
         this.descripcion=descripcion;

@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import entities.Persona;
-import login.EditarDatos;
 
 public class PersonaAdapterBd extends RecyclerView.Adapter<PersonaAdapterBd.PersonaBdAdapterResultHolder> {
 
