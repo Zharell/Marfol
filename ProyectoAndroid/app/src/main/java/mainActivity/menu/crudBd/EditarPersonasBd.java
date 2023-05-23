@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,12 +57,16 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
         //Laucher Result recibe el ArrayList con los nuevos comensales y los inserta en el adapter
         rLauncherPersonas = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        comensalesBd = (ArrayList<Persona>) data.getSerializableExtra("detalleComensal");
-                        cargarDatosBd();
-                        crudPersonaAdapter.setResultsCrudPersona(comensalesBd);
-                    }
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            cargarDatosBd();
+                        }
+                    }, 2000);
+
+
                 }
         );
 
@@ -75,6 +80,7 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
     }
 
     private void cargarDatosBd() {
+
         if (currentUser != null) {
             comensalesBd = new ArrayList<>();
             usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
@@ -85,13 +91,18 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
             consulta.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     // Recorrer los documentos obtenidos y agregar los datos al ArrayList
+                    int cont=0;
                     for (DocumentSnapshot document : task.getResult()) {
                         nombre = document.getString("nombre");
                         descripcion = document.getString("descripcion");
                         imagen = document.getString("imagen");
                         persona = new Persona(nombre, descripcion, imagen);
                         comensalesBd.add(persona);
+
+                        Toast.makeText(this,String.valueOf(comensalesBd.get(cont).getNombre()), Toast.LENGTH_SHORT).show();
+                        cont++;
                     }
+
                     // Notificar al adapter que los datos han cambiado
                     crudPersonaAdapter.setResultsCrudPersona(comensalesBd);
                 }

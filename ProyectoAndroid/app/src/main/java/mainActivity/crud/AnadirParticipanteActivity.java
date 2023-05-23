@@ -202,10 +202,6 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         );
     }
 
-<<<<<<< HEAD
-    private void comprobarLauncher() {
-        if (MetodosGlobales.comprobarLogueado(this, ivAnadirPlatoImagen)) {
-=======
     private void insertarDesdeBd() {
         if(importado){
             personaBd=(Persona)intent.getSerializableExtra("comensalesBd");
@@ -216,7 +212,6 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
     private void comprobarLauncher(){
         if(MetodosGlobales.comprobarLogueado(this,ivAnadirPlatoImagen)){
->>>>>>> 73a8d983f565266debe9dcc0a25b1578c41cdf20
             currentUser = mAuth.getCurrentUser();
             botonImagenLogueado();
         } else {

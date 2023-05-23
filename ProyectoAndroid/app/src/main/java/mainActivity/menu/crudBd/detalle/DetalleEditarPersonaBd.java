@@ -105,6 +105,7 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
         //Botón de borrar, llama a un método que a además de borrar, reordena los comensalID
         btnBorrarDetalleEditarPersona.setOnClickListener(view -> {
             borrarComensal();
+            finish();
         });
 
         // Registrar el launcher para la cámara
@@ -202,7 +203,6 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
                                     subirImagenPersona(personaId, uriCapturada);
                                     // Aquí puedes llamar a un método para actualizar la vista con el comensal modificado
                                     // Por ejemplo: actualizarVista(comensalBd);
-                                    finish();
                                 })
                                 .addOnFailureListener(e -> {
                                     // Ocurrió un error al actualizar los datos
@@ -234,8 +234,6 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
                                 .addOnSuccessListener(aVoid -> {
                                     // La eliminación se realizó exitosamente
                                     Toast.makeText(DetalleEditarPersonaBd.this, "El comensal se eliminó correctamente", Toast.LENGTH_SHORT).show();
-
-                                    finish();
                                 })
                                 .addOnFailureListener(e -> {
                                     // Ocurrió un error al eliminar el comensal
@@ -244,13 +242,11 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
                     } else {
                         // No se encontró el comensal en la base de datos
                         Toast.makeText(DetalleEditarPersonaBd.this, "El comensal no existe en la base de datos", Toast.LENGTH_SHORT).show();
-                        finish();
                     }
                 })
                 .addOnFailureListener(e -> {
                     // Ocurrió un error al buscar el comensal en la base de datos
                     Toast.makeText(DetalleEditarPersonaBd.this, "Error al buscar el comensal en la base de datos", Toast.LENGTH_SHORT).show();
-                    finish();
                 });
     }
     private void subirImagenPersona(String personaId, String imagen) {
