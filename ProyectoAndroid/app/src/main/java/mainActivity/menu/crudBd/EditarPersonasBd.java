@@ -5,26 +5,19 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.tfg.marfol.R;
-
 import java.util.ArrayList;
-
 import adapters.CrudPersonaAdapter;
-import adapters.PersonaAdapterBd;
 import entities.Persona;
 import mainActivity.menu.crudBd.detalle.DetalleEditarPersonaBd;
 
@@ -41,6 +34,7 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
     private CollectionReference personasRef;
     private Query consulta;
     private Persona persona;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,14 +51,9 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
         //Laucher Result recibe el ArrayList con los nuevos comensales y los inserta en el adapter
         rLauncherPersonas = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            cargarDatosBd();
-                        }
-                    }, 2000);
+                    //si no hago que se espere un poco, va mas rapida la petición que la actualización
+                    handler = new Handler();
+                    handler.postDelayed(() -> cargarDatosBd(), 2000);
 
 
                 }

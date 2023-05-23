@@ -1,9 +1,16 @@
 package mainActivity.menu.crudBd;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.widget.Toast;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -16,6 +23,8 @@ import java.util.ArrayList;
 import adapters.CrudRestaurantesAdapter;
 import adapters.RestaurantesAdapter;
 import entities.Restaurantes;
+import mainActivity.menu.crudBd.detalle.DetalleEditarPersonaBd;
+import mainActivity.menu.crudBd.detalle.DetalleEditarRestaurantesBd;
 
 public class EditarRestaurantesBd extends AppCompatActivity implements CrudRestaurantesAdapter.onItemClickListenerRestaurantes{
     private RecyclerView rvCrudRestaurantes;
@@ -24,12 +33,29 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
     private ArrayList<Restaurantes> restaurantesBd;
+    private Intent intent;
+    private String usuarioId,nombreRestaurante;
+    private CollectionReference restaurantesRef;
+    private Query consulta;
+    private Restaurantes restaurante;
+    private ActivityResultLauncher rLauncherRestaurantes;
+    private Handler handler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_restaurantes_bd);
         asignarId();
         mostrarAdapterRestaurantes();
+        //Laucher Result recibe el ArrayList con los restaurantes actualizados y los inserta en el adapter
+        rLauncherRestaurantes = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    //si no hago que se espere un poco, va mas rapida la petición que la actualización
+                    handler = new Handler();
+                    handler.postDelayed(() -> cargarRestaurantesBd(), 2000);
+
+
+                }
+        );
     }
 
     private void asignarId() {
@@ -46,25 +72,20 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
         if (currentUser != null) {
             cargarRestaurantesBd();
         }
-
     }
 
     private void cargarRestaurantesBd() {
         if (currentUser != null) {
             restaurantesBd = new ArrayList<>();
-            String usuarioId = currentUser.getEmail();
-            DocumentReference id = db.collection("users").document(usuarioId);
-
-            CollectionReference restaurantesRef = db.collection("restaurantes");
-
-            Query consulta = restaurantesRef.whereEqualTo("usuarioId", usuarioId);
-
+            usuarioId = currentUser.getEmail();
+            restaurantesRef = db.collection("restaurantes");
+            consulta = restaurantesRef.whereEqualTo("usuarioId", usuarioId);
             consulta.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     for (DocumentSnapshot document : task.getResult()) {
 
-                        String nombreRestaurante = document.getString("nombreRestaurante");
-                        Restaurantes restaurante = new Restaurantes(nombreRestaurante, "");
+                        nombreRestaurante = document.getString("nombreRestaurante");
+                        restaurante = new Restaurantes(nombreRestaurante, "");
                         restaurantesBd.add(restaurante);
                     }
                     crudRestaurantesAdapter.setResultsRestaurantes(restaurantesBd);
@@ -74,9 +95,11 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
 
         }
     }
-
     @Override
     public void onItemClick(int position) {
-
+        Toast.makeText(this, String.valueOf(position), Toast.LENGTH_SHORT).show();
+        intent = new Intent(this, DetalleEditarRestaurantesBd.class);
+        intent.putExtra("restauranteDetalle", restaurantesBd.get(position));
+        rLauncherRestaurantes.launch(intent);
     }
 }
