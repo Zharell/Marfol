@@ -108,6 +108,7 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
         Toast.makeText(this, String.valueOf(position), Toast.LENGTH_SHORT).show();
         intentDetalle = new Intent(this, DetalleEditarPersonaBd.class);
         intentDetalle.putExtra("comensalDetalle", comensalesBd.get(position));
+        intentDetalle.putExtra("comensalesTotales",comensalesBd);
         rLauncherPersonas.launch(intentDetalle);
     }
 }

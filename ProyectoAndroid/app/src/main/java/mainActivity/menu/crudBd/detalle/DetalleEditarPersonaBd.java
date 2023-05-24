@@ -47,27 +47,35 @@ import com.tfg.marfol.R;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import entities.Persona;
 
 public class DetalleEditarPersonaBd extends AppCompatActivity {
     private Persona comensalBd;
+    private ArrayList<Persona> comensalesTotales;
     private ImageView ivDetalleFotoEditarPersona;
     private EditText etDetalleNombreEditarPersona, etDetalleDescripcionEditarPersona;
     private static final int CAMERA_PERMISSION_CODE = 100;
     private ActivityResultLauncher<Intent> camaraLauncher;
     private Button btnBorrarDetalleEditarPersona, btnEditarDetalleEditarPersona;
-    private String uriCapturada = "",nombreNuevo,imagen,descripcionNueva,personaId,rutaImagen,imagenUrl;
+    private String uriCapturada = "", nombreNuevo, imagen, descripcionNueva, personaId, rutaImagen, imagenUrl, email,descripcionAntigua,imagenAntigua;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
-    private String email;
-    private Intent intent,cameraIntent;
+    private Intent intent, cameraIntent;
     private CollectionReference personasRef;
     private DocumentSnapshot document;
-    private StorageReference storageRef,imagenRef;
-    private Uri imagenUri,uri;
+    private StorageReference storageRef, imagenRef;
+    private Uri imagenUri, uri;
     private UploadTask uploadTask;
     private ContentValues values;
+    private boolean comprobarNombre = true;
+    boolean actualizarNombre = false; // Variable para determinar si se debe actualizar el nombre
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +83,7 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
         asignarId();
         intent = getIntent();
         comensalBd = (Persona) intent.getSerializableExtra("comensalDetalle");
+        comensalesTotales = (ArrayList<Persona>) intent.getSerializableExtra("comensalesTotales");
         mostrarDatos();
         //Añadimos onClick en el ImageView para activar la imagen
         ivDetalleFotoEditarPersona.setOnClickListener(view -> {
@@ -118,6 +127,8 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
                     outputStream.close();
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
+                    ivDetalleFotoEditarPersona.setBackground(null);
+                    Glide.with(this).load(uriCapturada).circleCrop().into(ivDetalleFotoEditarPersona);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -126,7 +137,6 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
 
 
     }
-
 
 
     public void asignarId() {
@@ -141,13 +151,14 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
         ivDetalleFotoEditarPersona = findViewById(R.id.ivDetalleFotoEditarPersona);
 
     }
+
     private void mostrarDatos() {
         etDetalleNombreEditarPersona.setText(comensalBd.getNombre());
         etDetalleDescripcionEditarPersona.setText(comensalBd.getDescripcion());
         imagen = comensalBd.getUrlImage();
-        if (imagen != null||!imagen.equalsIgnoreCase("")) {
+        if (imagen != null || !imagen.equalsIgnoreCase("")) {
             Glide.with(DetalleEditarPersonaBd.this).load(imagen).circleCrop().into(ivDetalleFotoEditarPersona);
-        }else{
+        } else {
             Glide.with(DetalleEditarPersonaBd.this).load(R.drawable.nologinimg).circleCrop().into(ivDetalleFotoEditarPersona);
         }
 
@@ -173,42 +184,51 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
             }
         }
     }
-
-
     private void editarComensal() {
         nombreNuevo = String.valueOf(etDetalleNombreEditarPersona.getText());
         descripcionNueva = String.valueOf(etDetalleDescripcionEditarPersona.getText());
+        descripcionAntigua = comensalBd.getDescripcion();
+        imagenAntigua = comensalBd.getUrlImage();
         // Actualizar el comensal en la base de datos
-        personasRef = db.collection("personas");
-        personasRef.whereEqualTo("nombre", comensalBd.getNombre())
-                .whereEqualTo("usuarioId", email)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    if (!querySnapshot.isEmpty()) {
-                        document = querySnapshot.getDocuments().get(0);
-                        document.getReference().update("nombre", nombreNuevo, "descripcion", descripcionNueva)
-                                .addOnSuccessListener(aVoid -> {
-                                    // La actualización se realizó exitosamente
-                                    Toast.makeText(DetalleEditarPersonaBd.this, "Los datos se actualizaron correctamente", Toast.LENGTH_SHORT).show();
-                                    personaId = document.getReference().getId();
-                                    subirImagenPersona(personaId, uriCapturada);
-                                    // Aquí puedes llamar a un método para actualizar la vista con el comensal modificado
-                                    // Por ejemplo: actualizarVista(comensalBd);
-                                })
-                                .addOnFailureListener(e -> {
-                                    // Ocurrió un error al actualizar los datos
-                                    Toast.makeText(DetalleEditarPersonaBd.this, "Error al actualizar los datos", Toast.LENGTH_SHORT).show();
-                                });
-                    } else {
-                        // No se encontró el comensal en la base de datos
-                        Toast.makeText(DetalleEditarPersonaBd.this, "El comensal no existe en la base de datos", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    // Ocurrió un error al buscar el comensal en la base de datos
-                    Toast.makeText(DetalleEditarPersonaBd.this, "Error al buscar el comensal en la base de datos", Toast.LENGTH_SHORT).show();
-                });
+        for (int i = 0; i < comensalesTotales.size(); i++) {
+            if (nombreNuevo.equalsIgnoreCase(comensalesTotales.get(i).getNombre())) {
+                comprobarNombre = false;
+                break;
+            }
+        }
+        if (comprobarNombre&&!nombreNuevo.equalsIgnoreCase("")) {
+            personasRef = db.collection("personas");
+            personasRef.whereEqualTo("nombre", comensalBd.getNombre())
+                    .whereEqualTo("usuarioId", email)
+                    .get()
+                    .addOnSuccessListener(querySnapshot -> {
+                        if (!querySnapshot.isEmpty()) {
+                            document = querySnapshot.getDocuments().get(0);
+                            document.getReference().update("nombre", nombreNuevo, "descripcion", descripcionNueva)
+                                    .addOnSuccessListener(aVoid -> {
+                                        // La actualización se realizó exitosamente
+                                        Toast.makeText(DetalleEditarPersonaBd.this, "Los datos se actualizaron correctamente", Toast.LENGTH_SHORT).show();
+                                        personaId = document.getReference().getId();
+                                        subirImagenPersona(personaId, uriCapturada);
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        // Ocurrió un error al actualizar los datos
+                                        Toast.makeText(DetalleEditarPersonaBd.this, "Error al actualizar los datos", Toast.LENGTH_SHORT).show();
+                                    });
+                        } else {
+                            // No se encontró el comensal en la base de datos
+                            Toast.makeText(DetalleEditarPersonaBd.this, "El comensal no existe en la base de datos", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        // Ocurrió un error al buscar el comensal en la base de datos
+                        Toast.makeText(DetalleEditarPersonaBd.this, "Error al buscar el comensal en la base de datos", Toast.LENGTH_SHORT).show();
+                    });
+        }else {finish();}
     }
+
+
+
 
 
     private void borrarComensal() {
@@ -240,6 +260,7 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
                     Toast.makeText(DetalleEditarPersonaBd.this, "Error al buscar el comensal en la base de datos", Toast.LENGTH_SHORT).show();
                 });
     }
+
     private void subirImagenPersona(String personaId, String imagen) {
         if (personaId != null && !personaId.isEmpty()) {
             // Obtiene una referencia al Storage de Firebase
