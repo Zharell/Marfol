@@ -21,6 +21,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name="mainActivity.detalle.RecordarPlatoActivity"
+            android:exported="false" />
+        <activity
             android:name="mainActivity.menu.crudBd.EditarRestaurantesBd"
             android:exported="false" />
         <activity
@@ -41,6 +44,7 @@
         <activity android:name="mainActivity.menu.AboutUs" />
         <activity android:name="mainActivity.menu.Preferences" />
         <activity android:name="mainActivity.API.API" />
+
         <activity
             android:name="mainActivity.detalle.DetallePlatoActivity"
             android:exported="false" />

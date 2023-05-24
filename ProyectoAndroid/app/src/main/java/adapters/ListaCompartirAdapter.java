@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.tfg.marfol.R;
 
 import java.util.ArrayList;
@@ -38,7 +39,11 @@ public class ListaCompartirAdapter extends RecyclerView.Adapter<ListaCompartirAd
         holder.tvPersonaRow.setText(resultsListCompartir.get(position).getNombre());
 
         //Insertamos para cada persona en el Recycler su imagen
-        holder.ivPersonaRow.setImageURI(Uri.parse(resultsListCompartir.get(position).getUrlImage()));
+        if (resultsListCompartir.get(position).getUrlImage().startsWith("https")) {
+            Glide.with(holder.itemView).load(resultsListCompartir.get(position).getUrlImage()).into(holder.ivPersonaRow);
+        } else {
+            holder.ivPersonaRow.setImageURI(Uri.parse(resultsListCompartir.get(position).getUrlImage()));
+        }
 
         //Método onclick
         holder.itemView.setOnClickListener(view -> {

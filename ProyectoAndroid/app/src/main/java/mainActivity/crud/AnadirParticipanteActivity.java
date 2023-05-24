@@ -207,6 +207,10 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             personaBd=(Persona)intent.getSerializableExtra("comensalesBd");
             etNombreAnadirP.setText(personaBd.getNombre());
             etDescAnadirP.setText(personaBd.getDescripcion());
+            if (personaBd.getUrlImage() != null) {
+                Glide.with(this).load(personaBd.getUrlImage()).into(ivPlatoAnadirP);
+                uriCapturada=personaBd.getUrlImage();
+            }
         }
     }
 

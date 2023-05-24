@@ -57,6 +57,7 @@
     <string name="correoHome">Correo: </string>
     <string name="google_maps_key">AIzaSyC1JbQNg7WkFD4zGdVr1Y-RkaWtluXStKE</string>
     <string name="API">Restaurantes\ncercanos</string>
+    <string name="recordar_plato">Volver a añadir...</string>
     <string name="compartir_con">Compartir con</string>
     <!-- STRING PARA PUP UP DESGLOSE -->
     <string name="popup_guardar_desglose">Guardar</string>

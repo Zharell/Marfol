@@ -25,6 +25,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -366,7 +368,11 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         etDescripcionDetalle.setText(comensal.getDescripcion());
         uriCapturada = comensal.getUrlImage();
         if (!comensal.getUrlImage().equalsIgnoreCase("")) {
-            ivFotoDetalle.setImageURI(Uri.parse(comensal.getUrlImage()));
+            if (comensal.getUrlImage().startsWith("https")) {
+                Glide.with(this).load(comensal.getUrlImage()).into(ivFotoDetalle);
+            } else {
+                ivFotoDetalle.setImageURI(Uri.parse(comensal.getUrlImage()));
+            }
         } else {
             //Inserta Imagen photo
             ivFotoDetalle.setImageURI(Uri.parse("android.resource://com.tfg.marfol/" + R.drawable.camera));

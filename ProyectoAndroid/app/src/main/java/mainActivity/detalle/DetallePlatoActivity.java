@@ -2,17 +2,25 @@ package mainActivity.detalle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +34,8 @@ import com.tfg.marfol.R;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 import adapters.ListaCompartirAdapter;
@@ -44,8 +54,8 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
     private RecyclerView rvAnadirPlatoDetalle;
     private static final int CAMERA_PERMISSION_CODE = 100;
     private int personaCode;
-    private ArrayList <Persona> noRepComList;
-    private ArrayList <Persona> nombreCompartir;
+    private ArrayList<Persona> noRepComList;
+    private ArrayList<Persona> nombreCompartir;
     private ActivityResultLauncher<Intent> camaraLauncher;
     private ActivityResultLauncher rLauncherPlatos;
     private PersonaCompartirAdapter anadirPAdapter;
@@ -63,11 +73,11 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
         Intent intent = getIntent();
         plato = (Plato) intent.getSerializableExtra("platoDetalle");
         nombreCompartir = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComenComp");
-        personaCode = intent.getIntExtra("comensalCode",0);
+        personaCode = intent.getIntExtra("comensalCode", 0);
         esCompartido = plato.isCompartido();
 
         for (Persona e : nombreCompartir) {
-            Toast.makeText(this,String.valueOf(e.getNombre()),Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, String.valueOf(e.getNombre()), Toast.LENGTH_SHORT).show();
         }
 
         //Método que asigna IDs a los elementos
@@ -116,6 +126,43 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
                     }
                 }
         );
+
+        // Registrar el launcher para la cámara
+        camaraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK) {
+
+                // Si la foto se toma correctamente, mostrar la vista previa en el ImageView
+                Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
+                ivFotoDetalle.setImageBitmap(photo);
+
+                // Insertar la imagen en la galería y obtenemos la URI transformada en String para almacenar en la BD
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.TITLE, "personaMarfol.jpg");
+                Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+                try {
+                    OutputStream outputStream = getContentResolver().openOutputStream(uri);
+                    photo.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                    outputStream.close();
+                    //Obtenemos la ruta URI de la imagen seleccionada
+                    uriCapturada = uri.toString();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        //Añadimos onClick en el ImageView para activar la imagen
+        ivFotoDetalle.setOnClickListener(view -> {
+            // Solicitar permiso para acceder a la cámara
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+                //Si no tenemos los permisos los obtenemos
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+            } else {
+                // Si ya se tienen los permisos, abrir la cámara
+                abrirCamara();
+            }
+        });
 
     }
 
@@ -232,11 +279,31 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
         anadirPAdapter.setResultsPersonaCom(plato.getPersonasCompartir());
 
         //Solo aparece activado si es compartido
-        if(plato.isCompartido()) {
+        if (plato.isCompartido()) {
             //Si el plato es compartido, activamos el switch y los elementos de compartir
             rvAnadirPlatoDetalle.setVisibility(View.VISIBLE);
             tvListaEditarPlato.setVisibility(View.VISIBLE);
             swCompartirPlato.setChecked(true);
+        }
+    }
+
+    private void abrirCamara() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        camaraLauncher.launch(cameraIntent);
+    }
+
+    // Método para manejar la respuesta de la solicitud de permisos
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Si se conceden los permisos, abrir la cámara
+                abrirCamara();
+            } else {
+                // Si se deniegan los permisos, mostrar un mensaje al usuario
+                Toast.makeText(this, "Para almacenar la imagen debe otorgar los permisos", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -254,14 +321,14 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
 
     @Override
     public void onItemClick(int position) {
-        if (position==0) {
+        if (position == 0) {
             //Método que comprueba si hay repetidos en la lista de compartidos (no aparezcan de nuevo)
             //Además, comprueba que no esté el propio usuario a la hora de repartir
-            noRepComList=nombreCompartir;
+            noRepComList = nombreCompartir;
 
             for (Persona p : plato.getPersonasCompartir()) {
-                noRepComList.removeIf(persona -> persona.getComensalCode()==p.getComensalCode());
-                noRepComList.removeIf(persona -> persona.getComensalCode()==personaCode);
+                noRepComList.removeIf(persona -> persona.getComensalCode() == p.getComensalCode());
+                noRepComList.removeIf(persona -> persona.getComensalCode() == personaCode);
             }
 
             //Accedemos a la actividad de compartir plato
