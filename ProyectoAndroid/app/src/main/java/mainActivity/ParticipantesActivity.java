@@ -335,8 +335,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                     // Notificar al adapter que los datos han cambiado
                     personaAdapterBd.setResultsPersonaBd(comensalesBd);
 
-                } else {
-                    // Ocurrió un error al obtener los documentos
                 }
             });
         } else {

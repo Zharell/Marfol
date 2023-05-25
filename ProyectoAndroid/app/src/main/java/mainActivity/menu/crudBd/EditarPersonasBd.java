@@ -1,5 +1,4 @@
 package mainActivity.menu.crudBd;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -54,8 +53,6 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
                     //si no hago que se espere un poco, va mas rapida la petición que la actualización
                     handler = new Handler();
                     handler.postDelayed(() -> cargarDatosBd(), 2000);
-
-
                 }
         );
 
@@ -81,31 +78,23 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
             consulta.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     // Recorrer los documentos obtenidos y agregar los datos al ArrayList
-                    int cont=0;
                     for (DocumentSnapshot document : task.getResult()) {
                         nombre = document.getString("nombre");
                         descripcion = document.getString("descripcion");
                         imagen = document.getString("imagen");
                         persona = new Persona(nombre, descripcion, imagen);
                         comensalesBd.add(persona);
-
-                        Toast.makeText(this,String.valueOf(comensalesBd.get(cont).getNombre()), Toast.LENGTH_SHORT).show();
-                        cont++;
                     }
 
                     // Notificar al adapter que los datos han cambiado
                     crudPersonaAdapter.setResultsCrudPersona(comensalesBd);
                 }
             });
-        } else {
-            // El usuario no está autenticado, muestra un mensaje o inicia sesión automáticamente
-            Toast.makeText(this, "Inicia sesión para cargar los datos", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onItemClickCrudPersona(int position) {
-        Toast.makeText(this, String.valueOf(position), Toast.LENGTH_SHORT).show();
         intentDetalle = new Intent(this, DetalleEditarPersonaBd.class);
         intentDetalle.putExtra("comensalDetalle", comensalesBd.get(position));
         intentDetalle.putExtra("comensalesTotales",comensalesBd);

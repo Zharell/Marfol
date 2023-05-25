@@ -61,7 +61,7 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
     private static final int CAMERA_PERMISSION_CODE = 100;
     private ActivityResultLauncher<Intent> camaraLauncher;
     private Button btnBorrarDetalleEditarPersona, btnEditarDetalleEditarPersona;
-    private String uriCapturada = "", nombreNuevo, imagen, descripcionNueva, personaId, rutaImagen, imagenUrl, email,descripcionAntigua,imagenAntigua;
+    private String uriCapturada = "", nombreNuevo, imagen, descripcionNueva, personaId, rutaImagen, imagenUrl, email;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
@@ -73,8 +73,6 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
     private UploadTask uploadTask;
     private ContentValues values;
     private boolean comprobarNombre = true;
-    boolean actualizarNombre = false; // Variable para determinar si se debe actualizar el nombre
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,26 +182,33 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
             }
         }
     }
+
     private void editarComensal() {
         nombreNuevo = String.valueOf(etDetalleNombreEditarPersona.getText());
         descripcionNueva = String.valueOf(etDetalleDescripcionEditarPersona.getText());
-        descripcionAntigua = comensalBd.getDescripcion();
-        imagenAntigua = comensalBd.getUrlImage();
         // Actualizar el comensal en la base de datos
         for (int i = 0; i < comensalesTotales.size(); i++) {
             if (nombreNuevo.equalsIgnoreCase(comensalesTotales.get(i).getNombre())) {
-                comprobarNombre = false;
-                break;
+                // Ignorar el elemento "nombre" enviado desde otra actividad
+                if (!comensalesTotales.get(i).getNombre().equalsIgnoreCase(comensalBd.getNombre())) {
+                    comprobarNombre = false;
+                    break;
+                }
             }
         }
-        if (comprobarNombre&&!nombreNuevo.equalsIgnoreCase("")) {
-            personasRef = db.collection("personas");
-            personasRef.whereEqualTo("nombre", comensalBd.getNombre())
-                    .whereEqualTo("usuarioId", email)
-                    .get()
-                    .addOnSuccessListener(querySnapshot -> {
-                        if (!querySnapshot.isEmpty()) {
-                            document = querySnapshot.getDocuments().get(0);
+        if (nombreNuevo.equalsIgnoreCase("")) {
+            // El campo de texto está vacío, mostrar un mensaje de error
+            Toast.makeText(DetalleEditarPersonaBd.this, "El campo nombre no puede estar vacío, no se realizaron los cambios.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        personasRef = db.collection("personas");
+        personasRef.whereEqualTo("nombre", comensalBd.getNombre())
+                .whereEqualTo("usuarioId", email)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        document = querySnapshot.getDocuments().get(0);
+                        if (comprobarNombre) {
                             document.getReference().update("nombre", nombreNuevo, "descripcion", descripcionNueva)
                                     .addOnSuccessListener(aVoid -> {
                                         // La actualización se realizó exitosamente
@@ -216,19 +221,16 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
                                         Toast.makeText(DetalleEditarPersonaBd.this, "Error al actualizar los datos", Toast.LENGTH_SHORT).show();
                                     });
                         } else {
-                            // No se encontró el comensal en la base de datos
-                            Toast.makeText(DetalleEditarPersonaBd.this, "El comensal no existe en la base de datos", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(DetalleEditarPersonaBd.this, "Ya existe una persona con ese nombre, no se realizaron los cambios.", Toast.LENGTH_SHORT).show();
                         }
-                    })
-                    .addOnFailureListener(e -> {
-                        // Ocurrió un error al buscar el comensal en la base de datos
-                        Toast.makeText(DetalleEditarPersonaBd.this, "Error al buscar el comensal en la base de datos", Toast.LENGTH_SHORT).show();
-                    });
-        }else {finish();}
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Ocurrió un error al buscar el comensal en la base de datos
+                    Toast.makeText(DetalleEditarPersonaBd.this, "Error al buscar el comensal en la base de datos", Toast.LENGTH_SHORT).show();
+                });
+
     }
-
-
-
 
 
     private void borrarComensal() {
@@ -250,9 +252,6 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
                                     // Ocurrió un error al eliminar el comensal
                                     Toast.makeText(DetalleEditarPersonaBd.this, "Error al eliminar el comensal", Toast.LENGTH_SHORT).show();
                                 });
-                    } else {
-                        // No se encontró el comensal en la base de datos
-                        Toast.makeText(DetalleEditarPersonaBd.this, "El comensal no existe en la base de datos", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -280,7 +279,6 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
                 imagenRef.getDownloadUrl().addOnSuccessListener(uri -> {
                     // La URL de descarga de la imagen está disponible
                     imagenUrl = uri.toString();
-
                     // Actualiza el campo "imagen" en Firestore con la URL de descarga de la imagen
                     db.collection("personas").document(personaId)
                             .update("imagen", imagenUrl)
@@ -293,7 +291,6 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
                 });
             }).addOnFailureListener(e -> {
                 // Ocurrió un error al subir la imagen
-                Toast.makeText(DetalleEditarPersonaBd.this, "Error al subir la imagen", Toast.LENGTH_SHORT).show();
             });
         }
     }

@@ -15,19 +15,25 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tfg.marfol.R;
 
+import java.util.ArrayList;
+
+import entities.Persona;
 import entities.Restaurantes;
 
 public class DetalleEditarRestaurantesBd extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
-    private String email,nombreNuevo,nombreAntiguo;
-    private Button btnBorrarDetalleRestaurantes,btnEditarDetalleRestaurantes;
+    private String email, nombreNuevo, nombreAntiguo;
+    private Button btnBorrarDetalleRestaurantes, btnEditarDetalleRestaurantes;
     private EditText etDetalleRestaurantes;
     private Restaurantes restaurantesBd;
     private Intent intent;
+    private ArrayList<Restaurantes> restaurantesTotales;
     private CollectionReference restaurantesRef;
     private DocumentSnapshot document;
+    private boolean comprobarNombre = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +41,7 @@ public class DetalleEditarRestaurantesBd extends AppCompatActivity {
         asignarId();
         intent = getIntent();
         restaurantesBd = (Restaurantes) intent.getSerializableExtra("restauranteDetalle");
+        restaurantesTotales = (ArrayList<Restaurantes>) intent.getSerializableExtra("restaurantesTotales");
         mostrarDatos();
         btnEditarDetalleRestaurantes.setOnClickListener(view -> {
             editarRestaurante();
@@ -45,12 +52,23 @@ public class DetalleEditarRestaurantesBd extends AppCompatActivity {
             finish();
         });
     }
+
     private void editarRestaurante() {
         nombreAntiguo = restaurantesBd.getNombreRestaurante();
         nombreNuevo = etDetalleRestaurantes.getText().toString();
+        for (int i = 0; i < restaurantesTotales.size(); i++) {
+            if (nombreNuevo.equalsIgnoreCase(restaurantesTotales.get(i).getNombreRestaurante())) {
+                // Ignorar el elemento "nombre" enviado desde otra actividad
+                if (!restaurantesTotales.get(i).getNombreRestaurante().equalsIgnoreCase(restaurantesBd.getNombreRestaurante())) {
+                    comprobarNombre = false;
+                    break;
+                }
+            }
+        }
+
         if (nombreNuevo.isEmpty()) {
             // El campo de texto está vacío, mostrar un mensaje de error
-            Toast.makeText(DetalleEditarRestaurantesBd.this, "Debes ingresar un nombre para el restaurante", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DetalleEditarRestaurantesBd.this, "El campo nombre de restaurante no puede estar vacío, no se realizaron los cambios.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -61,20 +79,21 @@ public class DetalleEditarRestaurantesBd extends AppCompatActivity {
                 .addOnSuccessListener(querySnapshot -> {
                     DocumentSnapshot document = querySnapshot.getDocuments().get(0);
                     if (document != null) {
-                        document.getReference().update("nombreRestaurante", nombreNuevo)
-                                .addOnSuccessListener(aVoid -> {
-                                    // La actualización se realizó exitosamente
-                                    Toast.makeText(DetalleEditarRestaurantesBd.this, "Los datos se actualizaron correctamente", Toast.LENGTH_SHORT).show();
-                                    // Actualizar las referencias en la colección "Platos"
-                                    actualizarReferencias(nombreAntiguo, nombreNuevo);
-                                })
-                                .addOnFailureListener(e -> {
-                                    // Ocurrió un error al actualizar los datos
-                                    Toast.makeText(DetalleEditarRestaurantesBd.this, "Error al actualizar los datos", Toast.LENGTH_SHORT).show();
-                                });
-                    } else {
-                        // El documento es nulo, mostrar un mensaje de error
-                        Toast.makeText(DetalleEditarRestaurantesBd.this, "No se encontró el restaurante en la base de datos", Toast.LENGTH_SHORT).show();
+                        if (comprobarNombre) {
+                            document.getReference().update("nombreRestaurante", nombreNuevo)
+                                    .addOnSuccessListener(aVoid -> {
+                                        // La actualización se realizó exitosamente
+                                        Toast.makeText(DetalleEditarRestaurantesBd.this, "Los datos se actualizaron correctamente", Toast.LENGTH_SHORT).show();
+                                        // Actualizar las referencias en la colección "Platos"
+                                        actualizarReferencias(nombreAntiguo, nombreNuevo);
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        // Ocurrió un error al actualizar los datos
+                                        Toast.makeText(DetalleEditarRestaurantesBd.this, "Error al actualizar los datos", Toast.LENGTH_SHORT).show();
+                                    });
+                        }else{
+                            Toast.makeText(DetalleEditarRestaurantesBd.this, "Ya existe un restaurante con ese nombre, no se realizaron los cambios.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -82,7 +101,6 @@ public class DetalleEditarRestaurantesBd extends AppCompatActivity {
                     Toast.makeText(DetalleEditarRestaurantesBd.this, "Error al buscar el restaurante en la base de datos", Toast.LENGTH_SHORT).show();
                 });
     }
-
 
 
     private void actualizarReferencias(String nombreAntiguo, String nombreNuevo) {

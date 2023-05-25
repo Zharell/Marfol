@@ -100,6 +100,7 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
         Toast.makeText(this, String.valueOf(position), Toast.LENGTH_SHORT).show();
         intent = new Intent(this, DetalleEditarRestaurantesBd.class);
         intent.putExtra("restauranteDetalle", restaurantesBd.get(position));
+        intent.putExtra("restaurantesTotales",restaurantesBd);
         rLauncherRestaurantes.launch(intent);
     }
 }
