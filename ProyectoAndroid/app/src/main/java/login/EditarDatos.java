@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import android.Manifest;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -37,6 +38,10 @@ public class EditarDatos extends AppCompatActivity {
     private EditText etNombreUsuario, etTelefonoUsuario;
     private Button btnGuardarBD;
     private ImageView ivPlatoAnadirP;
+    private Dialog puElegirAccion;
+    private ActivityResultLauncher<Intent> galeriaLauncher;
+    private Button btnUpCamara, btnUpGaleria;
+    private static final int GALLERY_PERMISSION_CODE = 1001;
     private ActivityResultLauncher<Intent> camaraLauncher;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -60,29 +65,54 @@ public class EditarDatos extends AppCompatActivity {
             cargarDatosDesdeBD(etNombreUsuario, etTelefonoUsuario);
             // Configuramos el botón de guardar
             btnGuardarBD.setOnClickListener(v -> actualizarDatos());
+
+            // Registrar el launcher para la galería
+            galeriaLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    Intent data = result.getData();
+                    if (data != null) {
+                        Uri selectedImageUri = data.getData();
+                        uriCapturada = selectedImageUri.toString();
+
+                        //Cargar imagen seleccionada
+                        ivPlatoAnadirP.setBackground(null);
+                        Glide.with(EditarDatos.this).load(uriCapturada).circleCrop().into(ivPlatoAnadirP);
+                    }
+                    puElegirAccion.dismiss();
+                }
+            });
+
             // Registrar el launcher para la cámara
             camaraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK) {
                     // Si la foto se toma correctamente, mostrar la vista previa en el ImageView
                     Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
+
                     // Insertar la imagen en la galería y obtenemos la URI transformada en String para almacenar en la BD
-                    values = new ContentValues();
+                    ContentValues values = new ContentValues();
                     values.put(MediaStore.Images.Media.TITLE, "personaMarfol.jpg");
-                    uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                    Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
                     try {
-                        outputStream = getContentResolver().openOutputStream(uri);
+                        OutputStream outputStream = getContentResolver().openOutputStream(uri);
                         photo.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                         outputStream.close();
+
                         //Obtenemos la ruta URI de la imagen seleccionada
                         uriCapturada = uri.toString();
+                        ivPlatoAnadirP.setBackground(null);
                         Glide.with(EditarDatos.this).load(uriCapturada).circleCrop().into(ivPlatoAnadirP);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    puElegirAccion.dismiss();
                 }
             });
+
+            //Convocamos el PopUp para mostrar las acciones ( Galería, Cámara )
+            ivPlatoAnadirP.setOnClickListener(view -> { puElegirAccion.show(); });
+
             //Añadimos onClick en el ImageView para activar la imagen
-            ivPlatoAnadirP.setOnClickListener(view -> {
+            btnUpCamara.setOnClickListener(view -> {
                 // Solicitar permiso para acceder a la cámara
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
                     //Si no tenemos los permisos los obtenemos
@@ -92,6 +122,19 @@ public class EditarDatos extends AppCompatActivity {
                     abrirCamara();
                 }
             });
+
+            //Añadimos onClick en el ImageView para activar la imagen
+            btnUpGaleria.setOnClickListener(view -> {
+                // Solicitar permiso para acceder a la galería
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                    // Si no tenemos los permisos, los solicitamos
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY_PERMISSION_CODE);
+                } else {
+                    // Si ya se tienen los permisos, abrir la galería
+                    abrirGaleria();
+                }
+            });
+
         }
     }
     private void asignarId() {
@@ -104,6 +147,13 @@ public class EditarDatos extends AppCompatActivity {
         etTelefonoUsuario = findViewById(R.id.etTelefonoUsuario);
         ivPlatoAnadirP = findViewById(R.id.ivAnadirFotoPersona);
         btnGuardarBD = findViewById(R.id.btnGuardarBD);
+
+        //Asigna IDs de los elementos del popup
+        puElegirAccion = new Dialog(this);
+        puElegirAccion.setContentView(R.layout.popup_accion);
+        btnUpCamara = puElegirAccion.findViewById(R.id.btnCancelarPopup);
+        btnUpGaleria = puElegirAccion.findViewById(R.id.btnConfirmarPopup);
+
         if(mAuth.getCurrentUser()!=null)email = mAuth.getCurrentUser().getEmail();
     }
     private void actualizarDatos() {
@@ -164,10 +214,19 @@ public class EditarDatos extends AppCompatActivity {
                     }
                 });
     }
+
+    // Método para abrir la galería
+    private void abrirGaleria() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galeriaLauncher.launch(intent);
+    }
+
+    // Método para abrir la cámara
     private void abrirCamara() {
         cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         camaraLauncher.launch(cameraIntent);
     }
+
     private void actualizarImagenBd(StorageReference reference, Uri uri) {
         reference.putFile(uri).addOnSuccessListener(taskSnapshot -> {
             Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
@@ -181,6 +240,7 @@ public class EditarDatos extends AppCompatActivity {
             }).addOnFailureListener(e -> Toast.makeText(EditarDatos.this, "Error al obtener la URL de la imagen", Toast.LENGTH_SHORT).show());
         });
     }
+
     // Método para manejar la respuesta de la solicitud de permisos
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -194,7 +254,17 @@ public class EditarDatos extends AppCompatActivity {
                 Toast.makeText(this, "Para almacenar la imagen debe otorgar los permisos", Toast.LENGTH_SHORT).show();
             }
         }
+        if (requestCode == GALLERY_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Si se conceden los permisos, abrir la galería
+                abrirGaleria();
+            } else {
+                // Si se deniegan los permisos, mostrar un mensaje al usuario
+                Toast.makeText(this, "Para acceder a la galería debe otorgar los permisos", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
+
     private void cargarDatosDesdeBD(EditText nombre, EditText telefono) {
         if (mAuth.getCurrentUser() != null && email != null && !email.isEmpty()) {
             userRef = db.collection("users").document(email);

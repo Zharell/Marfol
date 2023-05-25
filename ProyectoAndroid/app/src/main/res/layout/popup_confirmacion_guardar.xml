@@ -13,9 +13,9 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:hint="@string/popup_edit_desglose"
-        android:shadowColor="#1C1C1C"
-        android:textColor="@color/redLight"
-        android:textColorHint="@color/redSLight"
+        android:shadowColor="@color/azulSuave"
+        android:textColor="@color/azulFuerte"
+        android:textColorHint="@color/azulSuave"
         android:textSize="24sp"
         android:textStyle="bold" />
 

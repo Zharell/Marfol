@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -43,11 +44,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tfg.marfol.R;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import adapters.PersonaDetalleAdapter;
 import entities.Persona;
 import entities.Plato;
@@ -59,6 +62,10 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
     private ImageView ivLoginDetalle, ivMenuDetalle, ivFotoDetalle;
     private EditText etTitleDetalle, etDescripcionDetalle;
     private RecyclerView rvAnadirPlatoDetalle;
+    private Dialog puElegirAccion;
+    private ActivityResultLauncher<Intent> galeriaLauncher;
+    private Button btnUpCamara, btnUpGaleria;
+    private static final int GALLERY_PERMISSION_CODE = 1001;
     private PersonaDetalleAdapter adapterDetalle;
     private ArrayList<Plato> platos;
     private ArrayList<Persona> nombreCompartir;
@@ -147,28 +154,73 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
             editarComensal();
         });
 
+        // Registrar el launcher para la galería
+        galeriaLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK) {
+                Intent data = result.getData();
+                if (data != null) {
+                    Uri selectedImageUri = data.getData();
+                    uriCapturada = selectedImageUri.toString();
+
+                    //Cargar imagen seleccionada
+                    ivFotoDetalle.setBackground(null);
+                    ivFotoDetalle.setImageURI(selectedImageUri);
+                }
+                puElegirAccion.dismiss();
+            }
+        });
+
         // Registrar el launcher para la cámara
         camaraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK) {
-
                 // Si la foto se toma correctamente, mostrar la vista previa en el ImageView
                 Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
-                ivFotoDetalle.setImageBitmap(photo);
 
                 // Insertar la imagen en la galería y obtenemos la URI transformada en String para almacenar en la BD
                 ContentValues values = new ContentValues();
                 values.put(MediaStore.Images.Media.TITLE, "personaMarfol.jpg");
                 Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
                 try {
                     OutputStream outputStream = getContentResolver().openOutputStream(uri);
                     photo.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                     outputStream.close();
+
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
+                    ivFotoDetalle.setBackground(null);
+                    Glide.with(this).load(uriCapturada).into(ivFotoDetalle);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                puElegirAccion.dismiss();
+            }
+        });
+
+        //Convocamos el PopUp para mostrar las acciones ( Galería, Cámara )
+        ivFotoDetalle.setOnClickListener(view -> { puElegirAccion.show(); });
+
+        //Añadimos onClick en el ImageView para activar la imagen
+        btnUpCamara.setOnClickListener(view -> {
+            // Solicitar permiso para acceder a la cámara
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+                //Si no tenemos los permisos los obtenemos
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+            } else {
+                // Si ya se tienen los permisos, abrir la cámara
+                abrirCamara();
+            }
+        });
+
+        //Añadimos onClick en el ImageView para activar la imagen
+        btnUpGaleria.setOnClickListener(view -> {
+            // Solicitar permiso para acceder a la galería
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                // Si no tenemos los permisos, los solicitamos
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY_PERMISSION_CODE);
+            } else {
+                // Si ya se tienen los permisos, abrir la galería
+                abrirGaleria();
             }
         });
 
@@ -199,6 +251,18 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
                 }
         );
 
+    }
+
+    // Método para abrir la galería
+    private void abrirGaleria() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galeriaLauncher.launch(intent);
+    }
+
+    // Método para abrir la cámara
+    private void abrirCamara() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        camaraLauncher.launch(cameraIntent);
     }
 
     public void borrarComensal() {
@@ -320,13 +384,6 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         });
     }
 
-
-    // Método para abrir la cámara
-    private void abrirCamara() {
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        camaraLauncher.launch(cameraIntent);
-    }
-
     // Método para manejar la respuesta de la solicitud de permisos
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -340,11 +397,19 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
                 Toast.makeText(this, "Para almacenar la imagen debe otorgar los permisos", Toast.LENGTH_SHORT).show();
             }
         }
+        if (requestCode == GALLERY_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Si se conceden los permisos, abrir la galería
+                abrirGaleria();
+            } else {
+                // Si se deniegan los permisos, mostrar un mensaje al usuario
+                Toast.makeText(this, "Para acceder a la galería debe otorgar los permisos", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     //Se debe insertar el ArrayList vacío para que el adaptador inserte el objeto 0 ( añadir elemento )
     public void mostrarAdapter() {
-
         //Se añaden la lista de platos vacía para que aparezca el botón de añadir Plato
         platos = comensal.getPlatos();
 
@@ -419,6 +484,13 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         etDescripcionDetalle = findViewById(R.id.etDescripcionDetallePersona);
         rvAnadirPlatoDetalle = findViewById(R.id.rvAnadirPlatoDetalle);
         btnContinuarDetalle = findViewById(R.id.btnEditarDetalle);
+
+        //Asigna IDs de los elementos del popup
+        puElegirAccion = new Dialog(this);
+        puElegirAccion.setContentView(R.layout.popup_accion);
+        btnUpCamara = puElegirAccion.findViewById(R.id.btnCancelarPopup);
+        btnUpGaleria = puElegirAccion.findViewById(R.id.btnConfirmarPopup);
+
     }
 
     @Override

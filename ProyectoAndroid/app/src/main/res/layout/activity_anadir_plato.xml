@@ -27,18 +27,12 @@
 
         />
 
-
-
-    <!-- Menu APP -->
-
-    <!-- Login App -->
-
     <EditText
         android:id="@+id/etNombreAnadirPlato"
         android:layout_width="320dp"
         android:layout_height="50dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/editext_index"
+        android:background="@drawable/row_platos_bd"
         android:fontFamily="serif"
         android:gravity="center"
         android:hint="@string/etnombreanadir_participante"
@@ -58,7 +52,7 @@
         android:layout_width="320dp"
         android:layout_height="100dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/editext_index"
+        android:background="@drawable/row_platos_bd"
         android:fontFamily="serif"
         android:gravity="top|left"
         android:hint="@string/etdescripcionanadir_participante"
@@ -81,7 +75,7 @@
         android:layout_height="100dp"
         android:layout_marginTop="12dp"
 
-        android:background="@drawable/button_index"
+        android:background="@drawable/row_platos_bd"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.15"
         app:layout_constraintStart_toStartOf="parent"
@@ -92,7 +86,7 @@
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginTop="12dp"
-        android:background="@drawable/button_index"
+        android:background="@drawable/row_platos_bd"
         android:gravity="center"
         android:hint="@string/tvPrecio"
         android:inputType="numberDecimal"

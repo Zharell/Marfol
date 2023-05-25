@@ -4,8 +4,8 @@
 
     <!-- Agregar gradiente al borde -->
     <gradient
-        android:startColor="#FBCF35"
-        android:endColor="#FB9B35"
+        android:startColor="#FFD85E"
+        android:endColor="#FFAC5F"
         android:angle="90"
         android:type="linear" />
 

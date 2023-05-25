@@ -73,4 +73,8 @@
     <string name="tv_recordar_par">Participantes añadidos anteriormente</string>
     <string name="tv_recordar_pla">Platos añadidos anteriormente</string>
     <!-- FIN TextView Recordar -->
+    <!-- PopUp Accion -->
+    <string name="pop_up_galeria">GALERÍA</string>
+    <string name="pop_up_camara">CÁMARA</string>
+    <!-- FIN PopUp Accion -->
 </resources>
