@@ -381,6 +381,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         float shadowDy = 5f;
         int shadowColor = Color.BLACK;
         tvTitleAnadirP.getPaint().setShadowLayer(shadowRadius, shadowDx, shadowDy, shadowColor);
+
         //Inserta Imagen photo
         ivPlatoAnadirP.setImageURI(Uri.parse("android.resource://com.tfg.marfol/" + R.drawable.camera));
         ivPlatoAnadirP.setPadding(30, 30, 30, 30);

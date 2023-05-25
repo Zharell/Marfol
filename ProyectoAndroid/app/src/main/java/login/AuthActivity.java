@@ -3,10 +3,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -26,6 +30,8 @@ public class AuthActivity extends AppCompatActivity {
     private ImageButton btnGoogleLogin;
     private Button btnEntrarLogin;
     private EditText etEmailLogin;
+    private int susCont=0;
+    private ImageView imagenLogoAuth;
     private EditText etPasswordLogin;
     private TextView tvContrasenaOlvidada;
     private final int GOOGLE_SIGN_IN = 100;
@@ -43,9 +49,31 @@ public class AuthActivity extends AppCompatActivity {
         setContentView(R.layout.activity_auth);
         // Variables
         asignarId();
+
         // Setup
         setup();
+
+        //Método que utiliza el verySusyItem
+        imagenLogoAuth.setOnClickListener(view -> { utilizarSusy(); });
+
     }
+
+    public void utilizarSusy() {
+        susCont++;
+        if (susCont==8) {
+            Toast.makeText(this,"tututu tu... tururú",Toast.LENGTH_SHORT).show();
+        } else {
+            if (susCont==16) {
+                Toast.makeText(this,"mMmMm, very SUS touch",Toast.LENGTH_SHORT).show();
+            } else {
+                if (susCont==30) {
+                    imagenLogoAuth.setBackground(null);
+                    imagenLogoAuth.setImageDrawable(getDrawable(R.drawable.verysusyitem));
+                }
+            }
+        }
+    }
+
     private void asignarId() {
         // Asignar IDs de las vistas
         btnRegistrarseLogin = findViewById(R.id.btnRegistrarseLogin);
@@ -53,6 +81,7 @@ public class AuthActivity extends AppCompatActivity {
         etEmailLogin = findViewById(R.id.etEmailLogin);
         etPasswordLogin = findViewById(R.id.etPasswordLogin);
         btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
+        imagenLogoAuth = findViewById(R.id.imagenLogoAuth);
         tvContrasenaOlvidada = findViewById(R.id.tvContrasenaOlvidada);
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
