@@ -52,10 +52,8 @@ public class PlatoRecordarAdapter extends RecyclerView.Adapter<PlatoRecordarAdap
         }
 
         //Insertamos para cada persona en el Recycler su imagen
-        if (resultsPlato.get(position).getUrlImage().startsWith("https")) {
+        if (resultsPlato.get(position).getUrlImage() != null && !resultsPlato.get(position).getUrlImage().equalsIgnoreCase("")) {
             Glide.with(holder.itemView).load(resultsPlato.get(position).getUrlImage()).into(holder.ivPlatoRow);
-        } else {
-            holder.ivPlatoRow.setImageURI(Uri.parse(resultsPlato.get(position).getUrlImage()));
         }
 
         //Método onclick

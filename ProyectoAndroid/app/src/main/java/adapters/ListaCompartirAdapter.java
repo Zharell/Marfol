@@ -39,10 +39,8 @@ public class ListaCompartirAdapter extends RecyclerView.Adapter<ListaCompartirAd
         holder.tvPersonaRow.setText(resultsListCompartir.get(position).getNombre());
 
         //Insertamos para cada persona en el Recycler su imagen
-        if (resultsListCompartir.get(position).getUrlImage().startsWith("https")) {
+        if (resultsListCompartir.get(position).getUrlImage() != null && !resultsListCompartir.get(position).getUrlImage().equalsIgnoreCase("")) {
             Glide.with(holder.itemView).load(resultsListCompartir.get(position).getUrlImage()).into(holder.ivPersonaRow);
-        } else {
-            holder.ivPersonaRow.setImageURI(Uri.parse(resultsListCompartir.get(position).getUrlImage()));
         }
 
         //Método onclick

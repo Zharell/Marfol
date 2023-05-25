@@ -45,10 +45,8 @@ public class DesgloseAdapter extends RecyclerView.Adapter<DesgloseAdapter.Desglo
         holder.tvPersonaRow.setText(resultsPersona.get(position).getNombre());
 
         //Insertamos para cada persona en el Recycler su imagen
-        if (resultsPersona.get(position).getUrlImage().startsWith("https")) {
+        if (resultsPersona.get(position).getUrlImage() != null && !resultsPersona.get(position).getUrlImage().equalsIgnoreCase("")) {
             Glide.with(holder.itemView).load(resultsPersona.get(position).getUrlImage()).into(holder.ivPersonaRow);
-        } else {
-            holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
         }
 
         //Insertamos el total de los precios del comensal
