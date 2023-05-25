@@ -21,8 +21,10 @@ import com.tfg.marfol.R;
 import java.util.ArrayList;
 
 import adapters.CrudPlatosAdapter;
+import adapters.CrudRestaurantesAdapter;
 import entities.Plato;
 import mainActivity.menu.crudBd.detalle.DetalleEditarPersonaBd;
+import mainActivity.menu.crudBd.detalle.DetalleEditarPlatosBd;
 
 public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapter.onItemClickListener  {
     private FirebaseFirestore db;
@@ -46,13 +48,7 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_platos_bd);
         asignarId();
-        rvCrudPlatos.setLayoutManager(new GridLayoutManager(this, 1));
-        crudPlatosAdapter = new CrudPlatosAdapter();
-        rvCrudPlatos.setAdapter(crudPlatosAdapter);
-        crudPlatosAdapter.setmListener(this);
-        if (currentUser!=null){
-            cargarDatosBd();
-        }
+        mostrarAdapterPlatos();
         //Laucher Result recibe el ArrayList con los nuevos comensales y los inserta en el adapter
         rLauncherPlatos = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -70,6 +66,16 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         rvCrudPlatos = findViewById(R.id.rvCrudPlatos);
+
+    }
+    private void mostrarAdapterPlatos() {
+        rvCrudPlatos.setLayoutManager(new GridLayoutManager(this, 1));
+        crudPlatosAdapter = new CrudPlatosAdapter();
+        rvCrudPlatos.setAdapter(crudPlatosAdapter);
+        crudPlatosAdapter.setmListener(this);
+        if (currentUser!=null){
+            cargarDatosBd();
+        }
     }
     private void cargarDatosBd() {
 
@@ -100,7 +106,7 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
     }
     @Override
     public void onItemClick(int position) {
-        intentDetalle = new Intent(this, DetalleEditarPersonaBd.class);
+        intentDetalle = new Intent(this, DetalleEditarPlatosBd.class);
         intentDetalle.putExtra("platoDetalle", platosBd.get(position));
         intentDetalle.putExtra("platosTotales",platosBd);
         rLauncherPlatos.launch(intentDetalle);
