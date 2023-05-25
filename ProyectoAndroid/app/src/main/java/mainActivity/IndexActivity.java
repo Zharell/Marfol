@@ -46,7 +46,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     private Button btnApIndex;
 
     private Button btnApIndex2;
-    private ImageView ivLoginIndex, ivMenuIndex;
+    private ImageView ivImagenLogin, ivMenuIndex;
     private RecyclerView rvRestaurantesUsuario;
     private Dialog puVolverIndex;
     private Button btnCancelarIndex, btnConfirmarIndex, btnProvisional;
@@ -114,7 +114,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
     private void botonImagenNoLogueado() {
         //Puesto provisional para probar cosas
-        ivLoginIndex.setOnClickListener(view -> {
+        ivImagenLogin.setOnClickListener(view -> {
             authIntent = new Intent(this, login.AuthActivity.class);
             rLauncherLogin.launch(authIntent);
         });
@@ -124,7 +124,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
     private void botonImagenLogueado() {
         //Puesto provisional para probar cosas
-        ivLoginIndex.setOnClickListener(view -> {
+        ivImagenLogin.setOnClickListener(view -> {
             homeIntent = new Intent(this, login.HomeActivity.class);
             rLauncherLogin.launch(homeIntent);
         });
@@ -134,8 +134,8 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         //Asigna Ids a los elementos de la actividad
         btnApIndex = findViewById(R.id.btnApIndex);
         btnApIndex2 = findViewById(R.id.btnAPIndex);
-        ivLoginIndex = findViewById(R.id.ivAnadirPlatoImagen);
-        Glide.with(this).load(R.drawable.nologinimg).into(ivLoginIndex);
+        ivImagenLogin = findViewById(R.id.ivImagenLogin);
+        Glide.with(this).load(R.drawable.nologinimg).into(ivImagenLogin);
         ivMenuIndex = findViewById(R.id.ivMenuAnadirPlato);
         rvRestaurantesUsuario = findViewById(R.id.rvRestaurantesUsuario);
         tvTitleIndex = findViewById(R.id.tvTitleAnadirPlato);
@@ -156,7 +156,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     public void asignarEfectos() {
 
         //Ajusta el tamaño de la imagen del login
-        ivLoginIndex.setPadding(20, 20, 20, 20);
+        ivImagenLogin.setPadding(20, 20, 20, 20);
 
         //Asigna el degradado de colores a los textos
         int[] colors = {getResources().getColor(R.color.redBorder),
@@ -290,11 +290,11 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     }
 
     private void comprobarLauncher() {
-        if (MetodosGlobales.comprobarLogueado(IndexActivity.this, ivLoginIndex)) {
+        if (MetodosGlobales.comprobarLogueado(IndexActivity.this, ivImagenLogin)) {
             botonImagenLogueado();
             mostrarAdapterRestaurantes();
         } else {
-            Glide.with(this).load(R.drawable.nologinimg).into(ivLoginIndex);
+            Glide.with(this).load(R.drawable.nologinimg).into(ivImagenLogin);
             botonImagenNoLogueado();
         }
     }

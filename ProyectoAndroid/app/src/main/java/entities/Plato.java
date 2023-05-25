@@ -14,6 +14,14 @@ public class Plato implements Serializable {
 
     private ArrayList<Persona> personasCompartir;
 
+    public String getRestaurante() {
+        return restaurante;
+    }
+
+    public void setRestaurante(String restaurante) {
+        this.restaurante = restaurante;
+    }
+
     public Plato(String nombre, String descripcion, String urlImage, String restaurante, double precio) {
         this.nombre = nombre;
         this.descripcion = descripcion;

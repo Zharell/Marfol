@@ -12,7 +12,6 @@
         android:layout_width="80dp"
         android:layout_height="60dp"
         android:layout_marginStart="8dp"
-
         android:background="@drawable/row_platos_bd"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,7 +22,6 @@
         android:id="@+id/tvCrudPlatoNombre"
         android:layout_width="200dp"
         android:layout_height="60dp"
-
         android:layout_marginStart="4dp"
         android:background="@drawable/row_platos_bd"
         android:gravity="center"

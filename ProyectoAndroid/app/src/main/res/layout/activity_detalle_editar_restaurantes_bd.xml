@@ -6,46 +6,63 @@
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
     tools:context="mainActivity.menu.crudBd.detalle.DetalleEditarRestaurantesBd">
+
     <EditText
         android:id="@+id/etDetalleRestaurantes"
         android:layout_width="wrap_content"
         android:layout_height="55dp"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="172dp"
+        android:background="@drawable/row_gpt_restaurantes"
         android:fontFamily="serif"
         android:gravity="center"
-        android:textColor="@color/redBorder"
+        android:hint="@string/nombre"
+        android:textColorHint="@color/white"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnBorrarDetalleRestaurantes"
-        android:layout_width="150dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="40dp"
-        android:background="@drawable/button_borrar"
-        android:text="@string/btnborrar_detalle"
-        android:textColor="@color/yellowMargin"
-        android:textSize="22dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etDetalleRestaurantes"
-        app:layout_constraintVertical_bias="0.232" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnEditarDetalleRestaurantes"
         android:layout_width="150dp"
         android:layout_height="55dp"
-        android:layout_marginEnd="52dp"
+
         android:background="@drawable/button_index"
         android:text="@string/btneditar_detalle"
         android:textColor="@color/redTitle"
         android:textSize="22dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textView9"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etDetalleRestaurantes"
-        app:layout_constraintVertical_bias="0.232" />
+        app:layout_constraintVertical_bias="0.229" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnBorrarDetalleRestaurantes"
+
+        android:layout_width="150dp"
+        android:layout_height="55dp"
+        android:background="@drawable/button_borrar"
+        android:text="@string/btnborrar_detalle"
+        android:textColor="@color/yellowMargin"
+        android:textSize="22dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/textView9"
+        app:layout_constraintTop_toBottomOf="@+id/etDetalleRestaurantes"
+        app:layout_constraintVertical_bias="0.229" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/etDetalleRestaurantes"
+        app:layout_constraintHorizontal_bias="0.514"
+        app:layout_constraintStart_toStartOf="@+id/etDetalleRestaurantes"
+        app:layout_constraintTop_toBottomOf="@+id/etDetalleRestaurantes"
+        app:layout_constraintVertical_bias="0.246" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

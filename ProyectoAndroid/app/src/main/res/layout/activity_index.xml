@@ -44,7 +44,7 @@
 
     <ImageView
 
-        android:id="@+id/ivAnadirPlatoImagen"
+        android:id="@+id/ivImagenLogin"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="@drawable/login_style"

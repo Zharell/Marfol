@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_style"
+    >
+
+    <TextView
+        android:id="@+id/tvNombreDeRestaurante"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/row_platos_bd"
+        android:fontFamily="serif"
+        android:gravity="center"
+        android:hint="@string/etnombreanadir_participante"
+        android:textColor="@color/redTitle"
+        android:textColorHint="@color/redSLight"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etDetallePrecioEditarPlato" />
+
+    <EditText
+        android:id="@+id/etDetalleNombreEditarPlato"
+        android:layout_width="320dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="44dp"
+        android:background="@drawable/row_platos_bd"
+        android:fontFamily="serif"
+
+        android:gravity="center"
+        android:hint="@string/etnombreanadir_participante"
+        android:maxLength="16"
+        android:padding="10dp"
+        android:textColor="@color/redTitle"
+        android:textColorHint="@color/redSLight"
+        android:textSize="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.499"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/etDetalleDescripcionEditarPlato"
+        android:layout_width="320dp"
+        android:layout_height="100dp"
+        android:fontFamily="serif"
+        android:gravity="top|left"
+        android:background="@drawable/row_platos_bd"
+        android:hint="@string/etdescripcionanadir_participante"
+        android:maxLength="80"
+        android:padding="10dp"
+
+        android:textColor="@color/redTitle"
+        android:textColorHint="@color/redSLight"
+        android:textSize="22dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivDetalleFotoEditarPlato" />
+
+    <EditText
+        android:id="@+id/etDetallePrecioEditarPlato"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/row_platos_bd"
+        android:gravity="center"
+        android:hint="@string/tvPrecio"
+        android:inputType="numberDecimal"
+
+
+        android:maxLength="5"
+        android:textColor="@color/redTitle"
+        android:textColorHint="@color/redSLight"
+        android:textSize="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etDetalleDescripcionEditarPlato" />
+
+    <ImageView
+        android:id="@+id/ivDetalleFotoEditarPlato"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+
+        android:layout_marginTop="4dp"
+        android:background="@drawable/camera"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etDetalleNombreEditarPlato" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnBorrarDetalleRestaurantes"
+
+        android:layout_width="150dp"
+        android:layout_height="55dp"
+        android:background="@drawable/button_borrar"
+        android:text="@string/btnborrar_detalle"
+        android:textColor="@color/yellowMargin"
+        android:textSize="22dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/textView11"
+        app:layout_constraintTop_toBottomOf="@+id/tvNombreDeRestaurante"
+        app:layout_constraintVertical_bias="0.301" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnEditarDetalleRestaurantes"
+        android:layout_width="150dp"
+        android:layout_height="55dp"
+        android:background="@drawable/button_index"
+        android:text="@string/btneditar_detalle"
+        android:textColor="@color/redTitle"
+        android:textSize="22dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textView11"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvNombreDeRestaurante"
+        app:layout_constraintVertical_bias="0.301" />
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/etDetalleDescripcionEditarPlato"
+        app:layout_constraintStart_toStartOf="@+id/etDetalleDescripcionEditarPlato"
+        app:layout_constraintTop_toBottomOf="@+id/tvNombreDeRestaurante"
+        app:layout_constraintVertical_bias="0.0" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

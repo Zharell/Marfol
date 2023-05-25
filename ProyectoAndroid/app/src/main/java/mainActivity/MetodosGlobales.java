@@ -37,7 +37,7 @@ public class MetodosGlobales {
                         } else {
                             try {
                                 Glide.with(context)
-                                        .load(R.drawable.nologinimg)
+                                        .load(R.drawable.camera)
                                         .circleCrop() // Aplica el formato redondeado
                                         .into(iVimagen);
                             } catch (IllegalArgumentException e) {
@@ -45,7 +45,7 @@ public class MetodosGlobales {
                         }
                     } else {
                         try {
-                            Glide.with(context).load(R.drawable.nologinimg).into(iVimagen);
+                            Glide.with(context).load(R.drawable.camera).into(iVimagen);
                         } catch (IllegalArgumentException e) {
                         }
                     }
@@ -73,7 +73,7 @@ public class MetodosGlobales {
                     if (document.exists()) {
                         String imagen = document.getString("imagen");
                         if (imagen != null&&!imagen.equalsIgnoreCase("")) {
-                            iVimagen.setPadding(20, 20, 20, 20);
+                            iVimagen.setPadding(20,20,20,20);
                             iVimagen.setBackground(null);
                             try {
                                 Glide.with(context)
@@ -85,7 +85,7 @@ public class MetodosGlobales {
                         } else {
                             try {
                                 Glide.with(context)
-                                        .load(R.drawable.nologinimg)
+                                        .load(R.drawable.camera)
                                         .circleCrop() // Aplica el formato redondeado
                                         .into(iVimagen);
                             } catch (IllegalArgumentException e) {
@@ -93,7 +93,7 @@ public class MetodosGlobales {
                         }
                     } else {
                         try {
-                            Glide.with(context).load(R.drawable.nologinimg).into(iVimagen);
+                            Glide.with(context).load(R.drawable.camera).into(iVimagen);
                         } catch (IllegalArgumentException e) {
                         }
                     }
@@ -104,7 +104,7 @@ public class MetodosGlobales {
             return true;
         } else {
             Toast.makeText(context, "No estás logueado", Toast.LENGTH_SHORT).show();
-            Glide.with(context).load(R.drawable.nologinimg).into(iVimagen);
+            Glide.with(context).load(R.drawable.camera).into(iVimagen);
             return false;
         }
     }
