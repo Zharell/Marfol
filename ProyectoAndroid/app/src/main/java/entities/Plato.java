@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Plato implements Serializable {
 
-    private String nombre, descripcion, urlImage;
+    private String nombre, descripcion, urlImage,restaurante;
 
     //Precio --> Precio Original del plato
     //PrecioFinal --> Precio final si se ha compartido puede variar
@@ -14,9 +14,15 @@ public class Plato implements Serializable {
 
     private ArrayList<Persona> personasCompartir;
 
-    
+    public Plato(String nombre, String descripcion, String urlImage, String restaurante, double precio) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.urlImage = urlImage;
+        this.restaurante = restaurante;
+        this.precio = precio;
+    }
 
-    public Plato (String nombre, String descripcion, double precio,double precioFinal,String urlImage , boolean compartido, ArrayList<Persona> personasCompartir) {
+    public Plato (String nombre, String descripcion, double precio, double precioFinal, String urlImage , boolean compartido, ArrayList<Persona> personasCompartir) {
         this.nombre=nombre;
         this.descripcion=descripcion;
         this.precio=precio;

@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.tfg.marfol.R;
 
 import java.util.ArrayList;
@@ -40,10 +41,15 @@ public class CrudPersonaAdapter extends RecyclerView.Adapter<CrudPersonaAdapter.
         holder.tvPersonaRow.setText(resultsCrudPersona.get(position).getNombre());
 
         //Insertamos para cada persona en el Recycler su imagen
-
-        //holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
         if(resultsCrudPersona.get(position).getUrlImage()!=null) {
-            Glide.with(holder.itemView).load(Uri.parse(resultsCrudPersona.get(position).getUrlImage())).circleCrop().into(holder.ivPersonaRow);
+            Glide.with(holder.itemView)
+                    .load(Uri.parse(resultsCrudPersona.get(position).getUrlImage()))
+                    .transform(new RoundedCorners(100)) // Especifica el radio de redondeo en píxeles
+                    .into(holder.ivPersonaRow);
+            if(!resultsCrudPersona.get(position).getUrlImage().equalsIgnoreCase("")){
+                holder.ivPersonaRow.setBackground(null);
+            }
+
         }
 
         //Método onclick

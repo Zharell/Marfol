@@ -17,7 +17,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import entities.Persona;
 import entities.Plato;
 
 public class PlatoRecordarAdapter extends RecyclerView.Adapter<PlatoRecordarAdapter.PlatoRecordarAdapterResultHolder> {

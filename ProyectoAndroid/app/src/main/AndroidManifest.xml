@@ -33,6 +33,9 @@
             android:name="mainActivity.menu.crudBd.EditarPersonasBd"
             android:exported="false" />
         <activity
+            android:name="mainActivity.menu.crudBd.EditarPlatosBd"
+            android:exported="false" />
+        <activity
             android:name="mainActivity.menu.crudBd.detalle.DetalleEditarPersonaBd"
             android:exported="false" />
         <activity

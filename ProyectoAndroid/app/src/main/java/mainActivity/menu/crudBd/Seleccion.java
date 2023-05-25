@@ -21,6 +21,10 @@ public class Seleccion extends AppCompatActivity {
             intent = new Intent(Seleccion.this, EditarRestaurantesBd.class);
             startActivity(intent);
         });
+        btnCrudPlatos.setOnClickListener(v ->{
+            intent = new Intent(Seleccion.this, EditarPlatosBd.class);
+            startActivity(intent);
+        });
 
         btnCrudVolver.setOnClickListener(v -> finish());
     }
