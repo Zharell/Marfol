@@ -75,6 +75,7 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
     private StorageReference storageRef,imagenRef;
     private Uri imagenUri ;
     private UploadTask uploadTask;
+    private boolean d;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,9 +84,15 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
         //Recibe la lista de comensales para empezar a añadir
         intent = getIntent();
         comensales = (ArrayList<Persona>) intent.getSerializableExtra("envioDesglose");
-
+        nombreRestaurante = intent.getStringExtra("nombreRestaurante");
         //Método que asigna IDs a los elementos
         asignarId();
+        if(!nombreRestaurante.equalsIgnoreCase("")){
+            etNombrePopup.setText(nombreRestaurante);
+            etNombrePopup.setFocusable(false);
+            Toast.makeText(this, nombreRestaurante, Toast.LENGTH_SHORT).show();
+        }
+
 
         //Método que asigna los efectos a los elementos
         asignarEfectos();

@@ -64,16 +64,25 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private int comensalPosicion;
     private ArrayList<Persona> comensalesBd;
     private RecyclerView rvPersonaParticipantesBd;
-    private Intent irLogin;
+    private Intent irLogin,intent;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
+    private boolean enviarRestaurante;
+    private String nombreRestaurante;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_participantes);
-
+        intent = getIntent();
+        enviarRestaurante = intent.getBooleanExtra("enviarRestaurante",false);
+        if(intent.getBooleanExtra("enviarRestaurante",enviarRestaurante)){
+            nombreRestaurante = intent.getStringExtra("nombreRestaurante");
+            Toast.makeText(this, nombreRestaurante, Toast.LENGTH_SHORT).show();
+        }else {
+            nombreRestaurante= "";
+        }
         //Método que asigna IDs a los elementos
         asignarId();
 
@@ -173,6 +182,8 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                 //Accede a la actividad detalle de una persona
                 Intent intentDesglose = new Intent(this, DesgloseActivity.class);
                 intentDesglose.putExtra("envioDesglose", comensales);
+                intentDesglose.putExtra("nombreRestaurante", nombreRestaurante);
+                intentDesglose.putExtra("enviarRestaurante",true);
                 rLauncherDesglose.launch(intentDesglose);
             } else {
                 //Comprobamos qué elemento nos falta para avanzar al desglose
@@ -360,12 +371,16 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
             Intent intentDetalle = new Intent(this, DetallePersonaActivity.class);
             intentDetalle.putExtra("comensalDetalle", comensales.get(position));
             intentDetalle.putExtra("arrayListComenComp", comensales);
+            intentDetalle.putExtra("nombreRestaurante", nombreRestaurante);
+            intentDetalle.putExtra("enviarRestaurante",true);
             rLauncherDetalleComensal.launch(intentDetalle);
 
         } else {
             //Accede a la actividad para añadir nuevos comensales
             Intent intent = new Intent(this, AnadirParticipanteActivity.class);
             intent.putExtra("arrayListComensales", comensales);
+            intent.putExtra("nombreRestaurante", nombreRestaurante);
+            intent.putExtra("enviarRestaurante",true);
             rLauncherAnadirComensal.launch(intent);
 
         }
@@ -379,6 +394,8 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         i.putExtra("importado", true);
         i.putExtra("arrayListComensales", comensales);
         i.putExtra("comensalesBd", comensalesBd.get(position));
+        i.putExtra("nombreRestaurante", nombreRestaurante);
+        i.putExtra("enviarRestaurante",true);
         rLauncherAnadirComensal.launch(i);
 
     }

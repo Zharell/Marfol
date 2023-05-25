@@ -82,7 +82,9 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
-    private String email;
+    private String email,nombreRestaurante;
+    private boolean enviarRestaurante;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +96,12 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         comensal = (Persona) intent.getSerializableExtra("comensalDetalle");
         nombreCompartir = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComenComp");
         comensalBd = comensal;
-
+        if(intent.getBooleanExtra("enviarRestaurante",enviarRestaurante)){
+            nombreRestaurante = intent.getStringExtra("nombreRestaurante");
+            Toast.makeText(this, nombreRestaurante, Toast.LENGTH_SHORT).show();
+        }else {
+            nombreRestaurante= "";
+        }
         //Método que asigna IDs a los elementos
         asignarId();
 
@@ -507,6 +514,8 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
             Intent intent = new Intent(this, RecordarPlatoActivity.class);
             intent.putExtra("arrayListPlatos", platos);
             intent.putExtra("arrayListComenComp", nombreCompartir);
+            intent.putExtra("nombreRestaurante", nombreRestaurante);
+            intent.putExtra("enviarRestaurante",true);
             rLauncherRecordarPlato.launch(intent);
 
         }

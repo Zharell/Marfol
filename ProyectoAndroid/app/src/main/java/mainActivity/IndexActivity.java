@@ -40,6 +40,7 @@ import mainActivity.API.API;
 import mainActivity.menu.AboutUs;
 import mainActivity.menu.ContactUs;
 import mainActivity.menu.Preferences;
+import mainActivity.menu.crudBd.detalle.DetalleEditarPlatosBd;
 
 public class IndexActivity extends AppCompatActivity implements RestaurantesAdapter.onItemClickListenerRestaurantes {
 
@@ -62,9 +63,10 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     private TextView menuItemHome;
     private TextView tvLogoutIndex;
     private PopupWindow popupWindow;
-    private Intent homeIntent, authIntent;
+    private Intent homeIntent, authIntent,intent;
     private RestaurantesAdapter restaurantesAdapter;
     private ArrayList<Restaurantes> restaurantesBd;
+    private boolean enviarRestaurante;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +86,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         );
         //Botón que accede a la gestión de participantes
         btnApIndex.setOnClickListener(view -> {
-            Intent intent = new Intent(this, ParticipantesActivity.class);
+            intent = new Intent(this, ParticipantesActivity.class);
 
             startActivity(intent);
 
@@ -94,7 +96,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         });
 
         btnApIndex2.setOnClickListener(view -> {
-            Intent intent = new Intent(this, API.class);
+            intent = new Intent(this, API.class);
             startActivity(intent);
         });
         //Botones para el popup de confirmación
@@ -107,8 +109,8 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         //Cancela, desaparece el popup y continúa en la actividad
         btnCancelarIndex.setOnClickListener(view -> puVolverIndex.dismiss());
         btnProvisional.setOnClickListener(view -> {
-            Intent a = new Intent(this, mainActivity.menu.crudBd.Seleccion.class);
-            startActivity(a);
+            intent = new Intent(this, mainActivity.menu.crudBd.Seleccion.class);
+            startActivity(intent);
         });
     }
 
@@ -243,7 +245,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
         menuItemAboutUs.setOnClickListener(v -> {
             // Acción al hacer clic en "AboutUs"
-            Intent intent = new Intent(IndexActivity.this, AboutUs.class);
+            intent = new Intent(IndexActivity.this, AboutUs.class);
             startActivity(intent);
 
             // Cerrar el menú emergente
@@ -252,7 +254,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
         menuItemContactUs.setOnClickListener(v -> {
             // Acción al hacer clic en "ContactUs"
-            Intent intent = new Intent(IndexActivity.this, ContactUs.class);
+            intent = new Intent(IndexActivity.this, ContactUs.class);
             startActivity(intent);
 
             // Cerrar el menú emergente
@@ -266,7 +268,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
         menuItemPreferencias.setOnClickListener(v -> {
             // Acción al hacer clic en "Preferences"
-            Intent intent = new Intent(IndexActivity.this, Preferences.class);
+            intent = new Intent(IndexActivity.this, Preferences.class);
             startActivity(intent);
             // Cerrar el menú emergente
             popupWindow.dismiss();
@@ -281,8 +283,8 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
                 prefs.apply();
                 FirebaseAuth.getInstance()
                         .signOut();
-                Intent in = new Intent(this, IndexActivity.class);
-                startActivity(in);
+                intent = new Intent(this, IndexActivity.class);
+                startActivity(intent);
                 finish();
             });
         }
@@ -349,5 +351,10 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     @Override
     public void onItemClick(int position) {
         Toast.makeText(this, String.valueOf(position), Toast.LENGTH_SHORT).show();
+        intent = new Intent(this, ParticipantesActivity.class);
+        intent.putExtra("nombreRestaurante", restaurantesBd.get(position).getNombreRestaurante());
+        intent.putExtra("enviarRestaurante",true);
+        startActivity(intent);
+        finish();
     }
 }
