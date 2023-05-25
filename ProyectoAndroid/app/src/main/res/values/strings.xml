@@ -65,4 +65,8 @@
     <string name="popup_text2_desglose">Podrás recordar los platos muy fácilmente</string>
     <string name="popup_edit_desglose">Nombre restaurante</string>
     <!-- FIN STRING PARA PUP UP DESGLOSE -->
+    <!-- ROW PLATO RECORDAR -->
+    <string name="plato_nombre_nuevo">NUEVO</string>
+    <string name="plato_precio_nuevo">PLATO</string>
+    <!-- FIN ROW PLATO RECORDAR -->
 </resources>

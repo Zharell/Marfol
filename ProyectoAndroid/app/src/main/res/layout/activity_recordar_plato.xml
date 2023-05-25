@@ -52,7 +52,7 @@ tools:context="mainActivity.detalle.RecordarPlatoActivity">
         app:layout_constraintTop_toBottomOf="@+id/rvPlatoRecordar" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvPersonaRecordarBd"
+        android:id="@+id/rvPlatoRecordarBd"
         android:layout_width="275dp"
         android:layout_height="100dp"
         android:layout_marginTop="24dp"
