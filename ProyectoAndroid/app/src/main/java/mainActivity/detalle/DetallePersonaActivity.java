@@ -65,9 +65,11 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
     private static final int CAMERA_PERMISSION_CODE = 100;
     private boolean borrarPlato;
     private int platoPosicion;
+    private boolean nuevoPlato;
     private ActivityResultLauncher<Intent> camaraLauncher;
     private ActivityResultLauncher rLauncherPlatos;
     private ActivityResultLauncher rLauncherDetallePlato;
+    private ActivityResultLauncher rLauncherRecordarPlato;
     private Button btnContinuarDetalle, btnBorrarDetalle;
     private String uriCapturada = "";
     private FirebaseFirestore db;
@@ -174,6 +176,28 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         btnBorrarDetalle.setOnClickListener(view -> {
             borrarComensal();
         });
+
+        //Launcher que da la opción a recordar platos o añadir nuevos
+        rLauncherRecordarPlato = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        nuevoPlato = data.getBooleanExtra("nuevoPlato", false);
+                        if (nuevoPlato) {
+                            //Accedemos a la actividad de añadir plato
+                            Intent intentRec = new Intent(this, AnadirPlatoActivity.class);
+                            intentRec.putExtra("arrayListPlatos", platos);
+                            intentRec.putExtra("arrayListComenComp", nombreCompartir);
+                            intentRec.putExtra("comensalCode", comensal.getComensalCode());
+                            rLauncherPlatos.launch(intentRec);
+                        } else {
+                            //recibe el plato que anteriormente se había utilizado
+                            platos.add((Plato) data.getSerializableExtra("recordarNuevo"));
+                            adapterDetalle.setResultsPlato(platos);
+                        }
+                    }
+                }
+        );
 
     }
 
@@ -408,18 +432,15 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
             intentDetalle.putExtra("comensalCode", comensal.getComensalCode());
             rLauncherDetallePlato.launch(intentDetalle);
         } else {
-            //Accedemos a la actividad de añadir plato
-            Intent intent = new Intent(this, AnadirPlatoActivity.class);
+            Intent intent = new Intent(this, RecordarPlatoActivity.class);
             intent.putExtra("arrayListPlatos", platos);
             intent.putExtra("arrayListComenComp", nombreCompartir);
-            intent.putExtra("comensalCode", comensal.getComensalCode());
-            rLauncherPlatos.launch(intent);
+            rLauncherRecordarPlato.launch(intent);
 
         }
     }
 
     private void anadirPersonaABd(String nombre, String descripcion, String imagen) {
-
 
         if (currentUser != null) {
             // El usuario está autenticado

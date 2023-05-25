@@ -101,7 +101,6 @@ public class RecordarPlatoActivity extends AppCompatActivity implements PlatoRec
                 Shader.TileMode.REPEAT);
 
         tvTitleRecordar.getPaint().setShader(gradient);
-        tvAnterRecordar.getPaint().setShader(gradient);
 
         // Asigna sombreado al texto
         float shadowRadius = 10f;

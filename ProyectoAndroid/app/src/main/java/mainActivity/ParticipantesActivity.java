@@ -47,9 +47,9 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
     private final int MINIMO_PLATOS = 1;
     private boolean borrarComensal = false;
-    private int numPlatos=0;
+    private int numPlatos = 0;
     private ImageView ivLoginParticipantes, ivMenuParticipantes;
-    private TextView tvTitleParticipantes;
+    private TextView tvTitleParticipantes, tvRecorPar;
     private Dialog puVolverParticipantes;
     private Button btnCancelarParticipantes, btnConfirmarParticipantes, btnContinuarParticipantes;
     private Intent volverIndex;
@@ -67,7 +67,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private Intent irLogin;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
-    private FirebaseUser currentUser ;
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,13 +79,14 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
         //Método que asigna los efectos a los elementos
         asignarEfectos();
+
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
 
         //comprobar si estoy logueado
-        if(MetodosGlobales.comprobarLogueado(this,ivLoginParticipantes)){
+        if (MetodosGlobales.comprobarLogueado(this, ivLoginParticipantes)) {
             botonImagenLogueado();
-        }else{
+        } else {
             Glide.with(this).load(R.drawable.nologinimg).into(ivLoginParticipantes);
             botonImagenNoLogueado();
         }
@@ -98,7 +99,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                         comensales = (ArrayList<Persona>) data.getSerializableExtra("arrayListComensales");
                         personaAdapter.setResultsPersona(comensales);
                         comprobarLauncher();
-                    }else {
+                    } else {
                         comprobarLauncher();
                     }
                 }
@@ -112,7 +113,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                         Intent data = result.getData();
                         borrarComensal = data.getBooleanExtra("borrarComensal", false);
                         if (!borrarComensal) {
-                            comensales.set(comensalPosicion,(Persona) data.getSerializableExtra("detalleComensal"));
+                            comensales.set(comensalPosicion, (Persona) data.getSerializableExtra("detalleComensal"));
                             personaAdapter.setResultsPersona(comensales);
                         } else {
                             //Método que comprueba con quien has compartido y lo borra de ser necesario
@@ -120,11 +121,11 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                             comensales.remove(comensalPosicion);
                             personaAdapter.setResultsPersona(comensales);
                             //Importantísimo, reorganiza los ComensalCodes al borrar un comensal
-                            for (int i=1;i<comensales.size();i++) {
+                            for (int i = 1; i < comensales.size(); i++) {
                                 comensales.get(i).setComensalCode(i);
                             }
                         }
-                    }else{
+                    } else {
                         comprobarLauncher();
                     }
                 }
@@ -138,7 +139,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                         Intent data = result.getData();
                         comensales = (ArrayList<Persona>) data.getSerializableExtra("arrayListDesglose");
                         personaAdapter.setResultsPersona(comensales);
-                    }else{
+                    } else {
                         comprobarLauncher();
                     }
                 }
@@ -147,7 +148,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         //Comprueba si estás logueado
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-                  comprobarLauncher();
+                    comprobarLauncher();
                 }
         );
 
@@ -168,42 +169,45 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         btnContinuarParticipantes.setOnClickListener(view -> {
             //Obtenemos todos los platos
             int numPlatos = obtenerPlatos();
-            if (comensales.size()>1 && numPlatos >= MINIMO_PLATOS) {
+            if (comensales.size() > 1 && numPlatos >= MINIMO_PLATOS) {
                 //Accede a la actividad detalle de una persona
                 Intent intentDesglose = new Intent(this, DesgloseActivity.class);
                 intentDesglose.putExtra("envioDesglose", comensales);
                 rLauncherDesglose.launch(intentDesglose);
             } else {
                 //Comprobamos qué elemento nos falta para avanzar al desglose
-                if (comensales.size()<2) {
-                    Toast.makeText(this,"Debe añadir al menos un comensal",Toast.LENGTH_SHORT).show();
+                if (comensales.size() < 2) {
+                    Toast.makeText(this, "Debe añadir al menos un comensal", Toast.LENGTH_SHORT).show();
                 }
                 if (numPlatos < MINIMO_PLATOS) {
-                    Toast.makeText(this,"Debe añadir al menos un plato",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Debe añadir al menos un plato", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
-    private void botonImagenNoLogueado(){
+
+    private void botonImagenNoLogueado() {
         //Puesto provisional para probar cosas
         ivLoginParticipantes.setOnClickListener(view -> {
             Intent intent = new Intent(this, login.AuthActivity.class);
             rLauncherLogin.launch(intent);
         });
     }
-    private void botonImagenLogueado(){
+
+    private void botonImagenLogueado() {
         //Puesto provisional para probar cosas
         ivLoginParticipantes.setOnClickListener(view -> {
             Intent intent = new Intent(this, login.HomeActivity.class);
             rLauncherLogin.launch(intent);
         });
     }
+
     public void borrarCompartidos() {
-        for (int i=1;i<comensales.size();i++) {
-            for (int j=1;j<comensales.get(i).getPlatos().size();j++) {
+        for (int i = 1; i < comensales.size(); i++) {
+            for (int j = 1; j < comensales.get(i).getPlatos().size(); j++) {
                 if (comensales.get(i).getPlatos().get(j).isCompartido()) {
                     for (int h = 0; h < comensales.get(i).getPlatos().get(j).getPersonasCompartir().size(); h++) {
-                        if (comensales.get(i).getPlatos().get(j).getPersonasCompartir().get(h).getComensalCode()==comensales.get(comensalPosicion).getComensalCode()) {
+                        if (comensales.get(i).getPlatos().get(j).getPersonasCompartir().get(h).getComensalCode() == comensales.get(comensalPosicion).getComensalCode()) {
                             comensales.get(i).getPlatos().remove(j);
                             break;
                         }
@@ -215,8 +219,8 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
     //Comprueba si se han añadido platos para avanzar al Desglose
     public int obtenerPlatos() {
-        for (int i=1;i<comensales.size();i++) {
-            numPlatos+=comensales.get(i).obtenerNumPlatos();
+        for (int i = 1; i < comensales.size(); i++) {
+            numPlatos += comensales.get(i).obtenerNumPlatos();
         }
         return numPlatos;
     }
@@ -229,7 +233,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     }
 
 
-    public void asignarId () {
+    public void asignarId() {
 
         //Asigna Ids a los elementos de la actividad
         ivMenuParticipantes = findViewById(R.id.ivMenuAnadirPlato);
@@ -238,8 +242,10 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         rvPersonaParticipantesBd = findViewById(R.id.rvPersonaParticipantesBd);
         tvTitleParticipantes = findViewById(R.id.tvTitleAnadirPlato);
         btnContinuarParticipantes = findViewById(R.id.btnContinuarParticipantes);
+        tvRecorPar = findViewById(R.id.tvRecordarParticipantesPar);
         volverIndex = new Intent(this, IndexActivity.class);
         irLogin = new Intent(this, AuthActivity.class);
+
         //Asigna IDs de los elementos del popup
         puVolverParticipantes = new Dialog(this);
         puVolverParticipantes.setContentView(R.layout.popup_confirmacion);
@@ -248,7 +254,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        comensales= new ArrayList<>();
+        comensales = new ArrayList<>();
         comensalesBd = new ArrayList<>();
     }
 
@@ -270,6 +276,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                 positions,
                 Shader.TileMode.REPEAT);
 
+        //Colores rojizos
         tvTitleParticipantes.getPaint().setShader(gradient);
         btnConfirmarParticipantes.getPaint().setShader(gradient);
         btnCancelarParticipantes.getPaint().setShader(gradient);
@@ -288,7 +295,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     public void mostrarAdapter() {
 
         //Prepara el Adapter para su uso
-        rvPersonaParticipantes.setLayoutManager(new GridLayoutManager(this,2));
+        rvPersonaParticipantes.setLayoutManager(new GridLayoutManager(this, 2));
         personaAdapter = new PersonaAdapter();
         rvPersonaParticipantes.setAdapter(personaAdapter);
         personaAdapter.setmListener(this);
@@ -296,7 +303,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         personaAdapter.setResultsPersona(comensales);
 
         //aqui datos de la base de datos
-        rvPersonaParticipantesBd.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false));
+        rvPersonaParticipantesBd.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         personaAdapterBd = new PersonaAdapterBd();
         rvPersonaParticipantesBd.setAdapter(personaAdapterBd);
         personaAdapterBd.setmListener(this);
@@ -304,8 +311,9 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
             cargarDatosBd();
         }
     }
+
     private void cargarDatosBd() {
-         if (currentUser != null) {
+        if (currentUser != null) {
             comensalesBd = new ArrayList<>();
             String usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
             DocumentReference id = db.collection("users").document(usuarioId);
@@ -319,7 +327,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
             consulta.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     // Limpiar el ArrayList antes de agregar los nuevos datos
-                    int incremento=1;
+                    int incremento = 1;
 
                     // Recorrer los documentos obtenidos y agregar los datos al ArrayList
                     for (DocumentSnapshot document : task.getResult()) {
@@ -327,7 +335,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                         String nombre = document.getString("nombre");
                         String descripcion = document.getString("descripcion");
                         String imagen = document.getString("imagen");
-                        Persona persona = new Persona(incremento,nombre, descripcion, imagen, new ArrayList<>(),0);
+                        Persona persona = new Persona(incremento, nombre, descripcion, imagen, new ArrayList<>(), 0);
                         comensalesBd.add(persona);
                         incremento++;
                     }
@@ -349,7 +357,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     public void onItemClick(int position) {
         comensalPosicion = position;
         //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
-        if (position>0) {
+        if (position > 0) {
             //Accede a la actividad detalle de una persona
             Intent intentDetalle = new Intent(this, DetallePersonaActivity.class);
             intentDetalle.putExtra("comensalDetalle", comensales.get(position));
@@ -369,20 +377,20 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     @Override
     public void onItemClickBd(int position) {
         Toast.makeText(this, String.valueOf(position), Toast.LENGTH_SHORT).show();
-        Intent i= new Intent(this, AnadirParticipanteActivity.class);
-        i.putExtra("importado",true);
+        Intent i = new Intent(this, AnadirParticipanteActivity.class);
+        i.putExtra("importado", true);
         i.putExtra("arrayListComensales", comensales);
-        i.putExtra("comensalesBd",comensalesBd.get(position));
+        i.putExtra("comensalesBd", comensalesBd.get(position));
         rLauncherAnadirComensal.launch(i);
 
     }
 
-    private void comprobarLauncher(){
-        if(MetodosGlobales.comprobarLogueado(this,ivLoginParticipantes)){
+    private void comprobarLauncher() {
+        if (MetodosGlobales.comprobarLogueado(this, ivLoginParticipantes)) {
             currentUser = mAuth.getCurrentUser();
             cargarDatosBd();
             botonImagenLogueado();
-        }else{
+        } else {
             Glide.with(this).load(R.drawable.nologinimg).into(ivLoginParticipantes);
             botonImagenNoLogueado();
         }

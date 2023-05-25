@@ -324,6 +324,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                 colors,
                 positions,
                 Shader.TileMode.REPEAT);
+
         tvTitleAnadirP.getPaint().setShader(gradient);
         tvSubTitP.getPaint().setShader(gradient);
         btnContinuarAnadirP.getPaint().setShader(gradient);

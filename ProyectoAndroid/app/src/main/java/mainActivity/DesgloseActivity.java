@@ -129,8 +129,9 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                 });
             } else {
                 //si no estoy logueado no saldrá ningún pop up y se finalizará la actividad
-                Toast.makeText(this, "Gracias por utilizar marfol", Toast.LENGTH_SHORT).show();
-                finish();
+                Toast.makeText(this, "Regístrate para guardar el restaurante", Toast.LENGTH_SHORT).show();
+                authIntent = new Intent(this, login.AuthActivity.class);
+                rLauncherLogin.launch(authIntent);
             }
         });
         //launcher para volver con datos desde el auth/home dependiendo si estoy logueado o no

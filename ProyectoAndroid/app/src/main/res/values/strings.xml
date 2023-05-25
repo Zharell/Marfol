@@ -69,4 +69,8 @@
     <string name="plato_nombre_nuevo">NUEVO</string>
     <string name="plato_precio_nuevo">PLATO</string>
     <!-- FIN ROW PLATO RECORDAR -->
+    <!-- TextView Recordar -->
+    <string name="tv_recordar_par">Participantes añadidos anteriormente</string>
+    <string name="tv_recordar_pla">Platos añadidos anteriormente</string>
+    <!-- FIN TextView Recordar -->
 </resources>
