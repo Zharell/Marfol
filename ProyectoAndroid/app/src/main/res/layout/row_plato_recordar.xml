@@ -32,6 +32,7 @@
                 android:background="@drawable/row_platos_bd"
                 android:gravity="center"
                 android:text="TextView"
+                
                 android:textColor="#790087" />
 
             <TextView
