@@ -64,6 +64,7 @@ import entities.Plato;
 import login.AuthActivity;
 import mainActivity.MetodosGlobales;
 import mainActivity.detalle.DetallePlatoActivity;
+import mainActivity.detalle.RecordarPlatoActivity;
 
 public class AnadirParticipanteActivity extends AppCompatActivity implements AnadirPersonaAdapter.onItemClickListener {
 
@@ -77,10 +78,12 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     private ActivityResultLauncher rLauncherPlatos;
     private ActivityResultLauncher rLauncherLogin;
     private ActivityResultLauncher rLauncherDetallePlato;
+    private ActivityResultLauncher rLauncherRecordarPlato;
     private static final int CAMERA_PERMISSION_CODE = 100;
     private String uriCapturada = "";
     private ArrayList<Persona> comensales;
     private boolean borrarPlato;
+    private boolean nuevoPlato;
     private int platoPosicion;
     private ArrayList<Plato> platos;
     private Intent intentComensal;
@@ -109,13 +112,36 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
         //Método que asigna los efectos a los elementos
         asignarEfectos();
+
         //Comprobar usuario si está logueado o no
         comprobarLauncher();
 
         //Método que muestra el contenido del adaptader
         mostrarAdapter();
+
         //Trae desde el clic de personas ya añadidas recientemente los participantes para añadirlos
         insertarDesdeBd();
+
+        //Launcher que da la opción a recordar platos o añadir nuevos
+        rLauncherRecordarPlato = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        nuevoPlato = data.getBooleanExtra("nuevoPlato", false);
+                        if (nuevoPlato) {
+                            //Abre la actividad para añadir nuevo plato
+                            intent = new Intent(this, AnadirPlatoActivity.class);
+                            intent.putExtra("arrayListPlatos", platos);
+                            intent.putExtra("arrayListComenComp", comensales);
+                            rLauncherPlatos.launch(intent);
+                        } else {
+                            //recibe el plato que anteriormente se había utilizado
+                            platos.add((Plato) data.getSerializableExtra("recordarNuevo"));
+                            anadirPAdapter.setResultsPlato(platos);
+                        }
+                    }
+                }
+        );
 
         //Launcher detallePlato se actualiza al recibir la modificación
         rLauncherDetallePlato = registerForActivityResult(
@@ -207,6 +233,10 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             personaBd=(Persona)intent.getSerializableExtra("comensalesBd");
             etNombreAnadirP.setText(personaBd.getNombre());
             etDescAnadirP.setText(personaBd.getDescripcion());
+            if (personaBd.getUrlImage() != null) {
+                Glide.with(this).load(personaBd.getUrlImage()).into(ivPlatoAnadirP);
+                uriCapturada=personaBd.getUrlImage();
+            }
         }
     }
 
@@ -294,6 +324,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                 colors,
                 positions,
                 Shader.TileMode.REPEAT);
+
         tvTitleAnadirP.getPaint().setShader(gradient);
         tvSubTitP.getPaint().setShader(gradient);
         btnContinuarAnadirP.getPaint().setShader(gradient);
@@ -334,11 +365,10 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             intentDetalle.putExtra("arrayListComenComp", comensales);
             rLauncherDetallePlato.launch(intentDetalle);
         } else {
-            //Accedemos a la actividad de añadir plato
-            intent = new Intent(this, AnadirPlatoActivity.class);
+            intent = new Intent(this, RecordarPlatoActivity.class);
             intent.putExtra("arrayListPlatos", platos);
             intent.putExtra("arrayListComenComp", comensales);
-            rLauncherPlatos.launch(intent);
+            rLauncherRecordarPlato.launch(intent);
         }
     }
 

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.tfg.marfol.R;
 
 import java.text.NumberFormat;
@@ -44,7 +45,11 @@ public class DesgloseAdapter extends RecyclerView.Adapter<DesgloseAdapter.Desglo
         holder.tvPersonaRow.setText(resultsPersona.get(position).getNombre());
 
         //Insertamos para cada persona en el Recycler su imagen
-        holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
+        if (resultsPersona.get(position).getUrlImage().startsWith("https")) {
+            Glide.with(holder.itemView).load(resultsPersona.get(position).getUrlImage()).into(holder.ivPersonaRow);
+        } else {
+            holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
+        }
 
         //Insertamos el total de los precios del comensal
         holder.tvPrecioRow.setText(euroFormat.format(resultsPersona.get(position).getMonedero()));

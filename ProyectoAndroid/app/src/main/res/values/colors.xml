@@ -14,4 +14,6 @@
     <color name="redTitle">#FF0000</color>
     <color name="redLight">#e35454</color>
     <color name="redSLight">#e53333</color>
+    <color name="blueGpt">#00c4c1</color>
+    <color name="blueLGpt">#00a9a6</color>
 </resources>
