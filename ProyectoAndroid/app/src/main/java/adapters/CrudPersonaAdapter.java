@@ -41,8 +41,6 @@ public class CrudPersonaAdapter extends RecyclerView.Adapter<CrudPersonaAdapter.
         holder.tvPersonaRow.setText(resultsCrudPersona.get(position).getNombre());
 
         //Insertamos para cada persona en el Recycler su imagen
-
-        //holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
         if(resultsCrudPersona.get(position).getUrlImage()!=null) {
             Glide.with(holder.itemView)
                     .load(Uri.parse(resultsCrudPersona.get(position).getUrlImage()))

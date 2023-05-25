@@ -13,7 +13,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:textColor="#0000FF"
+                    android:textColor="@color/blueRestaurantes"
                     android:fontFamily="serif"
                     android:textSize="14dp"
                     android:padding="2dp"

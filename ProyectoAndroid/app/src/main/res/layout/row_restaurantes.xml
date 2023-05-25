@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="105dp"
-    android:layout_height="65dp"
+    android:layout_height="45dp"
     android:orientation="vertical"
     android:layout_marginRight="15dp"
     >
@@ -13,11 +13,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:textColor="#0000FF"
+                    android:textColor="#3661FA"
                     android:fontFamily="serif"
                     android:textSize="14dp"
                     android:padding="2dp"
-                    android:background="@drawable/row_gpt_restaurantes"
+                    android:background="@drawable/row_restaurantes_index"
                     />
 
 

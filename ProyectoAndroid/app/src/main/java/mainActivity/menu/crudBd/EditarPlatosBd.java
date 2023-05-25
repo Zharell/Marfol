@@ -1,16 +1,91 @@
 package mainActivity.menu.crudBd;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.tfg.marfol.R;
 
-public class EditarPlatosBd extends AppCompatActivity {
+import java.util.ArrayList;
+
+import adapters.CrudPersonaAdapter;
+import adapters.CrudPlatosAdapter;
+import entities.Persona;
+import entities.Plato;
+
+public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapter.onItemClickListener  {
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+    private RecyclerView rvCrudPlatos;
+    private CrudPlatosAdapter crudPlatosAdapter;
+    private ArrayList<Plato> platosBd;
+    private String usuarioId, nombre, descripcion, imagen;
+    private CollectionReference platosRef;
+    private Query consulta;
+    private Plato plato;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_platos_bd);
+        asignarId();
+        rvCrudPlatos.setLayoutManager(new GridLayoutManager(this, 1));
+        crudPlatosAdapter = new CrudPlatosAdapter();
+        rvCrudPlatos.setAdapter(crudPlatosAdapter);
+        crudPlatosAdapter.setmListener(this);
+        if (currentUser!=null){
+            cargarDatosBd();
+        }
+
+
+    }
+
+    private void asignarId() {
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+        rvCrudPlatos = findViewById(R.id.rvCrudPlatos);
+    }
+    private void cargarDatosBd() {
+
+        if (currentUser != null) {
+            platosBd = new ArrayList<>();
+            usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
+            // Obtén la colección "personas" en Firestore
+            platosRef = db.collection("platos");
+            // Realiza la consulta para obtener todas las personas del usuario actual
+            consulta = platosRef.whereEqualTo("usuario", usuarioId);
+            consulta.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    // Recorrer los documentos obtenidos y agregar los datos al ArrayList
+                    for (DocumentSnapshot document : task.getResult()) {
+                        nombre = document.getString("nombre");
+                        descripcion = document.getString("descripcion");
+                        imagen = document.getString("imagen");
+                        String restaurante = document.getString("restaurante");
+                        double precio = document.getDouble("precio");
+                        plato = new Plato(nombre,descripcion,imagen,restaurante,precio);
+                        platosBd.add(plato);
+                    }
+
+                    // Notificar al adapter que los datos han cambiado
+                    crudPlatosAdapter.setResultsPlato(platosBd);
+                }
+            });
+        }
+    }
+    @Override
+    public void onItemClick(int position) {
+
     }
 }
