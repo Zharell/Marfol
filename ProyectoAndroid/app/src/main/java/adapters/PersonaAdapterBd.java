@@ -40,8 +40,6 @@ public class PersonaAdapterBd extends RecyclerView.Adapter<PersonaAdapterBd.Pers
         //Insertamos para cada persona en el Recycler su nombre
         holder.tvPersonaRow.setText(resultsPersonaBd.get(position).getNombre());
 
-        //Insertamos para cada persona en el Recycler su imagen
-
         //holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
         if(resultsPersonaBd.get(position).getUrlImage()!=null) {
             Glide.with(holder.itemView).load(Uri.parse(resultsPersonaBd.get(position).getUrlImage())).circleCrop().into(holder.ivPersonaRow);

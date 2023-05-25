@@ -31,6 +31,7 @@ import com.tfg.marfol.R;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -72,6 +73,10 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     private TextView tvTitleAnadirP, tvSubTitP;
     private EditText etNombreAnadirP, etDescAnadirP;
     private Button btnContinuarAnadirP;
+    private Dialog puElegirAccion;
+    private ActivityResultLauncher<Intent> galeriaLauncher;
+    private Button btnUpCamara, btnUpGaleria;
+    private static final int GALLERY_PERMISSION_CODE = 1001;
     private ImageView ivAnadirPlatoImagen, ivPlatoAnadirP;
     private AnadirPersonaAdapter anadirPAdapter;
     private ActivityResultLauncher<Intent> camaraLauncher;
@@ -174,21 +179,33 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                 }
         );
 
+        // Registrar el launcher para la galería
+        galeriaLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK) {
+                Intent data = result.getData();
+                if (data != null) {
+                    Uri selectedImageUri = data.getData();
+                    uriCapturada = selectedImageUri.toString();
+
+                    //Cargar imagen seleccionada
+                    ivPlatoAnadirP.setBackground(null);
+                    ivPlatoAnadirP.setImageURI(selectedImageUri);
+                }
+                puElegirAccion.dismiss();
+            }
+        });
+
         // Registrar el launcher para la cámara
         camaraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK) {
-
                 // Si la foto se toma correctamente, mostrar la vista previa en el ImageView
                 Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
-
 
                 // Insertar la imagen en la galería y obtenemos la URI transformada en String para almacenar en la BD
                 ContentValues values = new ContentValues();
                 values.put(MediaStore.Images.Media.TITLE, "personaMarfol.jpg");
                 Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
                 try {
-
                     OutputStream outputStream = getContentResolver().openOutputStream(uri);
                     photo.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                     outputStream.close();
@@ -196,17 +213,20 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
                     ivPlatoAnadirP.setBackground(null);
-                    Glide.with(this).load(uriCapturada).circleCrop().into(ivPlatoAnadirP);
+                    Glide.with(this).load(uriCapturada).into(ivPlatoAnadirP);
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
+                puElegirAccion.dismiss();
             }
         });
 
+       //Convocamos el PopUp para mostrar las acciones ( Galería, Cámara )
+        ivPlatoAnadirP.setOnClickListener(view -> { puElegirAccion.show(); });
+
         //Añadimos onClick en el ImageView para activar la imagen
-        ivPlatoAnadirP.setOnClickListener(view -> {
+        btnUpCamara.setOnClickListener(view -> {
             // Solicitar permiso para acceder a la cámara
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
                 //Si no tenemos los permisos los obtenemos
@@ -214,6 +234,18 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             } else {
                 // Si ya se tienen los permisos, abrir la cámara
                 abrirCamara();
+            }
+        });
+
+        //Añadimos onClick en el ImageView para activar la imagen
+        btnUpGaleria.setOnClickListener(view -> {
+            // Solicitar permiso para acceder a la galería
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                // Si no tenemos los permisos, los solicitamos
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY_PERMISSION_CODE);
+            } else {
+                // Si ya se tienen los permisos, abrir la galería
+                abrirGaleria();
             }
         });
 
@@ -288,6 +320,21 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                 Toast.makeText(this, "Para almacenar la imagen debe otorgar los permisos", Toast.LENGTH_SHORT).show();
             }
         }
+        if (requestCode == GALLERY_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Si se conceden los permisos, abrir la galería
+                abrirGaleria();
+            } else {
+                // Si se deniegan los permisos, mostrar un mensaje al usuario
+                Toast.makeText(this, "Para acceder a la galería debe otorgar los permisos", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    // Método para abrir la galería
+    private void abrirGaleria() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galeriaLauncher.launch(intent);
     }
 
     // Método para abrir la cámara
@@ -349,6 +396,13 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         ivAnadirPlatoImagen = findViewById(R.id.ivAnadirPlatoImagen);
         btnContinuarAnadirP = findViewById(R.id.btnPlatosAnadirPlato);
         ivPlatoAnadirP = findViewById(R.id.ivPlatoAnadirPlato);
+
+        //Asigna IDs de los elementos del popup
+        puElegirAccion = new Dialog(this);
+        puElegirAccion.setContentView(R.layout.popup_accion);
+        btnUpCamara = puElegirAccion.findViewById(R.id.btnCancelarPopup);
+        btnUpGaleria = puElegirAccion.findViewById(R.id.btnConfirmarPopup);
+
         inLogin = new Intent(this, AuthActivity.class);
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
