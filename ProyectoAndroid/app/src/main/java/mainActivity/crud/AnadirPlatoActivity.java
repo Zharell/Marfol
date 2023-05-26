@@ -42,9 +42,6 @@ import adapters.PersonaCompartirAdapter;
 import entities.Persona;
 import entities.Plato;
 import mainActivity.detalle.CompartirListaActivity;
-import login.AuthActivity;
-import mainActivity.MetodosGlobales;
-import mainActivity.detalle.DetallePlatoActivity;
 
 public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCompartirAdapter.onItemClickListener {
 
@@ -68,9 +65,9 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
     private String uriCapturada="";
     private int personaCode;
     private ActivityResultLauncher<Intent> camaraLauncher;
-    private Intent intentObtener;
-    private ActivityResultLauncher rLauncherLogin;
-    private Intent inLogin;
+    private Intent intent;
+    private String nombre, descripcion;
+    private double precio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,12 +75,11 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
         setContentView(R.layout.activity_anadir_plato);
 
         //Recibe la lista de comensales para empezar a añadir
-        intentObtener = getIntent();
-        platos = (ArrayList<Plato>) intentObtener.getSerializableExtra("arrayListPlatos");
+        intent = getIntent();
+        platos = (ArrayList<Plato>) intent.getSerializableExtra("arrayListPlatos");
         //Recibo desde Editar o Añadir
-        nombreCompartir = (ArrayList<Persona>) intentObtener.getSerializableExtra("arrayListComenComp");
-        personaCode = intentObtener.getIntExtra("comensalCode",0);
-
+        nombreCompartir = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComenComp");
+        personaCode = intent.getIntExtra("comensalCode",0);
         //Método que asigna IDs a los elementos
         asignarId();
 
@@ -219,10 +215,8 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
     public void anadirPlato () {
 
         boolean esValidado=true;
-        String nombre = String.valueOf(etNombreAnadirP.getText());
-        String descripcion = String.valueOf(etDescAnadirP.getText());
-        double precio;
-
+        nombre = String.valueOf(etNombreAnadirP.getText());
+        descripcion = String.valueOf(etDescAnadirP.getText());
         //Comprueba si el editText está vacío, de estarlo el programa lo entiende como un 0, además, remplaza <,> por <.> para evitar errores
         precio = etPrecioAnadirP.getText().toString().equalsIgnoreCase("") ? 0 : Double.parseDouble(etPrecioAnadirP.getText().toString().replace(",","."));
 
@@ -258,10 +252,9 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
                 //Añado a la lista la persona creada                                          //Se crea el plato si en el compartido
                 platos.add(new Plato(nombre,descripcion,precio,precio,uriCapturada,esCompartido, new ArrayList<>()));
             }
-
-            Intent intentPlato = new Intent();
-            intentPlato.putExtra("arrayListPlatos", platos);
-            setResult(Activity.RESULT_OK, intentPlato);
+            intent = new Intent();
+            intent.putExtra("arrayListPlatos", platos);
+            setResult(Activity.RESULT_OK, intent);
             finish();
 
         }
@@ -297,8 +290,8 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
 
     // Método para abrir la cámara
     private void abrirCamara() {
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        camaraLauncher.launch(cameraIntent);
+        intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        camaraLauncher.launch(intent);
     }
 
     public void asignarEfectos() {
@@ -367,7 +360,7 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
             }
 
             //Accedemos a la actividad de compartir plato
-            Intent intent = new Intent(this, CompartirListaActivity.class);
+            intent = new Intent(this, CompartirListaActivity.class);
             intent.putExtra("arrayListComenComp", noRepCompartirList);
             rLauncherComp.launch(intent);
         }

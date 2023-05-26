@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import com.tfg.marfol.R;
 public class Seleccion extends AppCompatActivity {
-    private Button btnCrudPersona, btnCrudRestaurantes, btnCrudPlatos, btnCrudVolver;
+    private Button btnCrudPersona, btnCrudRestaurantes, btnCrudPlatos;
     private Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,14 +26,13 @@ public class Seleccion extends AppCompatActivity {
             startActivity(intent);
         });
 
-        btnCrudVolver.setOnClickListener(v -> finish());
     }
 
     private void assignarId() {
         btnCrudPersona = findViewById(R.id.btnCrudPersona);
         btnCrudRestaurantes = findViewById(R.id.btnCrudRestaurantes);
         btnCrudPlatos = findViewById(R.id.btnCrudPlatos);
-        btnCrudVolver = findViewById(R.id.btnCrudVolver);
+
 
     }
 }

@@ -1,75 +1,53 @@
 package mainActivity.crud;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.github.dhaval2404.imagepicker.ImagePicker;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 import com.tfg.marfol.R;
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import adapters.AnadirPersonaAdapter;
 import entities.Persona;
 import entities.Plato;
-import login.AuthActivity;
 import mainActivity.MetodosGlobales;
 import mainActivity.detalle.DetallePlatoActivity;
-import mainActivity.detalle.RecordarPlatoActivity;
 
 public class AnadirParticipanteActivity extends AppCompatActivity implements AnadirPersonaAdapter.onItemClickListener {
-
     private RecyclerView rvPlatosAnadirParticipante;
     private TextView tvTitleAnadirP, tvSubTitP;
     private EditText etNombreAnadirP, etDescAnadirP;
@@ -91,20 +69,19 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     private boolean nuevoPlato;
     private int platoPosicion;
     private ArrayList<Plato> platos;
-    private Intent intentComensal;
     private Intent intent;
-    private Intent data;
-    private Intent cameraIntent;
-    private Intent inLogin;
-    private String storage_path = "personas/*", photo = "photo";
+    private String rutaImagen;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private FirebaseFirestore db;
-    private StorageReference storageReference;
+    private StorageReference storageRef,imagenRef;
     private boolean importado;
     private Persona personaBd;
-    private boolean enviarRestaurante;
-    private String nombreRestaurante;
+    private String nombreRestaurante, nombre, descripcion, email,personaId,imagenUrl;
+    private CollectionReference personasRef;
+    private Query consulta;
+    private UploadTask uploadTask;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,14 +90,9 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         //Recibe la lista de comensales para empezar a añadir
         intent = getIntent();
         comensales = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComensales");
-        importado = intent.getBooleanExtra("importado",false);
-        enviarRestaurante = intent.getBooleanExtra("enviarRestaurante",false);
-        if(intent.getBooleanExtra("enviarRestaurante",enviarRestaurante)){
-            nombreRestaurante = intent.getStringExtra("nombreRestaurante");
-            Toast.makeText(this, nombreRestaurante, Toast.LENGTH_SHORT).show();
-        }else {
-            nombreRestaurante= "";
-        }
+        importado = intent.getBooleanExtra("importado", false);
+        nombreRestaurante = intent.getStringExtra("nombreRestaurante");
+
         //Método que asigna IDs a los elementos
         asignarId();
 
@@ -180,8 +152,8 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         rLauncherPlatos = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        data = result.getData();
-                        platos = (ArrayList<Plato>) data.getSerializableExtra("arrayListPlatos");
+                        intent = result.getData();
+                        platos = (ArrayList<Plato>) intent.getSerializableExtra("arrayListPlatos");
                         anadirPAdapter.setResultsPlato(platos);
                         comprobarLauncher();
                     }
@@ -215,8 +187,10 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             }
         });
 
-       //Convocamos el PopUp para mostrar las acciones ( Galería, Cámara )
-        ivPlatoAnadirP.setOnClickListener(view -> { puElegirAccion.show(); });
+        //Convocamos el PopUp para mostrar las acciones ( Galería, Cámara )
+        ivPlatoAnadirP.setOnClickListener(view -> {
+            puElegirAccion.show();
+        });
 
         //Añadimos onClick en el ImageView para activar la imagen
         btnUpCamara.setOnClickListener(view -> {
@@ -255,19 +229,19 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     }
 
     private void insertarDesdeBd() {
-        if(importado){
-            personaBd=(Persona)intent.getSerializableExtra("comensalesBd");
+        if (importado) {
+            personaBd = (Persona) intent.getSerializableExtra("comensalesBd");
             etNombreAnadirP.setText(personaBd.getNombre());
             etDescAnadirP.setText(personaBd.getDescripcion());
             if (personaBd.getUrlImage() != null) {
                 Glide.with(this).load(personaBd.getUrlImage()).into(ivPlatoAnadirP);
-                uriCapturada=personaBd.getUrlImage();
+                uriCapturada = personaBd.getUrlImage();
             }
         }
     }
 
-    private void comprobarLauncher(){
-        if(MetodosGlobales.comprobarLogueado(this,ivAnadirPlatoImagen)){
+    private void comprobarLauncher() {
+        if (MetodosGlobales.comprobarLogueado(this, ivAnadirPlatoImagen)) {
             currentUser = mAuth.getCurrentUser();
             botonImagenLogueado();
         } else {
@@ -278,8 +252,8 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
     public void anadirComensal() {
         boolean esValidado = true;
-        String nombre = String.valueOf(etNombreAnadirP.getText());
-        String descripcion = String.valueOf(etDescAnadirP.getText());
+        nombre = String.valueOf(etNombreAnadirP.getText());
+        descripcion = String.valueOf(etDescAnadirP.getText());
 
         if (etNombreAnadirP.getText().toString().length() == 0) {
             Toast.makeText(this, "Debe introducir un nombre", Toast.LENGTH_SHORT).show();
@@ -293,9 +267,9 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             // Añade la persona localmente
             comensales.add(new Persona(comensales.size(), nombre, descripcion, uriCapturada, platos, 0));
 
-            intentComensal = new Intent();
-            intentComensal.putExtra("arrayListComensales", comensales);
-            setResult(Activity.RESULT_OK, intentComensal);
+            intent = new Intent();
+            intent.putExtra("arrayListComensales", comensales);
+            setResult(Activity.RESULT_OK, intent);
             finish();
         }
     }
@@ -354,8 +328,8 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
     // Método para abrir la cámara
     private void abrirCamara() {
-        cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        camaraLauncher.launch(cameraIntent);
+        intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        camaraLauncher.launch(intent);
     }
 
     //Se debe insertar el ArrayList vacío para que el adaptador inserte el objeto 0 ( añadir elemento )
@@ -418,8 +392,6 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         puElegirAccion.setContentView(R.layout.popup_accion);
         btnUpCamara = puElegirAccion.findViewById(R.id.btnCancelarPopup);
         btnUpGaleria = puElegirAccion.findViewById(R.id.btnConfirmarPopup);
-
-        inLogin = new Intent(this, AuthActivity.class);
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
@@ -430,16 +402,15 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         platoPosicion = position;
         //Si pulsas "Añadir Plato" ( 0 ), accederás a la actividad añadir plato
         if (position > 0) {
-            Intent intentDetalle = new Intent(this, DetallePlatoActivity.class);
-            intentDetalle.putExtra("platoDetalle", platos.get(position));
-            intentDetalle.putExtra("arrayListComenComp", comensales);
-            rLauncherDetallePlato.launch(intentDetalle);
+            intent = new Intent(this, DetallePlatoActivity.class);
+            intent.putExtra("platoDetalle", platos.get(position));
+            intent.putExtra("arrayListComenComp", comensales);
+            rLauncherDetallePlato.launch(intent);
         } else {
             intent = new Intent(this, RecordarPlatoActivity.class);
             intent.putExtra("arrayListPlatos", platos);
             intent.putExtra("arrayListComenComp", comensales);
             intent.putExtra("nombreRestaurante", nombreRestaurante);
-            intent.putExtra("enviarRestaurante",true);
 
             rLauncherRecordarPlato.launch(intent);
         }
@@ -448,110 +419,68 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     private void anadirPersonaABd(String nombre, String descripcion, String imagen) {
         if (currentUser != null) {
             // El usuario está autenticado
-            String usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
-
+            email = currentUser.getEmail(); // Utiliza el email como ID único del usuario
             // Obtén la colección "personas" en Firestore
-            CollectionReference personasRef = db.collection("personas");
-
+            personasRef = db.collection("personas");
             // Realiza la consulta para verificar si ya existe una persona con los mismos valores de nombre y descripción
-            Query consulta = personasRef.whereEqualTo("nombre", nombre)
-                    .whereEqualTo("usuarioId", usuarioId);
+            consulta = personasRef.whereEqualTo("nombre", nombre)
+                    .whereEqualTo("usuarioId", email);
+            consulta.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    if (task.getResult().isEmpty()) {
+                        // No existe una persona con los mismos valores de nombre y descripción, procede a agregarla
+                        // Crea un objeto HashMap para almacenar los datos de la nueva persona
+                        Map<String, Object> nuevaPersona = new HashMap<>();
+                        nuevaPersona.put("nombre", nombre);
+                        nuevaPersona.put("imagen", "");
+                        nuevaPersona.put("descripcion", descripcion);
+                        nuevaPersona.put("usuarioId", email);
 
-            consulta.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        if (task.getResult().isEmpty()) {
-                            // No existe una persona con los mismos valores de nombre y descripción, procede a agregarla
-                            // Crea un objeto HashMap para almacenar los datos de la nueva persona
-                            Map<String, Object> nuevaPersona = new HashMap<>();
-                            nuevaPersona.put("nombre", nombre);
-                            nuevaPersona.put("imagen", "");
-                            nuevaPersona.put("descripcion", descripcion);
-                            nuevaPersona.put("usuarioId", usuarioId);
-
-                            // Agrega la nueva persona con un ID único generado automáticamente
-                            personasRef.add(nuevaPersona)
-                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                        @Override
-                                        public void onSuccess(DocumentReference documentReference) {
-                                            // La persona se agregó exitosamente
-                                            String personaId = documentReference.getId();
-                                            subirImagenPersona(personaId, imagen);
-                                            Toast.makeText(AnadirParticipanteActivity.this, "Se agregó la persona exitosamente", Toast.LENGTH_SHORT).show();
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            // Ocurrió un error al agregar la persona
-                                            Toast.makeText(AnadirParticipanteActivity.this, "Ocurrió un error al agregar la persona", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                        } else {
-                            // Ya existe una persona con los mismos valores de nombre y descripción
-                            Toast.makeText(AnadirParticipanteActivity.this, "Ya existe una persona con ese nombre", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        // Ocurrió un error al obtener los documentos
-                        Toast.makeText(AnadirParticipanteActivity.this, "Error al obtener los documentos", Toast.LENGTH_SHORT).show();
+                        // Agrega la nueva persona con un ID único generado automáticamente
+                        personasRef.add(nuevaPersona)
+                                .addOnSuccessListener(documentReference -> {
+                                    // La persona se agregó exitosamente
+                                    personaId = documentReference.getId();
+                                    subirImagenPersona(personaId, imagen);
+                                })
+                                .addOnFailureListener(e -> {
+                                });
                     }
                 }
             });
-        } else {
-            // El usuario no está autenticado, muestra un mensaje o inicia sesión automáticamente
-            Toast.makeText(this, "Inicia sesión para agregar una persona", Toast.LENGTH_SHORT).show();
         }
     }
-
 
     private void subirImagenPersona(String personaId, String imagen) {
         if (personaId != null && !personaId.isEmpty()) {
             // Obtiene una referencia al Storage de Firebase
-            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+            storageRef = FirebaseStorage.getInstance().getReference();
 
             // Define una referencia a la imagen en Storage utilizando el ID de la persona
-            String rutaImagen = "personas/" + personaId + ".jpg";
-            StorageReference imagenRef = storageRef.child(rutaImagen);
+            rutaImagen = "personas/" + personaId + ".jpg";
+            imagenRef = storageRef.child(rutaImagen);
 
             // Sube la imagen a Storage
             if (!imagen.equalsIgnoreCase("")) {
                 Uri imagenUri = Uri.parse(imagen);
-                UploadTask uploadTask = imagenRef.putFile(imagenUri);
+                uploadTask = imagenRef.putFile(imagenUri);
 
-                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {            // La imagen se subió exitosamente
-                        Toast.makeText(AnadirParticipanteActivity.this, "Imagen subida exitosamente", Toast.LENGTH_SHORT).show();
-
-                        // Obtiene la URL de descarga de la imagen
-                        imagenRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                // La URL de descarga de la imagen está disponible
-                                String imagenUrl = uri.toString();
-
-                                // Actualiza el campo "imagen" en Firestore con la URL de descarga de la imagen
-                                db.collection("personas").document(personaId)
-                                        .update("imagen", imagenUrl)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                // La URL de la imagen se actualizó exitosamente en Firestore
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                // Ocurrió un error al actualizar el campo "imagen" en Firestore
-                                            }
-                                        });
-                            }
-                        });
-                    }
+                uploadTask.addOnSuccessListener(taskSnapshot -> {
+                    // Obtiene la URL de descarga de la imagen
+                    imagenRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        // La URL de descarga de la imagen está disponible
+                        imagenUrl = uri.toString();
+                        // Actualiza el campo "imagen" en Firestore con la URL de descarga de la imagen
+                        db.collection("personas").document(personaId)
+                                .update("imagen", imagenUrl)
+                                .addOnSuccessListener(aVoid -> {
+                                    // La URL de la imagen se actualizó exitosamente en Firestore
+                                })
+                                .addOnFailureListener(e -> {
+                                    // Ocurrió un error al actualizar el campo "imagen" en Firestore
+                                });
+                    });
                 }).addOnFailureListener(e -> {
-                    // Ocurrió un error al subir la imagen
-                    Toast.makeText(AnadirParticipanteActivity.this, "Error al subir la imagen", Toast.LENGTH_SHORT).show();
                 });
             }
         }
@@ -560,16 +489,15 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     private void botonImagenNoLogueado() {
         //Puesto provisional para probar cosas
         ivAnadirPlatoImagen.setOnClickListener(view -> {
-            Intent intent = new Intent(this, login.AuthActivity.class);
+            intent = new Intent(this, login.AuthActivity.class);
             rLauncherLogin.launch(intent);
         });
-
     }
 
     private void botonImagenLogueado() {
         //Puesto provisional para probar cosas
         ivAnadirPlatoImagen.setOnClickListener(view -> {
-            Intent intent = new Intent(this, login.HomeActivity.class);
+            intent = new Intent(this, login.HomeActivity.class);
             rLauncherLogin.launch(intent);
         });
     }

@@ -59,6 +59,7 @@ import adapters.PersonaDetalleAdapter;
 import entities.Persona;
 import entities.Plato;
 import mainActivity.crud.AnadirPlatoActivity;
+import mainActivity.crud.RecordarPlatoActivity;
 
 public class DetallePersonaActivity extends AppCompatActivity implements PersonaDetalleAdapter.onItemClickListener {
 
@@ -87,7 +88,6 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
     private String email,nombreRestaurante;
-    private boolean enviarRestaurante;
 
 
     @Override
@@ -100,12 +100,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         comensal = (Persona) intent.getSerializableExtra("comensalDetalle");
         nombreCompartir = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComenComp");
         comensalBd = comensal;
-        if(intent.getBooleanExtra("enviarRestaurante",enviarRestaurante)){
-            nombreRestaurante = intent.getStringExtra("nombreRestaurante");
-            Toast.makeText(this, nombreRestaurante, Toast.LENGTH_SHORT).show();
-        }else {
-            nombreRestaurante= "";
-        }
+        nombreRestaurante = intent.getStringExtra("nombreRestaurante");
         //Método que asigna IDs a los elementos
         asignarId();
 

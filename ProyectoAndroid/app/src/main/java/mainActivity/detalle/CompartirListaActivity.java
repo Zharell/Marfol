@@ -25,7 +25,6 @@ import entities.Persona;
 import mainActivity.crud.AnadirPlatoActivity;
 
 public class CompartirListaActivity extends AppCompatActivity implements ListaCompartirAdapter.onItemClickListener {
-
     private ArrayList<Persona> nombreCompartir;
     private TextView tvTitleListComp;
     private ListaCompartirAdapter listaAdapter;

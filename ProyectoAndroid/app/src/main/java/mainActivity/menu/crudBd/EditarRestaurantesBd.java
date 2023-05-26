@@ -14,16 +14,13 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.tfg.marfol.R;
 import java.util.ArrayList;
 import adapters.CrudRestaurantesAdapter;
-import adapters.RestaurantesAdapter;
 import entities.Restaurantes;
-import mainActivity.menu.crudBd.detalle.DetalleEditarPersonaBd;
 import mainActivity.menu.crudBd.detalle.DetalleEditarRestaurantesBd;
 
 public class EditarRestaurantesBd extends AppCompatActivity implements CrudRestaurantesAdapter.onItemClickListenerRestaurantes{
@@ -34,7 +31,7 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
     private FirebaseUser currentUser;
     private ArrayList<Restaurantes> restaurantesBd;
     private Intent intent;
-    private String usuarioId,nombreRestaurante;
+    private String email,nombreRestaurante;
     private CollectionReference restaurantesRef;
     private Query consulta;
     private Restaurantes restaurante;
@@ -75,24 +72,28 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
     }
 
     private void cargarRestaurantesBd() {
-        if (currentUser != null) {
-            restaurantesBd = new ArrayList<>();
-            usuarioId = currentUser.getEmail();
+        if (currentUser != null) {  // Verifica si hay un usuario actualmente logueado
+            restaurantesBd = new ArrayList<>();  // Crea una nueva lista para almacenar los restaurantes
+            email = currentUser.getEmail();  // Obtiene el correo electrónico del usuario actual
+
+            // Configura la referencia a la colección "restaurantes" en la base de datos
             restaurantesRef = db.collection("restaurantes");
-            consulta = restaurantesRef.whereEqualTo("usuarioId", usuarioId);
+
+            // Realiza una consulta a la colección "restaurantes" donde el campo "usuarioId" sea igual al correo electrónico del usuario actual
+            consulta = restaurantesRef.whereEqualTo("usuarioId", email);
+
+            // Ejecuta la consulta y agrega un listener para recibir el resultado
             consulta.get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
+                if (task.isSuccessful()) {  // Verifica si la consulta se completó con éxito
                     for (DocumentSnapshot document : task.getResult()) {
-
-                        nombreRestaurante = document.getString("nombreRestaurante");
-                        restaurante = new Restaurantes(nombreRestaurante, "");
-                        restaurantesBd.add(restaurante);
+                        // Recorre los documentos resultantes de la consulta
+                        nombreRestaurante = document.getString("nombreRestaurante");  // Obtiene el nombre del restaurante del documento
+                        restaurante = new Restaurantes(nombreRestaurante, "");  // Crea un nuevo objeto Restaurantes con el nombre obtenido
+                        restaurantesBd.add(restaurante);  // Agrega el objeto a la lista de restaurantes
                     }
-                    crudRestaurantesAdapter.setResultsRestaurantes(restaurantesBd);
+                    crudRestaurantesAdapter.setResultsRestaurantes(restaurantesBd);  // Actualiza el adaptador con los resultados obtenidos
                 }
-
             });
-
         }
     }
     @Override

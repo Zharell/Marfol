@@ -51,31 +51,27 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
     private Button btnGuardarRestaurante;
     private RecyclerView rvPersonaDesglose;
     private TextView tvTitleDesglose;
-    private ImageView ivMenuDesglose, ivDesgloseImagen;
+    private ImageView ivDesgloseImagen;
     private DesgloseAdapter desgloseAdapter;
-
     private ArrayList<Persona> comensales, listaComensales;
     private ArrayList<Plato> platosABd;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-    private Intent homeIntent,authIntent;
     private ActivityResultLauncher rLauncherLogin;
-    private String nombreRestaurante,emailUsuario,restauranteId,platoExistenteId, rutaImagen,imagenUrl;
+    private String nombreRestaurante="", email, platoExistenteId, rutaImagen, imagenUrl;
     private DocumentReference restauranteRef;
     private CollectionReference platosRef;
     private Query query;
     private QuerySnapshot querySnapshot;
-    private QuerySnapshot platosSnapshot;
-    private DocumentSnapshot restauranteSnapshot;
     private List<DocumentSnapshot> platosExistente;
     private Query platosQuery;
     private Intent intent;
     private boolean platoExistente;
-    private StorageReference storageRef,imagenRef;
-    private Uri imagenUri ;
+    private StorageReference storageRef, imagenRef;
+    private Uri imagenUri;
     private UploadTask uploadTask;
-    private boolean d;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +83,7 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
         nombreRestaurante = intent.getStringExtra("nombreRestaurante");
         //Método que asigna IDs a los elementos
         asignarId();
-        if(!nombreRestaurante.equalsIgnoreCase("")){
+        if (nombreRestaurante != null) {
             etNombrePopup.setText(nombreRestaurante);
             etNombrePopup.setFocusable(false);
             Toast.makeText(this, nombreRestaurante, Toast.LENGTH_SHORT).show();
@@ -122,11 +118,11 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                 //Guarda el restaurante en la BD :)
                 btnConfirmarDesglose.setOnClickListener(v2 -> {
                     nombreRestaurante = String.valueOf(etNombrePopup.getText());
-                    emailUsuario = currentUser.getEmail();
+                    email = currentUser.getEmail();
                     //compruebo si el nombre del restaurante está vacío
                     if (!(nombreRestaurante).equalsIgnoreCase("")) {
                         copiarPlatosEnNuevoArray();
-                        guardarRestaurante(nombreRestaurante,emailUsuario);
+                        guardarRestaurante(nombreRestaurante, email);
                         Toast.makeText(this, "Se han guardado los platos", Toast.LENGTH_SHORT).show();
                         finish();
                     } else {
@@ -137,23 +133,19 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
             } else {
                 //si no estoy logueado no saldrá ningún pop up y se finalizará la actividad
                 Toast.makeText(this, "Regístrate para guardar el restaurante", Toast.LENGTH_SHORT).show();
-                authIntent = new Intent(this, login.AuthActivity.class);
-                rLauncherLogin.launch(authIntent);
+                intent = new Intent(this, login.AuthActivity.class);
+                rLauncherLogin.launch(intent);
             }
         });
         //launcher para volver con datos desde el auth/home dependiendo si estoy logueado o no
-        rLauncherLogin = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(), result -> comprobarLauncher()
-        );
+        rLauncherLogin = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> comprobarLauncher());
 
 
     }
 
     private void guardarRestaurante(String nombreRestaurante, String correoUsuario) {
         // Consultar si ya existe un restaurante con el mismo nombre y usuario
-        query = db.collection("restaurantes")
-                .whereEqualTo("nombreRestaurante", nombreRestaurante)
-                .whereEqualTo("usuarioId", correoUsuario);
+        query = db.collection("restaurantes").whereEqualTo("nombreRestaurante", nombreRestaurante).whereEqualTo("usuarioId", correoUsuario);
 
         query.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -169,20 +161,14 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                     restauranteData.put("usuarioId", correoUsuario);
 
                     // Guardar el restaurante en la base de datos
-                    restauranteRef.set(restauranteData)
-                            .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(this, "Restaurante guardado correctamente", Toast.LENGTH_SHORT).show();
-                                guardarPlatos(nombreRestaurante); // Llamar al método para guardar los platos
-                                finish();
-                            })
-                            .addOnFailureListener(e -> {
-                                Toast.makeText(this, "Error al guardar el restaurante", Toast.LENGTH_SHORT).show();
-                                finish();
-                            });
+                    restauranteRef.set(restauranteData).addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "Restaurante guardado correctamente", Toast.LENGTH_SHORT).show();
+                        guardarPlatos(nombreRestaurante); // Llamar al método para guardar los platos
+                        finish();
+                    }).addOnFailureListener(e -> {
+                        finish();
+                    });
                 } else {
-                    // Ya existe un restaurante con el mismo nombre y usuario
-                    restauranteSnapshot = querySnapshot.getDocuments().get(0);
-                    Toast.makeText(this, "Ya existe un restaurante con el mismo nombre y usuario", Toast.LENGTH_SHORT).show();
                     guardarPlatos(nombreRestaurante); // Llamar al método para guardar los platos
                     finish();
                 }
@@ -198,14 +184,12 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
         platosRef = db.collection("platos");
 
         // Consultar los platos existentes del restaurante
-        platosQuery = platosRef
-                .whereEqualTo("restaurante", restauranteNombre)
-                .whereEqualTo("usuario", currentUser.getEmail());
+        platosQuery = platosRef.whereEqualTo("restaurante", restauranteNombre).whereEqualTo("usuario", email);
 
         platosQuery.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                platosSnapshot = task.getResult();
-                platosExistente = platosSnapshot.getDocuments();
+                querySnapshot = task.getResult();
+                platosExistente = querySnapshot.getDocuments();
 
                 // Guardar los nuevos platos y actualizar los existentes
                 for (Plato plato : platosABd) {
@@ -232,29 +216,18 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
 
                     if (platoExistente) {
                         // Actualizar el plato existente
-                        platosRef.document(platoExistenteId)
-                                .set(platoData)
-                                .addOnSuccessListener(aVoid -> {
-                                    // Log.d(TAG, "Plato actualizado: " + platoExistenteId);
-                                })
-                                .addOnFailureListener(e -> {
-                                    // Log.e(TAG, "Error al actualizar el plato", e);
-                                });
-
+                        platosRef.document(platoExistenteId).set(platoData).addOnSuccessListener(aVoid -> {
+                        }).addOnFailureListener(e -> {
+                        });
                         // Subir la imagen del plato y actualizar los datos en Firestore
                         subirImagenPlato(platoExistenteId, plato.getUrlImage(), platoData);
                     } else {
                         // Guardar el nuevo plato
-                        platosRef.add(platoData)
-                                .addOnSuccessListener(documentReference -> {
-                                    // Log.d(TAG, "Plato guardado: " + documentReference.getId());
-
-                                    // Subir la imagen del plato y actualizar los datos en Firestore
-                                    subirImagenPlato(documentReference.getId(), plato.getUrlImage(), platoData);
-                                })
-                                .addOnFailureListener(e -> {
-                                    // Log.e(TAG, "Error al guardar el plato", e);
-                                });
+                        platosRef.add(platoData).addOnSuccessListener(documentReference -> {
+                            // Subir la imagen del plato y actualizar los datos en Firestore
+                            subirImagenPlato(documentReference.getId(), plato.getUrlImage(), platoData);
+                        }).addOnFailureListener(e -> {
+                        });
                     }
                 }
             }
@@ -285,14 +258,11 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                     platoData.put("imagen", imagenUrl);
 
                     // Actualiza los datos del plato en Firestore
-                    db.collection("platos").document(platoId)
-                            .set(platoData)
-                            .addOnSuccessListener(aVoid -> {
-                                // Los datos del plato se actualizaron exitosamente en Firestore
-                            })
-                            .addOnFailureListener(e -> {
-                                // Ocurrió un error al actualizar los datos del plato en Firestore
-                            });
+                    db.collection("platos").document(platoId).set(platoData).addOnSuccessListener(aVoid -> {
+                        // Los datos del plato se actualizaron exitosamente en Firestore
+                    }).addOnFailureListener(e -> {
+                        // Ocurrió un error al actualizar los datos del plato en Firestore
+                    });
                 });
             }).addOnFailureListener(e -> {
                 // Ocurrió un error al subir la imagen
@@ -302,15 +272,11 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
     }
 
 
-
-
-
-
-    private void comprobarLauncher(){
-        if(MetodosGlobales.comprobarLogueado(this,ivDesgloseImagen)){
+    private void comprobarLauncher() {
+        if (MetodosGlobales.comprobarLogueado(this, ivDesgloseImagen)) {
             currentUser = mAuth.getCurrentUser();
             botonImagenLogueado();
-        }else{
+        } else {
             Glide.with(this).load(R.drawable.nologinimg).into(ivDesgloseImagen);
             botonImagenNoLogueado();
         }
@@ -319,20 +285,21 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
     private void botonImagenLogueado() {
         //Puesto provisional para probar cosas
         ivDesgloseImagen.setOnClickListener(view -> {
-            homeIntent = new Intent(this, login.HomeActivity.class);
-            rLauncherLogin.launch(homeIntent);
+            intent = new Intent(this, login.HomeActivity.class);
+            rLauncherLogin.launch(intent);
         });
     }
 
     private void botonImagenNoLogueado() {
         //Puesto provisional para probar cosas
         ivDesgloseImagen.setOnClickListener(view -> {
-            authIntent = new Intent(this, login.AuthActivity.class);
-            rLauncherLogin.launch(authIntent);
+            intent = new Intent(this, login.AuthActivity.class);
+            rLauncherLogin.launch(intent);
         });
     }
 
     private void copiarPlatosEnNuevoArray() {
+        //añade los platos
         platosABd.removeAll(platosABd);
         for (int a = 0; a < comensales.size(); a++) {
             for (int b = 0; b < comensales.get(a).getPlatos().size(); b++) {
@@ -341,6 +308,18 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                 }
             }
         }
+        //comprueba si existen platos con el mismo nombre y los borra, solo guarda el ultimo nombre
+        for (int i = 0; i < platosABd.size(); i++) {
+            String nombreActual = platosABd.get(i).getNombre();
+            for (int j = i + 1; j < platosABd.size(); j++) {
+                if (nombreActual.equals(platosABd.get(j).getNombre())) {
+                    platosABd.remove(i);
+                    i--;
+                    break;
+                }
+            }
+        }
+
     }
 
 
@@ -383,15 +362,9 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
         ivDesgloseImagen.setPadding(20, 20, 20, 20);
 
         //Asigna el degradado de colores a los textos
-        int[] colors = {getResources().getColor(R.color.redBorder),
-                getResources().getColor(R.color.redTitle)
-        };
+        int[] colors = {getResources().getColor(R.color.redBorder), getResources().getColor(R.color.redTitle)};
         float[] positions = {0f, 0.2f};
-        LinearGradient gradient = new LinearGradient(0, 0, 40,
-                tvTitleDesglose.getPaint().getTextSize(),
-                colors,
-                positions,
-                Shader.TileMode.REPEAT);
+        LinearGradient gradient = new LinearGradient(0, 0, 40, tvTitleDesglose.getPaint().getTextSize(), colors, positions, Shader.TileMode.REPEAT);
         tvTitleDesglose.getPaint().setShader(gradient);
         btnGuardarRestaurante.getPaint().setShader(gradient);
         btnConfirmarDesglose.getPaint().setShader(gradient);
@@ -410,9 +383,7 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
         btnGuardarRestaurante = findViewById(R.id.btnGuardarRestauranteDes);
         rvPersonaDesglose = findViewById(R.id.rvPersonaDesglose);
         tvTitleDesglose = findViewById(R.id.tvTitleDesglose);
-        ivMenuDesglose = findViewById(R.id.ivMenuDesglose);
         ivDesgloseImagen = findViewById(R.id.ivDesgloseImagen);
-
         //Asigna IDs de los elementos del popup
         puGuardarDesglose = new Dialog(this);
         puGuardarDesglose.setContentView(R.layout.popup_confirmacion_guardar);

@@ -7,57 +7,43 @@
     android:background="@drawable/background_style"
     tools:context="mainActivity.menu.crudBd.Seleccion">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Editar datos"
-        android:textColor="@color/black"
-        android:textSize="40dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnCrudPersona"
+    <Button
+        android:id="@+id/btnCrudPersona"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="100dp"
+        android:background="@drawable/platorow_styledes"
+        android:text="@string/personas"
+        android:textColor="@color/redLight"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnCrudPersona"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:text="Personas"
-        app:layout_constraintBottom_toTopOf="@+id/btnCrudRestaurantes"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView" />
-
-    <Button
-        android:id="@+id/btnCrudRestaurantes"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:text="Restaurantes"
-        app:layout_constraintBottom_toTopOf="@+id/btnCrudPlatos"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnCrudPersona" />
-
-    <Button
         android:id="@+id/btnCrudPlatos"
-        android:layout_width="100dp"
+        android:layout_width="200dp"
         android:layout_height="100dp"
-        android:text="Platos"
-        app:layout_constraintBottom_toTopOf="@+id/btnCrudVolver"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnCrudRestaurantes" />
-
-    <Button
-        android:id="@+id/btnCrudVolver"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:text="Volver"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/row_platos_bd"
+        android:text="@string/platos"
+        android:textColor="@color/purplePlatos"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnCrudPlatos" />
+        app:layout_constraintTop_toBottomOf="@+id/btnCrudRestaurantes"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/btnCrudRestaurantes"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/row_gpt_restaurantes"
+        android:text="@string/restaurantes"
+        android:textColor="@color/blueRestaurantes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnCrudPersona" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

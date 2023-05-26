@@ -26,7 +26,7 @@
         android:background="@drawable/row_platos_bd"
         android:gravity="center"
         android:text="TextView"
-        android:textColor="#790087"
+        android:textColor="@color/purplePlatos"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ivCrudPlato"
         app:layout_constraintTop_toTopOf="parent" />
