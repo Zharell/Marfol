@@ -24,7 +24,7 @@
             android:name="mainActivity.menu.crudBd.detalle.DetalleEditarPlatosBd"
             android:exported="false" />
         <activity
-            android:name="mainActivity.detalle.RecordarPlatoActivity"
+            android:name="mainActivity.crud.RecordarPlatoActivity"
             android:exported="false" />
         <activity
             android:name="mainActivity.menu.crudBd.detalle.DetalleEditarRestaurantesBd"

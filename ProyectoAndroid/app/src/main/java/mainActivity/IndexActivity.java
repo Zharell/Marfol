@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -26,7 +27,6 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -40,33 +40,35 @@ import mainActivity.API.API;
 import mainActivity.menu.AboutUs;
 import mainActivity.menu.ContactUs;
 import mainActivity.menu.Preferences;
-import mainActivity.menu.crudBd.detalle.DetalleEditarPlatosBd;
 
 public class IndexActivity extends AppCompatActivity implements RestaurantesAdapter.onItemClickListenerRestaurantes {
-
     private Button btnApIndex;
-
     private Button btnApIndex2;
     private ImageView ivImagenLogin, ivMenuIndex;
     private RecyclerView rvRestaurantesUsuario;
     private Dialog puVolverIndex;
-    private Button btnCancelarIndex, btnConfirmarIndex, btnProvisional;
+    private Button btnCancelarIndex, btnConfirmarIndex;
     private TextView tvMessage1Popup, tvMessage2Popup, tvTitlePopup, btnAPIndex, tvTitleIndex;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
     private ActivityResultLauncher rLauncherLogin;
-
+    private Handler handler;
     private TextView menuItemAboutUs;
     private TextView menuItemContactUs;
     private TextView menuItemPreferencias;
     private TextView menuItemHome;
     private TextView tvLogoutIndex;
+    private TextView tvEditarDatosIndex;
+    private TextView tvOcultar1, tvOcultar2;
     private PopupWindow popupWindow;
-    private Intent homeIntent, authIntent,intent;
+    private Intent intent;
     private RestaurantesAdapter restaurantesAdapter;
     private ArrayList<Restaurantes> restaurantesBd;
-    private boolean enviarRestaurante;
+    private CollectionReference restaurantesRef;
+    private String email, nombreRestaurante;
+    private Restaurantes restaurantes;
+    private Query consulta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,17 +79,19 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
         //Método que asigna efectos a los elementos (colores, etc)
         asignarEfectos();
+
         //si uno está logueado se comporta de una manera o otra
         comprobarLauncher();
+
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     comprobarLauncher();
                 }
         );
+
         //Botón que accede a la gestión de participantes
         btnApIndex.setOnClickListener(view -> {
             intent = new Intent(this, ParticipantesActivity.class);
-
             startActivity(intent);
 
             //Aplica un efecto de desvanecimiento entre actividades y se cierra
@@ -99,6 +103,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
             intent = new Intent(this, API.class);
             startActivity(intent);
         });
+
         //Botones para el popup de confirmación
         //Confirmar cierra la APP
         btnConfirmarIndex.setOnClickListener(view -> {
@@ -108,27 +113,21 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
         //Cancela, desaparece el popup y continúa en la actividad
         btnCancelarIndex.setOnClickListener(view -> puVolverIndex.dismiss());
-        btnProvisional.setOnClickListener(view -> {
-            intent = new Intent(this, mainActivity.menu.crudBd.Seleccion.class);
-            startActivity(intent);
-        });
     }
 
     private void botonImagenNoLogueado() {
         //Puesto provisional para probar cosas
         ivImagenLogin.setOnClickListener(view -> {
-            authIntent = new Intent(this, login.AuthActivity.class);
-            rLauncherLogin.launch(authIntent);
+            intent = new Intent(this, login.AuthActivity.class);
+            rLauncherLogin.launch(intent);
         });
-
-
     }
 
     private void botonImagenLogueado() {
         //Puesto provisional para probar cosas
         ivImagenLogin.setOnClickListener(view -> {
-            homeIntent = new Intent(this, login.HomeActivity.class);
-            rLauncherLogin.launch(homeIntent);
+            intent = new Intent(this, login.HomeActivity.class);
+            rLauncherLogin.launch(intent);
         });
     }
 
@@ -152,7 +151,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        btnProvisional = findViewById(R.id.btnProvisional);
     }
 
     public void asignarEfectos() {
@@ -206,8 +204,15 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         menuItemPreferencias = popupView.findViewById(R.id.menu_item2);
         menuItemAboutUs = popupView.findViewById(R.id.menu_item3);
         menuItemContactUs = popupView.findViewById(R.id.menu_item4);
+        tvEditarDatosIndex = popupView.findViewById(R.id.tvEditarDatosIndex);
+        tvEditarDatosIndex.setVisibility(View.INVISIBLE);
+        tvOcultar1 = popupView.findViewById(R.id.tvOcultar1);
+        tvOcultar1.setVisibility(View.INVISIBLE);
         tvLogoutIndex = popupView.findViewById(R.id.tvLogoutIndex);
         tvLogoutIndex.setVisibility(View.INVISIBLE);
+        tvOcultar2 = popupView.findViewById(R.id.tvOcultar2);
+        tvOcultar2.setVisibility(View.INVISIBLE);
+
         // Ajustar el tamaño del menú según tus preferencias
         int width = getResources().getDisplayMetrics().widthPixels * 7 / 10; // El 70% del ancho de la pantalla
         int height = getResources().getDisplayMetrics().heightPixels; // El 70% del alto de la pantalla
@@ -276,6 +281,9 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null) {
             tvLogoutIndex.setVisibility(View.VISIBLE);
+            tvEditarDatosIndex.setVisibility(View.VISIBLE);
+            tvOcultar1.setVisibility(View.VISIBLE);
+            tvOcultar2.setVisibility(View.VISIBLE);
             tvLogoutIndex.setOnClickListener(v -> {
                 SharedPreferences prefAux = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
                 SharedPreferences.Editor prefs = prefAux.edit();
@@ -286,6 +294,11 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
                 intent = new Intent(this, IndexActivity.class);
                 startActivity(intent);
                 finish();
+            });
+            tvEditarDatosIndex.setOnClickListener(v2 -> {
+                intent = new Intent(this, mainActivity.menu.crudBd.Seleccion.class);
+                startActivity(intent);
+                popupWindow.dismiss();
             });
         }
         // Cerrar el PopupWindow cuando se destruya la actividad
@@ -309,32 +322,31 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         if (currentUser != null) {
             cargarRestaurantesBd();
         }
-
     }
 
     private void cargarRestaurantesBd() {
-        if (currentUser != null) {
-            restaurantesBd = new ArrayList<>();
-            String usuarioId = currentUser.getEmail();
-            DocumentReference id = db.collection("users").document(usuarioId);
+        if (currentUser != null) {  // Verifica si hay un usuario actualmente logueado
+            restaurantesBd = new ArrayList<>();  // Crea una nueva lista para almacenar los restaurantes
+            email = currentUser.getEmail();  // Obtiene el correo electrónico del usuario actual
 
-            CollectionReference restaurantesRef = db.collection("restaurantes");
+            // Configura la referencia a la colección "restaurantes" en la base de datos
+            restaurantesRef = db.collection("restaurantes");
 
-            Query consulta = restaurantesRef.whereEqualTo("usuarioId", usuarioId);
+            // Realiza una consulta a la colección "restaurantes" donde el campo "usuarioId" sea igual al correo electrónico del usuario actual
+            consulta = restaurantesRef.whereEqualTo("usuarioId", email);
 
+            // Ejecuta la consulta y agrega un listener para recibir el resultado
             consulta.get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
+                if (task.isSuccessful()) {  // Verifica si la consulta se completó con éxito
                     for (DocumentSnapshot document : task.getResult()) {
-
-                        String nombreRestaurante = document.getString("nombreRestaurante");
-                        Restaurantes restaurante = new Restaurantes(nombreRestaurante, "");
-                        restaurantesBd.add(restaurante);
+                        // Recorre los documentos resultantes de la consulta
+                        nombreRestaurante = document.getString("nombreRestaurante");  // Obtiene el nombre del restaurante del documento
+                        restaurantes = new Restaurantes(nombreRestaurante, "");  // Crea un nuevo objeto Restaurantes con el nombre obtenido
+                        restaurantesBd.add(restaurantes);  // Agrega el objeto a la lista de restaurantes
                     }
-                    restaurantesAdapter.setResultsRestaurantes(restaurantesBd);
+                    restaurantesAdapter.setResultsRestaurantes(restaurantesBd);  // Actualiza el adaptador con los resultados obtenidos
                 }
-
             });
-
         }
     }
 
@@ -347,13 +359,10 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         }
     }
 
-
     @Override
     public void onItemClick(int position) {
-        Toast.makeText(this, String.valueOf(position), Toast.LENGTH_SHORT).show();
         intent = new Intent(this, ParticipantesActivity.class);
         intent.putExtra("nombreRestaurante", restaurantesBd.get(position).getNombreRestaurante());
-        intent.putExtra("enviarRestaurante",true);
         startActivity(intent);
         finish();
     }

@@ -67,7 +67,6 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
     }
 
     private void cargarDatosBd() {
-
         if (currentUser != null) {
             comensalesBd = new ArrayList<>();
             email = currentUser.getEmail(); // Utiliza el email como ID único del usuario
@@ -85,7 +84,6 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
                         persona = new Persona(nombre, descripcion, imagen);
                         comensalesBd.add(persona);
                     }
-
                     // Notificar al adapter que los datos han cambiado
                     crudPersonaAdapter.setResultsCrudPersona(comensalesBd);
                 }

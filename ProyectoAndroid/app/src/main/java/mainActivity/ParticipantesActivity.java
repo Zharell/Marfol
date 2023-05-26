@@ -48,8 +48,8 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private final int MINIMO_PLATOS = 1;
     private boolean borrarComensal = false;
     private int numPlatos = 0;
-    private ImageView ivLoginParticipantes, ivMenuParticipantes;
-    private TextView tvTitleParticipantes, tvRecorPar;
+    private ImageView ivLoginParticipantes;
+    private TextView tvTitleParticipantes;
     private Dialog puVolverParticipantes;
     private Button btnCancelarParticipantes, btnConfirmarParticipantes, btnContinuarParticipantes;
     private Intent volverIndex;
@@ -68,21 +68,19 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-    private boolean enviarRestaurante;
-    private String nombreRestaurante;
+    private String nombreRestaurante,email,nombre,descripcion,imagen;
+    private Persona persona;
+    private CollectionReference personasRef;
+    private Query consulta;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_participantes);
         intent = getIntent();
-        enviarRestaurante = intent.getBooleanExtra("enviarRestaurante",false);
-        if(intent.getBooleanExtra("enviarRestaurante",enviarRestaurante)){
-            nombreRestaurante = intent.getStringExtra("nombreRestaurante");
-            Toast.makeText(this, nombreRestaurante, Toast.LENGTH_SHORT).show();
-        }else {
-            nombreRestaurante= "";
-        }
+        nombreRestaurante = intent.getStringExtra("nombreRestaurante");
+
         //Método que asigna IDs a los elementos
         asignarId();
 
@@ -119,10 +117,10 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         comprobarLauncher();
-                        Intent data = result.getData();
-                        borrarComensal = data.getBooleanExtra("borrarComensal", false);
+                        intent = result.getData();
+                        borrarComensal = intent.getBooleanExtra("borrarComensal", false);
                         if (!borrarComensal) {
-                            comensales.set(comensalPosicion, (Persona) data.getSerializableExtra("detalleComensal"));
+                            comensales.set(comensalPosicion, (Persona) intent.getSerializableExtra("detalleComensal"));
                             personaAdapter.setResultsPersona(comensales);
                         } else {
                             //Método que comprueba con quien has compartido y lo borra de ser necesario
@@ -145,8 +143,8 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         comprobarLauncher();
-                        Intent data = result.getData();
-                        comensales = (ArrayList<Persona>) data.getSerializableExtra("arrayListDesglose");
+                        intent = result.getData();
+                        comensales = (ArrayList<Persona>) intent.getSerializableExtra("arrayListDesglose");
                         personaAdapter.setResultsPersona(comensales);
                     } else {
                         comprobarLauncher();
@@ -180,11 +178,10 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
             int numPlatos = obtenerPlatos();
             if (comensales.size() > 1 && numPlatos >= MINIMO_PLATOS) {
                 //Accede a la actividad detalle de una persona
-                Intent intentDesglose = new Intent(this, DesgloseActivity.class);
-                intentDesglose.putExtra("envioDesglose", comensales);
-                intentDesglose.putExtra("nombreRestaurante", nombreRestaurante);
-                intentDesglose.putExtra("enviarRestaurante",true);
-                rLauncherDesglose.launch(intentDesglose);
+                intent = new Intent(this, DesgloseActivity.class);
+                intent.putExtra("envioDesglose", comensales);
+                intent.putExtra("nombreRestaurante", nombreRestaurante);
+                rLauncherDesglose.launch(intent);
             } else {
                 //Comprobamos qué elemento nos falta para avanzar al desglose
                 if (comensales.size() < 2) {
@@ -247,13 +244,11 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     public void asignarId() {
 
         //Asigna Ids a los elementos de la actividad
-        ivMenuParticipantes = findViewById(R.id.ivMenuAnadirPlato);
         ivLoginParticipantes = findViewById(R.id.ivParticipantesImagen);
         rvPersonaParticipantes = findViewById(R.id.rvPersonaParticipantes);
         rvPersonaParticipantesBd = findViewById(R.id.rvPersonaParticipantesBd);
         tvTitleParticipantes = findViewById(R.id.tvTitleAnadirPlato);
         btnContinuarParticipantes = findViewById(R.id.btnContinuarParticipantes);
-        tvRecorPar = findViewById(R.id.tvRecordarParticipantesPar);
         volverIndex = new Intent(this, IndexActivity.class);
         irLogin = new Intent(this, AuthActivity.class);
 
@@ -326,34 +321,23 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private void cargarDatosBd() {
         if (currentUser != null) {
             comensalesBd = new ArrayList<>();
-            String usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
-            DocumentReference id = db.collection("users").document(usuarioId);
-
+            email = currentUser.getEmail(); // Utiliza el email como ID único del usuario
             // Obtén la colección "personas" en Firestore
-            CollectionReference personasRef = db.collection("personas");
-
+            personasRef = db.collection("personas");
             // Realiza la consulta para obtener todas las personas del usuario actual
-            Query consulta = personasRef.whereEqualTo("usuarioId", usuarioId);
-
+            consulta = personasRef.whereEqualTo("usuarioId", email);
             consulta.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    // Limpiar el ArrayList antes de agregar los nuevos datos
-                    int incremento = 1;
-
                     // Recorrer los documentos obtenidos y agregar los datos al ArrayList
                     for (DocumentSnapshot document : task.getResult()) {
-
-                        String nombre = document.getString("nombre");
-                        String descripcion = document.getString("descripcion");
-                        String imagen = document.getString("imagen");
-                        Persona persona = new Persona(incremento, nombre, descripcion, imagen, new ArrayList<>(), 0);
+                        nombre = document.getString("nombre");
+                        descripcion = document.getString("descripcion");
+                        imagen = document.getString("imagen");
+                        persona = new Persona(nombre, descripcion, imagen);
                         comensalesBd.add(persona);
-                        incremento++;
                     }
-
                     // Notificar al adapter que los datos han cambiado
                     personaAdapterBd.setResultsPersonaBd(comensalesBd);
-
                 }
             });
         } else {
@@ -368,19 +352,16 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         //Si pulsas "Añadir Persona" ( 0 ), accederás a la actividad añadir persona
         if (position > 0) {
             //Accede a la actividad detalle de una persona
-            Intent intentDetalle = new Intent(this, DetallePersonaActivity.class);
-            intentDetalle.putExtra("comensalDetalle", comensales.get(position));
-            intentDetalle.putExtra("arrayListComenComp", comensales);
-            intentDetalle.putExtra("nombreRestaurante", nombreRestaurante);
-            intentDetalle.putExtra("enviarRestaurante",true);
-            rLauncherDetalleComensal.launch(intentDetalle);
-
+            intent = new Intent(this, DetallePersonaActivity.class);
+            intent.putExtra("comensalDetalle", comensales.get(position));
+            intent.putExtra("arrayListComenComp", comensales);
+            intent.putExtra("nombreRestaurante", nombreRestaurante);
+            rLauncherDetalleComensal.launch(intent);
         } else {
             //Accede a la actividad para añadir nuevos comensales
             Intent intent = new Intent(this, AnadirParticipanteActivity.class);
             intent.putExtra("arrayListComensales", comensales);
             intent.putExtra("nombreRestaurante", nombreRestaurante);
-            intent.putExtra("enviarRestaurante",true);
             rLauncherAnadirComensal.launch(intent);
 
         }
@@ -395,7 +376,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         i.putExtra("arrayListComensales", comensales);
         i.putExtra("comensalesBd", comensalesBd.get(position));
         i.putExtra("nombreRestaurante", nombreRestaurante);
-        i.putExtra("enviarRestaurante",true);
         rLauncherAnadirComensal.launch(i);
 
     }

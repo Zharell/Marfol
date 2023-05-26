@@ -63,12 +63,15 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
     private ArrayList<Persona> noRepComList;
     private ArrayList<Persona> nombreCompartir;
     private ActivityResultLauncher<Intent> camaraLauncher;
-    private ActivityResultLauncher rLauncherPlatos;
     private PersonaCompartirAdapter anadirPAdapter;
     private boolean esCompartido;
     private Button btnEditarDetalle, btnBorrarDetalle;
     private String uriCapturada = "";
     private Plato plato;
+    private Intent intent;
+    private String nombre,descripcion;
+    private double precio;
+    private Plato platoEditado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +79,7 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
         setContentView(R.layout.activity_detalle_plato);
 
         //Recibe la lista de comensales para empezar a añadir
-        Intent intent = getIntent();
+        intent = getIntent();
         plato = (Plato) intent.getSerializableExtra("platoDetalle");
         nombreCompartir = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComenComp");
         personaCode = intent.getIntExtra("comensalCode", 0);
@@ -126,8 +129,8 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         //Método de cálculo aquí también
-                        Intent data = result.getData();
-                        plato.getPersonasCompartir().add((Persona) data.getSerializableExtra("personaCompartir"));
+                        intent = result.getData();
+                        plato.getPersonasCompartir().add((Persona) intent.getSerializableExtra("personaCompartir"));
                         anadirPAdapter.setResultsPersonaCom(plato.getPersonasCompartir());
                     }
                 }
@@ -207,10 +210,8 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
 
     public void editarPlato() {
         boolean esValidado = true;
-        String nombre = String.valueOf(etTitleDetalle.getText());
-        String descripcion = String.valueOf(etDescripcionDetalle.getText());
-        double precio;
-        Plato platoEditado;
+        nombre = String.valueOf(etTitleDetalle.getText());
+        descripcion = String.valueOf(etDescripcionDetalle.getText());
 
         //Comprueba si el editText está vacío, de estarlo el programa lo entiende como un 0, además, remplaza <,> por <.> para evitar errores
         precio = etPrecioDetalle.getText().toString().equalsIgnoreCase("") ? 0 : Double.parseDouble(etPrecioDetalle.getText().toString().replace(",", "."));
@@ -352,7 +353,7 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
 
     // Método para abrir la galería
     private void abrirGaleria() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         galeriaLauncher.launch(intent);
     }
 
@@ -394,7 +395,7 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
             }
 
             //Accedemos a la actividad de compartir plato
-            Intent intent = new Intent(this, CompartirListaActivity.class);
+            intent = new Intent(this, CompartirListaActivity.class);
             intent.putExtra("arrayListComenComp", noRepComList);
             rLauncherComp.launch(intent);
 
