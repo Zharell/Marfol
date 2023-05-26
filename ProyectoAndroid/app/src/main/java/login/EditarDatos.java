@@ -289,7 +289,7 @@ public class EditarDatos extends AppCompatActivity {
                             Glide.with(EditarDatos.this).load(imagen).circleCrop().into(ivPlatoAnadirP);
                         } else {
                             // Manejar el caso en el que no haya imagen
-                            Glide.with(EditarDatos.this).load(R.drawable.nologinimg).circleCrop().into(ivPlatoAnadirP);
+                            Glide.with(EditarDatos.this).load(R.drawable.camera).circleCrop().into(ivPlatoAnadirP);
                         }
                     }
                 } else {

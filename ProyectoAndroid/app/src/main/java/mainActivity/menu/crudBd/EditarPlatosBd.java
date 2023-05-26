@@ -1,10 +1,14 @@
 package mainActivity.menu.crudBd;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -16,10 +20,11 @@ import com.tfg.marfol.R;
 
 import java.util.ArrayList;
 
-import adapters.CrudPersonaAdapter;
 import adapters.CrudPlatosAdapter;
-import entities.Persona;
+import adapters.CrudRestaurantesAdapter;
 import entities.Plato;
+import mainActivity.menu.crudBd.detalle.DetalleEditarPersonaBd;
+import mainActivity.menu.crudBd.detalle.DetalleEditarPlatosBd;
 
 public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapter.onItemClickListener  {
     private FirebaseFirestore db;
@@ -28,10 +33,14 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
     private RecyclerView rvCrudPlatos;
     private CrudPlatosAdapter crudPlatosAdapter;
     private ArrayList<Plato> platosBd;
-    private String usuarioId, nombre, descripcion, imagen;
+    private String email, nombre, descripcion, imagen,restaurante;
+    private double precio;
     private CollectionReference platosRef;
     private Query consulta;
     private Plato plato;
+    private Intent intentDetalle;
+    private ActivityResultLauncher rLauncherPlatos;
+    private Handler handler;
 
 
     @Override
@@ -39,13 +48,15 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_platos_bd);
         asignarId();
-        rvCrudPlatos.setLayoutManager(new GridLayoutManager(this, 1));
-        crudPlatosAdapter = new CrudPlatosAdapter();
-        rvCrudPlatos.setAdapter(crudPlatosAdapter);
-        crudPlatosAdapter.setmListener(this);
-        if (currentUser!=null){
-            cargarDatosBd();
-        }
+        mostrarAdapterPlatos();
+        //Laucher Result recibe el ArrayList con los nuevos comensales y los inserta en el adapter
+        rLauncherPlatos = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    //si no hago que se espere un poco, va mas rapida la petición que la actualización
+                    handler = new Handler();
+                    handler.postDelayed(() -> cargarDatosBd(), 2000);
+                }
+        );
 
 
     }
@@ -55,16 +66,26 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         rvCrudPlatos = findViewById(R.id.rvCrudPlatos);
+
+    }
+    private void mostrarAdapterPlatos() {
+        rvCrudPlatos.setLayoutManager(new GridLayoutManager(this, 1));
+        crudPlatosAdapter = new CrudPlatosAdapter();
+        rvCrudPlatos.setAdapter(crudPlatosAdapter);
+        crudPlatosAdapter.setmListener(this);
+        if (currentUser!=null){
+            cargarDatosBd();
+        }
     }
     private void cargarDatosBd() {
 
         if (currentUser != null) {
             platosBd = new ArrayList<>();
-            usuarioId = currentUser.getEmail(); // Utiliza el email como ID único del usuario
+            email = currentUser.getEmail(); // Utiliza el email como ID único del usuario
             // Obtén la colección "personas" en Firestore
             platosRef = db.collection("platos");
             // Realiza la consulta para obtener todas las personas del usuario actual
-            consulta = platosRef.whereEqualTo("usuario", usuarioId);
+            consulta = platosRef.whereEqualTo("usuario", email);
             consulta.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     // Recorrer los documentos obtenidos y agregar los datos al ArrayList
@@ -72,12 +93,11 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
                         nombre = document.getString("nombre");
                         descripcion = document.getString("descripcion");
                         imagen = document.getString("imagen");
-                        String restaurante = document.getString("restaurante");
-                        double precio = document.getDouble("precio");
+                        restaurante = document.getString("restaurante");
+                        precio = document.getDouble("precio");
                         plato = new Plato(nombre,descripcion,imagen,restaurante,precio);
                         platosBd.add(plato);
                     }
-
                     // Notificar al adapter que los datos han cambiado
                     crudPlatosAdapter.setResultsPlato(platosBd);
                 }
@@ -86,6 +106,9 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
     }
     @Override
     public void onItemClick(int position) {
-
+        intentDetalle = new Intent(this, DetalleEditarPlatosBd.class);
+        intentDetalle.putExtra("platoDetalle", platosBd.get(position));
+        intentDetalle.putExtra("platosTotales",platosBd);
+        rLauncherPlatos.launch(intentDetalle);
     }
 }

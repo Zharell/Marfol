@@ -1,29 +1,21 @@
 package adapters;
-
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.tfg.marfol.R;
-
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Locale;
-
 import entities.Plato;
 
 public class CrudPlatosAdapter extends RecyclerView.Adapter<CrudPlatosAdapter.CrudPlatosAdapterResultHolder> {
 
     private ArrayList<Plato> resultsPlato = new ArrayList<>();
-    private NumberFormat euroFormat = NumberFormat.getCurrencyInstance(Locale.GERMANY);
     private onItemClickListener mListener;
 
     @NonNull
@@ -37,7 +29,7 @@ public class CrudPlatosAdapter extends RecyclerView.Adapter<CrudPlatosAdapter.Cr
 
     @Override
     public void onBindViewHolder(@NonNull CrudPlatosAdapterResultHolder holder, int position) {
-        holder.tvPlatoRow.setText(resultsPlato.get(position).getNombre());
+        holder.tvPlatoRow.setText(resultsPlato.get(position).getNombre()+"\n---------\n"+resultsPlato.get(position).getRestaurante());
         if(resultsPlato.get(position).getUrlImage()!=null) {
             Glide.with(holder.itemView)
                     .load(Uri.parse(resultsPlato.get(position).getUrlImage()))

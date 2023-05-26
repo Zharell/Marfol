@@ -12,7 +12,21 @@ public class Plato implements Serializable {
     private double precio, precioFinal;
     private boolean compartido;
 
+    public Plato(String urlImage,String nombre,double precio) {
+        this.urlImage = urlImage;
+        this.nombre = nombre;
+        this.precio = precio;
+    }
+
     private ArrayList<Persona> personasCompartir;
+
+    public String getRestaurante() {
+        return restaurante;
+    }
+
+    public void setRestaurante(String restaurante) {
+        this.restaurante = restaurante;
+    }
 
     public Plato(String nombre, String descripcion, String urlImage, String restaurante, double precio) {
         this.nombre = nombre;

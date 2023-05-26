@@ -95,12 +95,12 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
             }
         });
 
-        //Botón que vuelve a participantes y además devuelve el comensal modificado
+        //Botón que vuelve a comensales y además devuelve el comensal modificado
         btnEditarDetalleEditarPersona.setOnClickListener(view -> {
             editarComensal();
             finish();
         });
-        //Botón de borrar, llama a un método que a además de borrar, reordena los comensalID
+        //Botón de borrar, llama a un método que a además de borrar
         btnBorrarDetalleEditarPersona.setOnClickListener(view -> {
             borrarComensal();
             finish();
@@ -154,10 +154,12 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
         etDetalleNombreEditarPersona.setText(comensalBd.getNombre());
         etDetalleDescripcionEditarPersona.setText(comensalBd.getDescripcion());
         imagen = comensalBd.getUrlImage();
-        if (imagen != null || !imagen.equalsIgnoreCase("")) {
+        if (imagen != null && !imagen.equalsIgnoreCase("")) {
+            ivDetalleFotoEditarPersona.setBackground(null);
             Glide.with(DetalleEditarPersonaBd.this).load(imagen).circleCrop().into(ivDetalleFotoEditarPersona);
+
         } else {
-            Glide.with(DetalleEditarPersonaBd.this).load(R.drawable.nologinimg).circleCrop().into(ivDetalleFotoEditarPersona);
+            Glide.with(DetalleEditarPersonaBd.this).load(R.drawable.camera).circleCrop().into(ivDetalleFotoEditarPersona);
         }
 
     }

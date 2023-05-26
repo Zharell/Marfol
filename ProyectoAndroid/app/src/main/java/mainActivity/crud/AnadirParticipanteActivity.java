@@ -103,6 +103,8 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     private StorageReference storageReference;
     private boolean importado;
     private Persona personaBd;
+    private boolean enviarRestaurante;
+    private String nombreRestaurante;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +114,13 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         intent = getIntent();
         comensales = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComensales");
         importado = intent.getBooleanExtra("importado",false);
+        enviarRestaurante = intent.getBooleanExtra("enviarRestaurante",false);
+        if(intent.getBooleanExtra("enviarRestaurante",enviarRestaurante)){
+            nombreRestaurante = intent.getStringExtra("nombreRestaurante");
+            Toast.makeText(this, nombreRestaurante, Toast.LENGTH_SHORT).show();
+        }else {
+            nombreRestaurante= "";
+        }
         //Método que asigna IDs a los elementos
         asignarId();
 
@@ -429,6 +438,9 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             intent = new Intent(this, RecordarPlatoActivity.class);
             intent.putExtra("arrayListPlatos", platos);
             intent.putExtra("arrayListComenComp", comensales);
+            intent.putExtra("nombreRestaurante", nombreRestaurante);
+            intent.putExtra("enviarRestaurante",true);
+
             rLauncherRecordarPlato.launch(intent);
         }
     }

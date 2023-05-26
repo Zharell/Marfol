@@ -40,13 +40,14 @@ import mainActivity.API.API;
 import mainActivity.menu.AboutUs;
 import mainActivity.menu.ContactUs;
 import mainActivity.menu.Preferences;
+import mainActivity.menu.crudBd.detalle.DetalleEditarPlatosBd;
 
 public class IndexActivity extends AppCompatActivity implements RestaurantesAdapter.onItemClickListenerRestaurantes {
 
     private Button btnApIndex;
 
     private Button btnApIndex2;
-    private ImageView ivLoginIndex, ivMenuIndex;
+    private ImageView ivImagenLogin, ivMenuIndex;
     private RecyclerView rvRestaurantesUsuario;
     private Dialog puVolverIndex;
     private Button btnCancelarIndex, btnConfirmarIndex, btnProvisional;
@@ -62,9 +63,10 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     private TextView menuItemHome;
     private TextView tvLogoutIndex;
     private PopupWindow popupWindow;
-    private Intent homeIntent, authIntent;
+    private Intent homeIntent, authIntent,intent;
     private RestaurantesAdapter restaurantesAdapter;
     private ArrayList<Restaurantes> restaurantesBd;
+    private boolean enviarRestaurante;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +90,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
         //Botón que accede a la gestión de participantes
         btnApIndex.setOnClickListener(view -> {
-            Intent intent = new Intent(this, ParticipantesActivity.class);
+            intent = new Intent(this, ParticipantesActivity.class);
             startActivity(intent);
             //Aplica un efecto de desvanecimiento entre actividades y se cierra
             overridePendingTransition(androidx.navigation.ui.R.anim.nav_default_enter_anim, androidx.navigation.ui.R.anim.nav_default_exit_anim);
@@ -97,7 +99,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
         //Botón que accede al apartado APIs
         btnApIndex2.setOnClickListener(view -> {
-            Intent intent = new Intent(this, API.class);
+            intent = new Intent(this, API.class);
             startActivity(intent);
         });
 
@@ -111,14 +113,14 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         //Cancela, desaparece el popup y continúa en la actividad
         btnCancelarIndex.setOnClickListener(view -> puVolverIndex.dismiss());
         btnProvisional.setOnClickListener(view -> {
-            Intent a = new Intent(this, mainActivity.menu.crudBd.Seleccion.class);
-            startActivity(a);
+            intent = new Intent(this, mainActivity.menu.crudBd.Seleccion.class);
+            startActivity(intent);
         });
     }
 
     private void botonImagenNoLogueado() {
         //Puesto provisional para probar cosas
-        ivLoginIndex.setOnClickListener(view -> {
+        ivImagenLogin.setOnClickListener(view -> {
             authIntent = new Intent(this, login.AuthActivity.class);
             rLauncherLogin.launch(authIntent);
         });
@@ -127,7 +129,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
     private void botonImagenLogueado() {
         //Puesto provisional para probar cosas
-        ivLoginIndex.setOnClickListener(view -> {
+        ivImagenLogin.setOnClickListener(view -> {
             homeIntent = new Intent(this, login.HomeActivity.class);
             rLauncherLogin.launch(homeIntent);
         });
@@ -137,8 +139,8 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         //Asigna Ids a los elementos de la actividad
         btnApIndex = findViewById(R.id.btnApIndex);
         btnApIndex2 = findViewById(R.id.btnAPIndex);
-        ivLoginIndex = findViewById(R.id.ivAnadirPlatoImagen);
-        Glide.with(this).load(R.drawable.nologinimg).into(ivLoginIndex);
+        ivImagenLogin = findViewById(R.id.ivImagenLogin);
+        Glide.with(this).load(R.drawable.nologinimg).into(ivImagenLogin);
         ivMenuIndex = findViewById(R.id.ivMenuAnadirPlato);
         rvRestaurantesUsuario = findViewById(R.id.rvRestaurantesUsuario);
         tvTitleIndex = findViewById(R.id.tvTitleAnadirPlato);
@@ -159,7 +161,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     public void asignarEfectos() {
 
         //Ajusta el tamaño de la imagen del login
-        ivLoginIndex.setPadding(20, 20, 20, 20);
+        ivImagenLogin.setPadding(20, 20, 20, 20);
 
         //Asigna el degradado de colores a los textos
         int[] colors = {getResources().getColor(R.color.redBorder),
@@ -246,7 +248,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
         menuItemAboutUs.setOnClickListener(v -> {
             // Acción al hacer clic en "AboutUs"
-            Intent intent = new Intent(IndexActivity.this, AboutUs.class);
+            intent = new Intent(IndexActivity.this, AboutUs.class);
             startActivity(intent);
 
             // Cerrar el menú emergente
@@ -255,7 +257,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
         menuItemContactUs.setOnClickListener(v -> {
             // Acción al hacer clic en "ContactUs"
-            Intent intent = new Intent(IndexActivity.this, ContactUs.class);
+            intent = new Intent(IndexActivity.this, ContactUs.class);
             startActivity(intent);
 
             // Cerrar el menú emergente
@@ -269,7 +271,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
         menuItemPreferencias.setOnClickListener(v -> {
             // Acción al hacer clic en "Preferences"
-            Intent intent = new Intent(IndexActivity.this, Preferences.class);
+            intent = new Intent(IndexActivity.this, Preferences.class);
             startActivity(intent);
             // Cerrar el menú emergente
             popupWindow.dismiss();
@@ -284,8 +286,8 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
                 prefs.apply();
                 FirebaseAuth.getInstance()
                         .signOut();
-                Intent in = new Intent(this, IndexActivity.class);
-                startActivity(in);
+                intent = new Intent(this, IndexActivity.class);
+                startActivity(intent);
                 finish();
             });
         }
@@ -293,11 +295,11 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     }
 
     private void comprobarLauncher() {
-        if (MetodosGlobales.comprobarLogueado(IndexActivity.this, ivLoginIndex)) {
+        if (MetodosGlobales.comprobarLogueado(IndexActivity.this, ivImagenLogin)) {
             botonImagenLogueado();
             mostrarAdapterRestaurantes();
         } else {
-            Glide.with(this).load(R.drawable.nologinimg).into(ivLoginIndex);
+            Glide.with(this).load(R.drawable.nologinimg).into(ivImagenLogin);
             botonImagenNoLogueado();
         }
     }
@@ -352,5 +354,10 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     @Override
     public void onItemClick(int position) {
         Toast.makeText(this, String.valueOf(position), Toast.LENGTH_SHORT).show();
+        intent = new Intent(this, ParticipantesActivity.class);
+        intent.putExtra("nombreRestaurante", restaurantesBd.get(position).getNombreRestaurante());
+        intent.putExtra("enviarRestaurante",true);
+        startActivity(intent);
+        finish();
     }
 }
