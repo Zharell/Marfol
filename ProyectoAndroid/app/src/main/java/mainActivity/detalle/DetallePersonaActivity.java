@@ -12,9 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
@@ -28,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,6 +48,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tfg.marfol.R;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -137,37 +141,9 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
                 }
         );
 
-        //Añadimos onClick en el ImageView para activar la imagen
-        ivFotoDetalle.setOnClickListener(view -> {
-            // Solicitar permiso para acceder a la cámara
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
-                //Si no tenemos los permisos los obtenemos
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
-            } else {
-                // Si ya se tienen los permisos, abrir la cámara
-                abrirCamara();
-            }
-        });
-
         //Botón que vuelve a participantes y además devuelve el comensal modificado
         btnContinuarDetalle.setOnClickListener(view -> {
             editarComensal();
-        });
-
-        // Registrar el launcher para la galería
-        galeriaLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (result.getResultCode() == RESULT_OK) {
-                Intent data = result.getData();
-                if (data != null) {
-                    Uri selectedImageUri = data.getData();
-                    uriCapturada = selectedImageUri.toString();
-
-                    //Cargar imagen seleccionada
-                    ivFotoDetalle.setBackground(null);
-                    ivFotoDetalle.setImageURI(selectedImageUri);
-                }
-                puElegirAccion.dismiss();
-            }
         });
 
         // Registrar el launcher para la cámara
@@ -188,7 +164,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
                     ivFotoDetalle.setBackground(null);
-                    Glide.with(this).load(uriCapturada).into(ivFotoDetalle);
+                    Glide.with(this).load(uriCapturada).circleCrop().into(ivFotoDetalle);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -255,9 +231,31 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
 
     // Método para abrir la galería
     private void abrirGaleria() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        galeriaLauncher.launch(intent);
+        //Librería que accede a la galería del dispositivo (OBLIGATORIO USAR LIBRERÍAS MIUI BLOQUEA LO DEMÁS)
+        ImagePicker.with(this)
+                .galleryOnly()
+                .start();
     }
+
+    //Método que accede a la galería sin que los permisos restrictivos MIUI afecten
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            // La Uri de la imagen no será nula para RESULT_OK
+            Uri uri = data.getData();
+            if (uri != null) {
+                Uri selectedImageUri = data.getData();
+                uriCapturada = selectedImageUri.toString();
+
+                //Cargar imagen seleccionada
+                ivFotoDetalle.setBackground(null);
+                Glide.with(this).load(selectedImageUri).circleCrop().into(ivFotoDetalle);
+            }
+            puElegirAccion.dismiss();
+        }
+    }
+
 
     // Método para abrir la cámara
     private void abrirCamara() {
@@ -456,12 +454,8 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         etTitleDetalle.setText(comensal.getNombre());
         etDescripcionDetalle.setText(comensal.getDescripcion());
         uriCapturada = comensal.getUrlImage();
-        if (!comensal.getUrlImage().equalsIgnoreCase("")) {
-            if (comensal.getUrlImage().startsWith("https")) {
-                Glide.with(this).load(comensal.getUrlImage()).into(ivFotoDetalle);
-            } else {
-                ivFotoDetalle.setImageURI(Uri.parse(comensal.getUrlImage()));
-            }
+        if (comensal.getUrlImage() != null) {
+            Glide.with(this).load(comensal.getUrlImage()).circleCrop().into(ivFotoDetalle);
         } else {
             //Inserta Imagen photo
             ivFotoDetalle.setImageURI(Uri.parse("android.resource://com.tfg.marfol/" + R.drawable.camera));

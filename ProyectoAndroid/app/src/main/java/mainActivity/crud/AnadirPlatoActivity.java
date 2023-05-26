@@ -9,6 +9,8 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.tfg.marfol.R;
 
 import android.Manifest;
@@ -51,7 +53,6 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
     private TextView tvTitleAnadirP, tvSubTitP;
     private Dialog puElegirAccion;
     private Button btnUpCamara, btnUpGaleria;
-    private ActivityResultLauncher<Intent> galeriaLauncher;
     private static final int GALLERY_PERMISSION_CODE = 1001;
     private PersonaCompartirAdapter anadirPAdapter;
     private EditText  etNombreAnadirP, etDescAnadirP, etPrecioAnadirP;
@@ -145,21 +146,6 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
             } else {
                 // Si ya se tienen los permisos, abrir la galería
                 abrirGaleria();
-            }
-        });
-
-        // Registrar el launcher para la galería
-        galeriaLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (result.getResultCode() == RESULT_OK) {
-                Intent data = result.getData();
-                if (data != null) {
-                    Uri selectedImageUri = data.getData();
-                    uriCapturada = selectedImageUri.toString();
-                    //Cargar imagen seleccionada
-                    ivPlatoAnadirP.setBackground(null);
-                    ivPlatoAnadirP.setImageURI(selectedImageUri);
-                }
-                puElegirAccion.dismiss();
             }
         });
 
@@ -284,8 +270,29 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
 
     // Método para abrir la galería
     private void abrirGaleria() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        galeriaLauncher.launch(intent);
+        //Librería que accede a la galería del dispositivo (OBLIGATORIO USAR LIBRERÍAS MIUI BLOQUEA LO DEMÁS)
+        ImagePicker.with(this)
+                .galleryOnly()
+                .start();
+    }
+
+    //Método que accede a la galería sin que los permisos restrictivos MIUI afecten
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            // La Uri de la imagen no será nula para RESULT_OK
+            Uri uri = data.getData();
+            if (uri != null) {
+                Uri selectedImageUri = data.getData();
+                uriCapturada = selectedImageUri.toString();
+
+                //Cargar imagen seleccionada
+                ivPlatoAnadirP.setBackground(null);
+                Glide.with(this).load(selectedImageUri).circleCrop().into(ivPlatoAnadirP);
+            }
+            puElegirAccion.dismiss();
+        }
     }
 
     // Método para abrir la cámara

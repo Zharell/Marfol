@@ -65,7 +65,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     private Intent homeIntent, authIntent;
     private RestaurantesAdapter restaurantesAdapter;
     private ArrayList<Restaurantes> restaurantesBd;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,28 +74,33 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
         //Método que asigna efectos a los elementos (colores, etc)
         asignarEfectos();
+
         //si uno está logueado se comporta de una manera o otra
         comprobarLauncher();
+
+        //Launcher Login comprueba si estás logueado
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
+                    currentUser = mAuth.getCurrentUser();
                     comprobarLauncher();
                 }
         );
+
         //Botón que accede a la gestión de participantes
         btnApIndex.setOnClickListener(view -> {
             Intent intent = new Intent(this, ParticipantesActivity.class);
-
             startActivity(intent);
-
             //Aplica un efecto de desvanecimiento entre actividades y se cierra
             overridePendingTransition(androidx.navigation.ui.R.anim.nav_default_enter_anim, androidx.navigation.ui.R.anim.nav_default_exit_anim);
             finish();
         });
 
+        //Botón que accede al apartado APIs
         btnApIndex2.setOnClickListener(view -> {
             Intent intent = new Intent(this, API.class);
             startActivity(intent);
         });
+
         //Botones para el popup de confirmación
         //Confirmar cierra la APP
         btnConfirmarIndex.setOnClickListener(view -> {
@@ -118,7 +122,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
             authIntent = new Intent(this, login.AuthActivity.class);
             rLauncherLogin.launch(authIntent);
         });
-
 
     }
 

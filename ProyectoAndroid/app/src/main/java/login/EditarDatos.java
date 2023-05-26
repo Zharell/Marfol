@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
+import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -39,7 +41,6 @@ public class EditarDatos extends AppCompatActivity {
     private Button btnGuardarBD;
     private ImageView ivPlatoAnadirP;
     private Dialog puElegirAccion;
-    private ActivityResultLauncher<Intent> galeriaLauncher;
     private Button btnUpCamara, btnUpGaleria;
     private static final int GALLERY_PERMISSION_CODE = 1001;
     private ActivityResultLauncher<Intent> camaraLauncher;
@@ -47,9 +48,6 @@ public class EditarDatos extends AppCompatActivity {
     private FirebaseFirestore db;
     private static final int CAMERA_PERMISSION_CODE = 100;
     private StorageReference storageReference;
-    private Uri uri;
-    private ContentValues values;
-    private OutputStream outputStream;
     private String imagen,rute_storage_photo,userNombre,userTelefono,email,uriCapturada = "", storage_path = "users/*", photo = "photo", download_uri;
     private StorageReference reference;
     private DocumentSnapshot document;
@@ -64,23 +62,7 @@ public class EditarDatos extends AppCompatActivity {
             //este metodo va a firebase y carga los datos del usuario en esta clase
             cargarDatosDesdeBD(etNombreUsuario, etTelefonoUsuario);
             // Configuramos el botón de guardar
-            btnGuardarBD.setOnClickListener(v -> actualizarDatos());
-
-            // Registrar el launcher para la galería
-            galeriaLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK) {
-                    Intent data = result.getData();
-                    if (data != null) {
-                        Uri selectedImageUri = data.getData();
-                        uriCapturada = selectedImageUri.toString();
-
-                        //Cargar imagen seleccionada
-                        ivPlatoAnadirP.setBackground(null);
-                        Glide.with(EditarDatos.this).load(uriCapturada).circleCrop().into(ivPlatoAnadirP);
-                    }
-                    puElegirAccion.dismiss();
-                }
-            });
+            btnGuardarBD.setOnClickListener(v -> actualizarDatos() );
 
             // Registrar el launcher para la cámara
             camaraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -217,8 +199,29 @@ public class EditarDatos extends AppCompatActivity {
 
     // Método para abrir la galería
     private void abrirGaleria() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        galeriaLauncher.launch(intent);
+        //Librería que accede a la galería del dispositivo (OBLIGATORIO USAR LIBRERÍAS MIUI BLOQUEA LO DEMÁS)
+        ImagePicker.with(this)
+                .galleryOnly()
+                .start();
+    }
+
+    //Método que accede a la galería sin que los permisos restrictivos MIUI afecten
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            // La Uri de la imagen no será nula para RESULT_OK
+            Uri uri = data.getData();
+            if (uri != null) {
+                Uri selectedImageUri = data.getData();
+                uriCapturada = selectedImageUri.toString();
+
+                //Cargar imagen seleccionada
+                ivPlatoAnadirP.setBackground(null);
+                Glide.with(this).load(selectedImageUri).circleCrop().into(ivPlatoAnadirP);
+            }
+            puElegirAccion.dismiss();
+        }
     }
 
     // Método para abrir la cámara
