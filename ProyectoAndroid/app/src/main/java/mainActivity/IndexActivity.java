@@ -21,8 +21,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,9 +29,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.tfg.marfol.R;
-
 import java.util.ArrayList;
-
 import adapters.RestaurantesAdapter;
 import entities.Restaurantes;
 import mainActivity.API.API;
@@ -57,7 +53,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     private TextView menuItemAboutUs;
     private TextView menuItemContactUs;
     private TextView menuItemPreferencias;
-    private TextView menuItemHome;
     private TextView tvLogoutIndex;
     private TextView tvEditarDatosIndex;
     private TextView tvOcultar1, tvOcultar2;
@@ -201,7 +196,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
     public void showPopupMenu(View view) {
         View popupView = getLayoutInflater().inflate(R.layout.popup_menu, null);
-        menuItemHome = popupView.findViewById(R.id.menu_item1);
         menuItemPreferencias = popupView.findViewById(R.id.menu_item2);
         menuItemAboutUs = popupView.findViewById(R.id.menu_item3);
         menuItemContactUs = popupView.findViewById(R.id.menu_item4);
@@ -237,18 +231,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
         float[] positions = {0f, 0.2f};
 
-        LinearGradient gradient = new LinearGradient(
-                0, 0, 0, menuItemHome.getPaint().getTextSize(),
-                colors,
-                positions,
-                Shader.TileMode.REPEAT
-        );
-
-        menuItemHome.getPaint().setShader(gradient);
-        menuItemPreferencias.getPaint().setShader(gradient);
-        menuItemAboutUs.getPaint().setShader(gradient);
-        menuItemContactUs.getPaint().setShader(gradient);
-
         menuItemAboutUs.setOnClickListener(v -> {
             // Acción al hacer clic en "AboutUs"
             intent = new Intent(IndexActivity.this, AboutUs.class);
@@ -263,11 +245,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
             intent = new Intent(IndexActivity.this, ContactUs.class);
             startActivity(intent);
 
-            // Cerrar el menú emergente
-            popupWindow.dismiss();
-        });
-
-        menuItemHome.setOnClickListener(v -> {
             // Cerrar el menú emergente
             popupWindow.dismiss();
         });

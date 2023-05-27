@@ -5,87 +5,92 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_style">
-    <ImageView
-        android:id="@+id/ivMenuAnadirPlato"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
-        android:src="@android:drawable/ic_menu_sort_by_size"
-        android:onClick="showPopupMenu"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02" />
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="159dp"
-        android:layout_height="143dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/logo_marfol" />
 
     <EditText
         android:id="@+id/etName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.311" />
+        android:layout_width="300dp"
 
-    <EditText
-        android:id="@+id/etEmail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Email"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        android:layout_height="30dp"
+        android:layout_marginTop="15dp"
+        android:paddingStart="10dp"
+        android:background="@drawable/row_platos_bd"
+        android:hint="Name"
+        android:textColor="@color/purplePlatos"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.406" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
     <EditText
         android:id="@+id/etSubject"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:paddingStart="10dp"
+        app:layout_constraintHorizontal_bias="0.5"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/row_platos_bd"
         android:hint="Subject"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="@color/purplePlatos"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/etEmail" />
 
     <EditText
         android:id="@+id/etMessage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        app:layout_constraintHorizontal_bias="0.5"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/row_platos_bd"
         android:hint="Message"
         android:inputType="textMultiLine"
         android:minLines="5"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="top|left"
+        android:paddingStart="10dp"
+        android:paddingTop="5dp"
+        android:textColor="@color/purplePlatos"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.689" />
+        app:layout_constraintTop_toBottomOf="@+id/etSubject" />
+
+    <EditText
+        android:id="@+id/etEmail"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:paddingStart="10dp"
+        app:layout_constraintHorizontal_bias="0.5"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/row_platos_bd"
+        android:hint="Email"
+        android:textColor="@color/purplePlatos"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etName" />
 
     <Button
         android:id="@+id/btnSend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/row_platos_bd"
         android:text="Send"
+        android:textColor="@color/purplePlatos"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toStartOf="@+id/imageView2"
+        app:layout_constraintTop_toBottomOf="@+id/etMessage"
+        app:layout_constraintVertical_bias="0.154" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="159dp"
+        android:layout_height="143dp"
+        android:layout_marginTop="44dp"
+        android:textColor="@color/purplePlatos"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.828"
-        tools:layout_editor_absoluteX="161dp" />
+        app:srcCompat="@drawable/logo_marfol" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

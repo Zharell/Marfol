@@ -7,34 +7,37 @@
     android:background="@drawable/background_style"
     tools:context="login.AuthActivity">
 
+
     <EditText
         android:id="@+id/etContrasenaOlvidadaRecover"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="264dp"
         android:layout_marginEnd="20dp"
+        android:paddingLeft="5dp"
         android:hint="@string/contraseñaOlvidada"
         android:textColor="@color/black"
+        android:background="@drawable/row_platos_bd"
         android:textColorHint="#474646"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.478" />
-
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnEnviarRecover"
         android:layout_width="120dp"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:text="@string/enviar"
+        android:textColor="@color/blueRestaurantes"
+        android:background="@drawable/row_gpt_restaurantes"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.588" />
+        app:layout_constraintTop_toBottomOf="@+id/etContrasenaOlvidadaRecover"
+        app:layout_constraintVertical_bias="0.22" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -65,7 +65,6 @@ public class ContactUs extends AppCompatActivity {
     }
     public void showPopupMenu(View view) {
         View popupView = getLayoutInflater().inflate(R.layout.popup_menu, null);
-        menuItemHome = popupView.findViewById(R.id.menu_item1);
         menuItemPreferencias = popupView.findViewById(R.id.menu_item2);
         menuItemAboutUs = popupView.findViewById(R.id.menu_item3);
         menuItemContactUs = popupView.findViewById(R.id.menu_item4);

@@ -58,12 +58,6 @@ public class HomeActivity extends AppCompatActivity {
             finish();
         });
     }
-    /**
-     * Carga los datos del usuario logueado en la interfaz de HomeActivity.
-     * @param email TextView para mostrar el correo electrónico del usuario.
-     * @param nombre TextView para mostrar el nombre del usuario.
-     * @param telefono TextView para mostrar el número de teléfono del usuario.
-     */
     private void cargarDatosEnHomeSiLogueado(TextView email, TextView nombre, TextView telefono) {
         if (mAuth.getCurrentUser() != null) {
             // Obtener el usuario actualmente logueado
