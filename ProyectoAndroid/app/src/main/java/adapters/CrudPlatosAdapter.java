@@ -33,7 +33,7 @@ public class CrudPlatosAdapter extends RecyclerView.Adapter<CrudPlatosAdapter.Cr
         if(resultsPlato.get(position).getUrlImage()!=null) {
             Glide.with(holder.itemView)
                     .load(Uri.parse(resultsPlato.get(position).getUrlImage()))
-                    .transform(new RoundedCorners(100)) // Especifica el radio de redondeo en píxeles
+                    .circleCrop() // Especifica el radio de redondeo en píxeles
                     .into(holder.ivPlatoRow);
             if(!resultsPlato.get(position).getUrlImage().equalsIgnoreCase("")){
                 holder.ivPlatoRow.setBackground(null);

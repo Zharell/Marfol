@@ -9,115 +9,118 @@
 
     <EditText
         android:id="@+id/etEmailLogin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:background="@drawable/row_platos_bd"
+        android:padding="5dp"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:hint="@string/prompt_email"
         android:textColor="@color/black"
         android:textColorHint="#474646"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.455" />
+        app:layout_constraintTop_toBottomOf="@+id/imagenLogoAuth" />
 
     <EditText
         android:id="@+id/etPasswordLogin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:background="@drawable/row_platos_bd"
+        android:padding="5dp"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:hint="@string/prompt_password"
         android:inputType="textPassword"
         android:textColor="@color/black"
         android:textColorHint="#474646"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.552" />
+        app:layout_constraintTop_toBottomOf="@+id/etEmailLogin" />
 
     <ImageView
         android:id="@+id/imagenLogoAuth"
-        android:layout_width="280dp"
+        android:layout_width="250dp"
         android:layout_height="250dp"
+        android:layout_marginTop="15dp"
         android:background="@drawable/logo_marfol"
-        android:textAlignment="center"
-        android:textColor="@color/redBorder"
-        android:textSize="55sp"
-        android:textStyle="bold|italic"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.062" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnRegistrarseLogin"
         android:layout_width="120dp"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginEnd="20dp"
+        android:textSize="15dp"
         android:text="@string/registrarse"
+        android:textColor="@color/blueRestaurantes"
+        android:background="@drawable/row_gpt_restaurantes"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.807"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.732" />
-
-    <ImageButton
-        android:id="@+id/btnGoogleLogin"
-        android:layout_width="74dp"
-        android:layout_height="70dp"
-        android:background="@drawable/google_icon"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.953" />
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintVertical_bias="0.25" />
 
     <Button
         android:id="@+id/btnEntrarLogin"
         android:layout_width="120dp"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginStart="20dp"
         android:text="@string/entrar"
+        android:textSize="15dp"
+        android:textColor="@color/blueRestaurantes"
+        android:background="@drawable/row_gpt_restaurantes"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.171"
+        app:layout_constraintEnd_toStartOf="@+id/textView"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.732" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintVertical_bias="0.25" />
+
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="4px"
+        android:layout_width="300dp"
+        android:layout_height="7px"
+        android:gravity="center"
         android:layout_marginStart="25dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="25dp"
         android:background="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.82" />
+        app:layout_constraintTop_toBottomOf="@+id/tvContrasenaOlvidada" />
 
     <TextView
         android:id="@+id/tvContrasenaOlvidada"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
         android:clickable="true"
         android:text="@string/olvidada"
-        android:textColor="@color/teal_200"
+        android:textColor="@color/blueRestaurantes"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.481"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.633" />
+        app:layout_constraintTop_toBottomOf="@+id/etPasswordLogin" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        app:flow_horizontalBias="0.5"
+        app:layout_constraintEnd_toEndOf="@+id/textView2"
+        app:layout_constraintStart_toStartOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/tvContrasenaOlvidada" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
