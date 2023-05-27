@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -113,6 +114,7 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                 //Método cancelar para no guardar en la bd
                 btnNoGuardarDesglose.setOnClickListener(v1 -> {
                     Toast.makeText(this, "Gracias por utilizar marfol", Toast.LENGTH_SHORT).show();
+                    puGuardarDesglose.dismiss();
                     finish();
                 });
                 //Guarda el restaurante en la BD :)
@@ -124,6 +126,7 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                         copiarPlatosEnNuevoArray();
                         guardarRestaurante(nombreRestaurante, email);
                         Toast.makeText(this, "Se han guardado los platos", Toast.LENGTH_SHORT).show();
+                        puGuardarDesglose.dismiss();
                         finish();
                     } else {
                         //si el nombre está vacío no va a dejar hacer nada
@@ -164,17 +167,21 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                     restauranteRef.set(restauranteData).addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Restaurante guardado correctamente", Toast.LENGTH_SHORT).show();
                         guardarPlatos(nombreRestaurante); // Llamar al método para guardar los platos
+                        puGuardarDesglose.dismiss();
                         finish();
                     }).addOnFailureListener(e -> {
+                        puGuardarDesglose.dismiss();
                         finish();
                     });
                 } else {
                     guardarPlatos(nombreRestaurante); // Llamar al método para guardar los platos
+                    puGuardarDesglose.dismiss();
                     finish();
                 }
             } else {
                 // Error al realizar la consulta
                 Toast.makeText(this, "Error al consultar el restaurante existente", Toast.LENGTH_SHORT).show();
+                puGuardarDesglose.dismiss();
                 finish();
             }
         });
@@ -277,7 +284,10 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
             currentUser = mAuth.getCurrentUser();
             botonImagenLogueado();
         } else {
-            Glide.with(this).load(R.drawable.nologinimg).into(ivDesgloseImagen);
+            Glide.with(this)
+                    .load(R.drawable.nologinimg)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(ivDesgloseImagen);
             botonImagenNoLogueado();
         }
     }

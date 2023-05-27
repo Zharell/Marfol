@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -27,6 +28,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -58,6 +61,9 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
     private ArrayList<Persona> comensalesTotales;
     private ImageView ivDetalleFotoEditarPersona;
     private EditText etDetalleNombreEditarPersona, etDetalleDescripcionEditarPersona;
+    private Dialog puElegirAccion;
+    private Button btnUpCamara, btnUpGaleria;
+    private static final int GALLERY_PERMISSION_CODE = 1001;
     private static final int CAMERA_PERMISSION_CODE = 100;
     private ActivityResultLauncher<Intent> camaraLauncher;
     private Button btnBorrarDetalleEditarPersona, btnEditarDetalleEditarPersona;
@@ -83,6 +89,7 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
         comensalBd = (Persona) intent.getSerializableExtra("comensalDetalle");
         comensalesTotales = (ArrayList<Persona>) intent.getSerializableExtra("comensalesTotales");
         mostrarDatos();
+
         //Añadimos onClick en el ImageView para activar la imagen
         ivDetalleFotoEditarPersona.setOnClickListener(view -> {
             // Solicitar permiso para acceder a la cámara
@@ -106,6 +113,33 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
             finish();
         });
 
+        //Convocamos el PopUp para mostrar las acciones ( Galería, Cámara )
+        ivDetalleFotoEditarPersona.setOnClickListener(view -> { puElegirAccion.show(); });
+
+        //Añadimos onClick en el ImageView para activar la imagen
+        btnUpCamara.setOnClickListener(view -> {
+            // Solicitar permiso para acceder a la cámara
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+                //Si no tenemos los permisos los obtenemos
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+            } else {
+                // Si ya se tienen los permisos, abrir la cámara
+                abrirCamara();
+            }
+        });
+
+        //Añadimos onClick en el ImageView para activar la imagen
+        btnUpGaleria.setOnClickListener(view -> {
+            // Solicitar permiso para acceder a la galería
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                // Si no tenemos los permisos, los solicitamos
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY_PERMISSION_CODE);
+            } else {
+                // Si ya se tienen los permisos, abrir la galería
+                abrirGaleria();
+            }
+        });
+
         // Registrar el launcher para la cámara
         camaraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK) {
@@ -126,48 +160,25 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
                     ivDetalleFotoEditarPersona.setBackground(null);
-                    Glide.with(this).load(uriCapturada).circleCrop().into(ivDetalleFotoEditarPersona);
+                    Glide.with(this)
+                            .load(uriCapturada)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .circleCrop()
+                            .into(ivDetalleFotoEditarPersona);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         });
 
-
     }
 
-
-    public void asignarId() {
-        auth = FirebaseAuth.getInstance();
-        currentUser = auth.getCurrentUser();
-        db = FirebaseFirestore.getInstance();
-        email = currentUser.getEmail();
-        etDetalleNombreEditarPersona = findViewById(R.id.etDetalleNombreEditarPersona);
-        etDetalleDescripcionEditarPersona = findViewById(R.id.etDetalleDescripcionEditarPersona);
-        btnBorrarDetalleEditarPersona = findViewById(R.id.btnBorrarDetalleEditarPersona);
-        btnEditarDetalleEditarPersona = findViewById(R.id.btnEditarDetalleEditarPersona);
-        ivDetalleFotoEditarPersona = findViewById(R.id.ivDetalleFotoEditarPersona);
-
-    }
-
-    private void mostrarDatos() {
-        etDetalleNombreEditarPersona.setText(comensalBd.getNombre());
-        etDetalleDescripcionEditarPersona.setText(comensalBd.getDescripcion());
-        imagen = comensalBd.getUrlImage();
-        if (imagen != null && !imagen.equalsIgnoreCase("")) {
-            ivDetalleFotoEditarPersona.setBackground(null);
-            Glide.with(DetalleEditarPersonaBd.this).load(imagen).circleCrop().into(ivDetalleFotoEditarPersona);
-
-        } else {
-            Glide.with(DetalleEditarPersonaBd.this).load(R.drawable.camera).circleCrop().into(ivDetalleFotoEditarPersona);
-        }
-
-    }
-
-    // Método para abrir la cámara
-    private void abrirCamara() {
-        cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        camaraLauncher.launch(cameraIntent);
+    // Método para abrir la galería
+    private void abrirGaleria() {
+        //Librería que accede a la galería del dispositivo (OBLIGATORIO USAR LIBRERÍAS MIUI BLOQUEA LO DEMÁS)
+        ImagePicker.with(this)
+                .galleryOnly()
+                .start();
     }
 
     // Método para manejar la respuesta de la solicitud de permisos
@@ -183,6 +194,85 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
                 Toast.makeText(this, "Para almacenar la imagen debe otorgar los permisos", Toast.LENGTH_SHORT).show();
             }
         }
+        if (requestCode == GALLERY_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Si se conceden los permisos, abrir la galería
+                abrirGaleria();
+            } else {
+                // Si se deniegan los permisos, mostrar un mensaje al usuario
+                Toast.makeText(this, "Para acceder a la galería debe otorgar los permisos", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    //Método que accede a la galería sin que los permisos restrictivos MIUI afecten
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            // La Uri de la imagen no será nula para RESULT_OK
+            Uri uri = data.getData();
+            if (uri != null) {
+                Uri selectedImageUri = data.getData();
+                uriCapturada = selectedImageUri.toString();
+
+                //Cargar imagen seleccionada
+                ivDetalleFotoEditarPersona.setBackground(null);
+                Glide.with(this)
+                        .load(selectedImageUri)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .circleCrop()
+                        .into(ivDetalleFotoEditarPersona);
+            }
+            puElegirAccion.dismiss();
+        }
+    }
+
+    public void asignarId() {
+        auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+        email = currentUser.getEmail();
+        etDetalleNombreEditarPersona = findViewById(R.id.etDetalleNombreEditarPersona);
+        etDetalleDescripcionEditarPersona = findViewById(R.id.etDetalleDescripcionEditarPersona);
+        btnBorrarDetalleEditarPersona = findViewById(R.id.btnBorrarDetalleEditarPersona);
+        btnEditarDetalleEditarPersona = findViewById(R.id.btnEditarDetalleEditarPersona);
+        ivDetalleFotoEditarPersona = findViewById(R.id.ivDetalleFotoEditarPersona);
+
+        //Asigna IDs de los elementos del popup
+        puElegirAccion = new Dialog(this);
+        puElegirAccion.setContentView(R.layout.popup_accion);
+        btnUpCamara = puElegirAccion.findViewById(R.id.btnCancelarPopup);
+        btnUpGaleria = puElegirAccion.findViewById(R.id.btnConfirmarPopup);
+
+    }
+
+    private void mostrarDatos() {
+        etDetalleNombreEditarPersona.setText(comensalBd.getNombre());
+        etDetalleDescripcionEditarPersona.setText(comensalBd.getDescripcion());
+        imagen = comensalBd.getUrlImage();
+        if (imagen != null && !imagen.equalsIgnoreCase("")) {
+            ivDetalleFotoEditarPersona.setBackground(null);
+            Glide.with(DetalleEditarPersonaBd.this)
+                    .load(imagen)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
+                    .into(ivDetalleFotoEditarPersona);
+
+        } else {
+            Glide.with(DetalleEditarPersonaBd.this)
+                    .load(R.drawable.camera)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
+                    .into(ivDetalleFotoEditarPersona);
+        }
+
+    }
+
+    // Método para abrir la cámara
+    private void abrirCamara() {
+        cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        camaraLauncher.launch(cameraIntent);
     }
 
     private void editarComensal() {

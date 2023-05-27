@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -64,11 +65,10 @@ import mainActivity.crud.RecordarPlatoActivity;
 public class DetallePersonaActivity extends AppCompatActivity implements PersonaDetalleAdapter.onItemClickListener {
 
     private Persona comensal, comensalBd;
-    private ImageView ivLoginDetalle, ivMenuDetalle, ivFotoDetalle;
+    private ImageView ivLoginDetalle, ivFotoDetalle;
     private EditText etTitleDetalle, etDescripcionDetalle;
     private RecyclerView rvAnadirPlatoDetalle;
     private Dialog puElegirAccion;
-    private ActivityResultLauncher<Intent> galeriaLauncher;
     private Button btnUpCamara, btnUpGaleria;
     private static final int GALLERY_PERMISSION_CODE = 1001;
     private PersonaDetalleAdapter adapterDetalle;
@@ -83,7 +83,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
     private ActivityResultLauncher rLauncherDetallePlato;
     private ActivityResultLauncher rLauncherRecordarPlato;
     private Button btnContinuarDetalle, btnBorrarDetalle;
-    private String uriCapturada = "";
+    private String uriCapturada = "android.resource://com.tfg.marfol/"+R.drawable.logo_marfol;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
@@ -166,7 +166,11 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
                     ivFotoDetalle.setBackground(null);
-                    Glide.with(this).load(uriCapturada).circleCrop().into(ivFotoDetalle);
+                    Glide.with(this)
+                            .load(uriCapturada)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .circleCrop()
+                            .into(ivFotoDetalle);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -252,7 +256,11 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
 
                 //Cargar imagen seleccionada
                 ivFotoDetalle.setBackground(null);
-                Glide.with(this).load(selectedImageUri).circleCrop().into(ivFotoDetalle);
+                Glide.with(this)
+                        .load(selectedImageUri)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .circleCrop()
+                        .into(ivFotoDetalle);
             }
             puElegirAccion.dismiss();
         }
@@ -457,7 +465,10 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         etDescripcionDetalle.setText(comensal.getDescripcion());
         uriCapturada = comensal.getUrlImage();
         if (comensal.getUrlImage() != null) {
-            Glide.with(this).load(comensal.getUrlImage()).circleCrop().into(ivFotoDetalle);
+            Glide.with(this)
+                    .load(comensal.getUrlImage()).circleCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(ivFotoDetalle);
         } else {
             //Inserta Imagen photo
             ivFotoDetalle.setImageURI(Uri.parse("android.resource://com.tfg.marfol/" + R.drawable.camera));
@@ -474,7 +485,6 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         }
         btnBorrarDetalle = findViewById(R.id.btnBorrarDetalle);
         ivLoginDetalle = findViewById(R.id.ivLoginDetallePersona);
-        ivMenuDetalle = findViewById(R.id.ivMenuDetallePersona);
         ivFotoDetalle = findViewById(R.id.ivFotoPersonaDetalle);
         etTitleDetalle = findViewById(R.id.etTitleDetallePersona);
         etDescripcionDetalle = findViewById(R.id.etDescripcionDetallePersona);

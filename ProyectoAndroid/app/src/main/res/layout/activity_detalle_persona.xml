@@ -15,49 +15,32 @@ tools:context="mainActivity.detalle.DetallePersonaActivity">
         android:id="@+id/etTitleDetallePersona"
         android:layout_width="wrap_content"
         android:layout_height="55dp"
+        android:layout_marginTop="15dp"
         android:fontFamily="serif"
         android:gravity="center"
         android:textColor="@color/redBorder"
         android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02"
 
-        />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Login App -->
 
     <ImageView
-    android:id="@+id/ivMenuDetallePersona"
-    android:layout_width="60dp"
-    android:layout_height="40dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.04"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.02"
-    android:src="@android:drawable/ic_menu_sort_by_size"
+        android:id="@+id/ivLoginDetallePersona"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="110dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/login_style"
+        android:scaleType="fitCenter"
+        android:src="@drawable/nologinimg"
 
-    />
-
-<!-- Login App -->
-<ImageView
-    android:id="@+id/ivLoginDetallePersona"
-    android:layout_width="50dp"
-    android:layout_height="50dp"
-    android:background="@drawable/login_style"
-    android:src="@drawable/nologinimg"
-    android:scaleType="fitCenter"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.96"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.02"
-
-    />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/etTitleDetallePersona"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/etDescripcionDetallePersona"
@@ -108,12 +91,12 @@ tools:context="mainActivity.detalle.DetallePersonaActivity">
         android:id="@+id/btnEditarDetalle"
         android:layout_width="150dp"
         android:layout_height="55dp"
-        android:layout_marginTop="15dp"
-        android:background="@drawable/button_index"
+        android:background="@drawable/platorow_styledes"
         android:text="@string/btneditar_detalle"
         android:textColor="@color/redTitle"
         android:textSize="22dp"
 
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
@@ -123,12 +106,12 @@ tools:context="mainActivity.detalle.DetallePersonaActivity">
         android:id="@+id/btnBorrarDetalle"
         android:layout_width="150dp"
         android:layout_height="55dp"
-        android:layout_marginTop="15dp"
         android:background="@drawable/button_borrar"
         android:text="@string/btnborrar_detalle"
         android:textColor="@color/yellowMargin"
         android:textSize="22dp"
 
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.875"
         app:layout_constraintStart_toStartOf="parent"

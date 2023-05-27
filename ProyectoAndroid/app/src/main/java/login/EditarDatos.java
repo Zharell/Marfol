@@ -59,8 +59,10 @@ public class EditarDatos extends AppCompatActivity {
         setContentView(R.layout.activity_editar_datos);
         asignarId();
         if (MetodosGlobales.comprobarLogueado(EditarDatos.this, ivPlatoAnadirP)) {
+
             //este metodo va a firebase y carga los datos del usuario en esta clase
             cargarDatosDesdeBD(etNombreUsuario, etTelefonoUsuario);
+
             // Configuramos el botón de guardar
             btnGuardarBD.setOnClickListener(v -> actualizarDatos() );
 
@@ -285,11 +287,11 @@ public class EditarDatos extends AppCompatActivity {
                             telefono.setText(userTelefono);
                         }
                         // Si la imagen existe, mostrarla en el ImageView
-                        if (imagen != null) {
+                        if (imagen != null && !imagen.equalsIgnoreCase("")) {
                             Glide.with(EditarDatos.this).load(imagen).circleCrop().into(ivPlatoAnadirP);
                         } else {
                             // Manejar el caso en el que no haya imagen
-                            Glide.with(EditarDatos.this).load(R.drawable.camera).circleCrop().into(ivPlatoAnadirP);
+                            ivPlatoAnadirP.setImageURI(Uri.parse("android.resource://com.tfg.marfol/"+R.drawable.camera));
                         }
                     }
                 } else {

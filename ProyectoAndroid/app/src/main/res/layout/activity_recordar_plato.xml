@@ -8,34 +8,32 @@ android:background="@drawable/background_style"
 tools:context="mainActivity.crud.RecordarPlatoActivity">
 
 <!-- Title Actividad -->
-<TextView
-    android:id="@+id/tvTitleRecordar"
-    android:layout_width="wrap_content"
-    android:layout_height="40dp"
-    android:fontFamily="serif"
-    android:gravity="center"
-    android:text="@string/recordar_plato"
-    android:textColor="@color/redBorder"
-    android:textSize="30sp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.5"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.02"
+    <TextView
+        android:id="@+id/tvTitleRecordar"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="serif"
+        android:gravity="center"
+        android:text="@string/recordar_plato"
+        android:textColor="@color/redBorder"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
 
-    />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 
     <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/rvPlatoRecordar"
     android:layout_width="350dp"
-    android:layout_height="420dp"
+    android:layout_height="480dp"
 
     android:layout_marginTop="20dp"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.508"
+    app:layout_constraintHorizontal_bias="0.5"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/tvTitleRecordar" />
 
@@ -47,7 +45,8 @@ tools:context="mainActivity.crud.RecordarPlatoActivity">
         android:text="@string/tv_recordar_pla"
         android:textColor="@color/blueGpt"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.525"
+        app:layout_constraintHorizontal_bias="0.5
+"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rvPlatoRecordar" />
 
@@ -55,9 +54,11 @@ tools:context="mainActivity.crud.RecordarPlatoActivity">
         android:id="@+id/rvPlatoRecordarBd"
         android:layout_width="275dp"
         android:layout_height="100dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvAnteriormenteRecordar" />
+        app:layout_constraintTop_toBottomOf="@+id/tvAnteriormenteRecordar"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

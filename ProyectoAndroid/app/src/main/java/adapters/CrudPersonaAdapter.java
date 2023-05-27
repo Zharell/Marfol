@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.tfg.marfol.R;
 
@@ -44,6 +45,7 @@ public class CrudPersonaAdapter extends RecyclerView.Adapter<CrudPersonaAdapter.
         if(resultsCrudPersona.get(position).getUrlImage()!=null) {
             Glide.with(holder.itemView)
                     .load(Uri.parse(resultsCrudPersona.get(position).getUrlImage()))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .circleCrop() // Especifica el radio de redondeo en píxeles
                     .into(holder.ivPersonaRow);
             if(!resultsCrudPersona.get(position).getUrlImage().equalsIgnoreCase("")){

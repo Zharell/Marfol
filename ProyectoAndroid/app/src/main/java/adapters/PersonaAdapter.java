@@ -6,12 +6,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.tfg.marfol.R;
+
 import java.util.ArrayList;
+
 import entities.Persona;
 
 public class PersonaAdapter extends RecyclerView.Adapter<PersonaAdapter.PersonaAdapterResultHolder> {
@@ -20,7 +25,7 @@ public class PersonaAdapter extends RecyclerView.Adapter<PersonaAdapter.PersonaA
 
     //añadirPersona siempre se añade en la posición 0 ya que su función es redirigir a otra actividad distinta
     //Tiene la ruta URI de su imagen por defecto
-    private Persona anadirPersona = new Persona(0, "Añadir Persona", "", "android.resource://com.tfg.marfol/"+R.drawable.add_icon , new ArrayList<>(),0);
+    private Persona anadirPersona = new Persona(0, "Añadir Persona", "", "android.resource://com.tfg.marfol/" + R.drawable.add_icon, new ArrayList<>(), 0);
     private onItemClickListener mListener;
 
     @NonNull
@@ -40,7 +45,11 @@ public class PersonaAdapter extends RecyclerView.Adapter<PersonaAdapter.PersonaA
 
         //Insertamos para cada persona en el Recycler su imagen
         if (resultsPersona.get(position).getUrlImage() != null && !resultsPersona.get(position).getUrlImage().equalsIgnoreCase("")) {
-            Glide.with(holder.itemView).load(resultsPersona.get(position).getUrlImage()).into(holder.ivPersonaRow);
+            Glide.with(holder.itemView)
+                    .load(resultsPersona.get(position).getUrlImage())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
+                    .into(holder.ivPersonaRow);
         }
 
         //Método onclick
@@ -63,7 +72,7 @@ public class PersonaAdapter extends RecyclerView.Adapter<PersonaAdapter.PersonaA
     public void setResultsPersona(ArrayList<Persona> resultsPersona) {
 
         //Comprueba si está vacío para añadir el primer elemento ( Añadir Persona ) si no, no hace nada
-        if (resultsPersona.size()==0) {
+        if (resultsPersona.size() == 0) {
             resultsPersona.add(0, anadirPersona);
         }
 
@@ -91,7 +100,7 @@ public class PersonaAdapter extends RecyclerView.Adapter<PersonaAdapter.PersonaA
 
     }
 
-    public interface onItemClickListener{
+    public interface onItemClickListener {
         void onItemClick(int position);
     }
 

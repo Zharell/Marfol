@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.tfg.marfol.R;
 
 import java.util.ArrayList;
@@ -40,7 +41,10 @@ public class ListaCompartirAdapter extends RecyclerView.Adapter<ListaCompartirAd
 
         //Insertamos para cada persona en el Recycler su imagen
         if (resultsListCompartir.get(position).getUrlImage() != null && !resultsListCompartir.get(position).getUrlImage().equalsIgnoreCase("")) {
-            Glide.with(holder.itemView).load(resultsListCompartir.get(position).getUrlImage()).into(holder.ivPersonaRow);
+            Glide.with(holder.itemView)
+                    .load(resultsListCompartir.get(position).getUrlImage())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.ivPersonaRow);
         }
 
         //Método onclick

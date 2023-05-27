@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.tfg.marfol.R;
 
@@ -66,7 +67,7 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
     private PersonaCompartirAdapter anadirPAdapter;
     private boolean esCompartido;
     private Button btnEditarDetalle, btnBorrarDetalle;
-    private String uriCapturada = "";
+    private String uriCapturada  ="android.resource://com.tfg.marfol/"+R.drawable.logo_marfol_azul;
     private Plato plato;
     private Intent intent;
     private String nombre,descripcion;
@@ -154,7 +155,10 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
                     ivFotoDetalle.setBackground(null);
-                    Glide.with(this).load(uriCapturada).into(ivFotoDetalle);
+                    Glide.with(this)
+                            .load(uriCapturada)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(ivFotoDetalle);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -254,8 +258,14 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
         etDescripcionDetalle.setText(plato.getDescripcion());
         etPrecioDetalle.setText(String.valueOf(plato.getPrecio()));
         uriCapturada = plato.getUrlImage();
-        if (!plato.getUrlImage().equalsIgnoreCase("")) {
-            ivFotoDetalle.setImageURI(Uri.parse(plato.getUrlImage()));
+
+        //Comprobamos que el plato no es nulo
+        if (plato.getUrlImage() != null && !plato.getUrlImage().equalsIgnoreCase("")) {
+            Glide.with(this)
+                    .load(Uri.parse(plato.getUrlImage()))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
+                    .into(ivFotoDetalle);
         } else {
             //Inserta Imagen photo
             ivFotoDetalle.setImageURI(Uri.parse("android.resource://com.tfg.marfol/" + R.drawable.camera));
@@ -356,7 +366,11 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
 
                 //Cargar imagen seleccionada
                 ivFotoDetalle.setBackground(null);
-                Glide.with(this).load(selectedImageUri).circleCrop().into(ivFotoDetalle);
+                Glide.with(this)
+                        .load(selectedImageUri)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .circleCrop()
+                        .into(ivFotoDetalle);
             }
             puElegirAccion.dismiss();
         }

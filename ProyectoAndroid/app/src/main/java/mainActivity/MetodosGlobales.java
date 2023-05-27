@@ -3,6 +3,7 @@ import android.content.Context;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -28,6 +29,7 @@ public class MetodosGlobales {
                             try {
                                 Glide.with(context)
                                         .load(imagen)
+                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                                         .circleCrop() // Aplica el formato redondeado
                                         .into(iVimagen);
                             } catch (IllegalArgumentException e) {
@@ -36,6 +38,7 @@ public class MetodosGlobales {
                             try {
                                 Glide.with(context)
                                         .load(R.drawable.camera)
+                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                                         .circleCrop() // Aplica el formato redondeado
                                         .into(iVimagen);
                             } catch (IllegalArgumentException e) {
@@ -43,7 +46,10 @@ public class MetodosGlobales {
                         }
                     } else {
                         try {
-                            Glide.with(context).load(R.drawable.camera).into(iVimagen);
+                            Glide.with(context)
+                                    .load(R.drawable.camera)
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                    .into(iVimagen);
                         } catch (IllegalArgumentException e) {
                         }
                     }
@@ -54,7 +60,10 @@ public class MetodosGlobales {
             return true;
         } else {
             Toast.makeText(context, "No estás logueado", Toast.LENGTH_SHORT).show();
-            Glide.with(context).load(R.drawable.camera).into(iVimagen);
+            Glide.with(context)
+                    .load(R.drawable.camera)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(iVimagen);
             return false;
         }
     }

@@ -4,19 +4,15 @@
 
     <!-- Agregar gradiente al borde -->
     <gradient
-        android:startColor="@color/redSLight"
+        android:startColor="#FA2C48"
         android:endColor="@color/redTitle"
-        android:angle="90"
+        android:angle="10"
         android:type="linear" />
 
-    <!-- Definir bordes redondeados -->
     <corners
         android:radius="15dp" />
-
-    <!-- Definir borde -->
     <stroke
-        android:width="10dp"
-        android:color="@android:color/transparent" />
-
+        android:color="#FBDD65"
+        android:width="3dp" />
 
 </shape>

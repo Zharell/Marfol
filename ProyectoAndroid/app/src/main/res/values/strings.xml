@@ -5,7 +5,7 @@
     <string name="menu_contact_us">CONTACTO\n</string>
     <string name="menu_about_us">Sobre Nosotros</string>
     <string name="app_name">Marfol</string>
-    <string name="button_intro">¡ A \nPagar !</string>
+    <string name="button_intro">¡Pagar!</string>
     <string name="nombre">Nombre:</string>
     <string name="telefono">Teléfono:</string>
     <string name="prompt_email">Email *</string>

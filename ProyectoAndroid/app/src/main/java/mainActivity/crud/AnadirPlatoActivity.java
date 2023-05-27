@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.tfg.marfol.R;
 
@@ -62,7 +63,7 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
     private ArrayList <Persona> noRepCompartirList;
     private boolean esCompartido=false;
     private ActivityResultLauncher rLauncherComp;
-    private String uriCapturada="";
+    private String uriCapturada ="android.resource://com.tfg.marfol/"+R.drawable.logo_marfol_azul;
     private int personaCode;
     private ActivityResultLauncher<Intent> camaraLauncher;
     private Intent intent;
@@ -77,9 +78,11 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
         //Recibe la lista de comensales para empezar a añadir
         intent = getIntent();
         platos = (ArrayList<Plato>) intent.getSerializableExtra("arrayListPlatos");
+
         //Recibo desde Editar o Añadir
         nombreCompartir = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComenComp");
         personaCode = intent.getIntExtra("comensalCode",0);
+
         //Método que asigna IDs a los elementos
         asignarId();
 
@@ -282,7 +285,11 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
 
                 //Cargar imagen seleccionada
                 ivPlatoAnadirP.setBackground(null);
-                Glide.with(this).load(selectedImageUri).circleCrop().into(ivPlatoAnadirP);
+                Glide.with(this)
+                        .load(selectedImageUri)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .circleCrop()
+                        .into(ivPlatoAnadirP);
             }
             puElegirAccion.dismiss();
         }

@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -132,7 +133,10 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         btnApIndex = findViewById(R.id.btnApIndex);
         btnApIndex2 = findViewById(R.id.btnAPIndex);
         ivImagenLogin = findViewById(R.id.ivImagenLogin);
-        Glide.with(this).load(R.drawable.nologinimg).into(ivImagenLogin);
+        Glide.with(this)
+                .load(R.drawable.nologinimg)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(ivImagenLogin);
         ivMenuIndex = findViewById(R.id.ivMenuAnadirPlato);
         rvRestaurantesUsuario = findViewById(R.id.rvRestaurantesUsuario);
         tvTitleIndex = findViewById(R.id.tvTitleAnadirPlato);
@@ -287,7 +291,10 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
             botonImagenLogueado();
             mostrarAdapterRestaurantes();
         } else {
-            Glide.with(this).load(R.drawable.nologinimg).into(ivImagenLogin);
+            Glide.with(this)
+                    .load(R.drawable.nologinimg)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(ivImagenLogin);
             botonImagenNoLogueado();
         }
     }

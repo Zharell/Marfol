@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -94,7 +95,10 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         if (MetodosGlobales.comprobarLogueado(this, ivLoginParticipantes)) {
             botonImagenLogueado();
         } else {
-            Glide.with(this).load(R.drawable.nologinimg).into(ivLoginParticipantes);
+            Glide.with(this)
+                    .load(R.drawable.nologinimg)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(ivLoginParticipantes);
             botonImagenNoLogueado();
         }
 
@@ -386,7 +390,10 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
             cargarDatosBd();
             botonImagenLogueado();
         } else {
-            Glide.with(this).load(R.drawable.nologinimg).into(ivLoginParticipantes);
+            Glide.with(this)
+                    .load(R.drawable.nologinimg)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(ivLoginParticipantes);
             botonImagenNoLogueado();
         }
     }

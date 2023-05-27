@@ -68,7 +68,4 @@ dependencies {
     // Librería que permite acceder a la galería
     implementation 'com.github.dhaval2404:imagepicker:2.1'
 
-
-
-
 }
