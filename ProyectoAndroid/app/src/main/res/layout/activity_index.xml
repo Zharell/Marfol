@@ -30,6 +30,7 @@
         app:layout_constraintStart_toEndOf="@+id/ivMenuAnadirPlato"
         app:layout_constraintTop_toTopOf="parent" />
 
+<<<<<<< HEAD
     <ImageView
         android:id="@+id/ivMenuAnadirPlato"
         android:layout_width="60dp"
@@ -41,6 +42,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
+=======
+        />
+
+    <!-- Menu APP -->
+
+    <!-- Login App -->
+
+    <ImageView
+        android:id="@+id/ivMenuAnadirPlato"
+        android:layout_width="50dp"
+        android:layout_height="35dp"
+        android:background="@drawable/botones_menu"
+        android:onClick="showPopupMenu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.044"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.02" />
+>>>>>>> ab8d7a0bcd70e54fb1fd2be66a4f9089cfb5bd96
 
     <ImageView
 
@@ -50,13 +71,26 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="20dp"
         android:background="@drawable/login_style"
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> ab8d7a0bcd70e54fb1fd2be66a4f9089cfb5bd96
         android:clickable="true"
         android:scaleType="fitCenter"
         android:src="@drawable/nologinimg"
         app:layout_constraintEnd_toEndOf="parent"
+<<<<<<< HEAD
         app:layout_constraintTop_toTopOf="parent" />
+=======
+        app:layout_constraintHorizontal_bias="0.958"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.02"
+
+
+        />
+>>>>>>> ab8d7a0bcd70e54fb1fd2be66a4f9089cfb5bd96
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnApIndex"
