@@ -193,7 +193,6 @@ public class DetalleEditarPlatosBd extends AppCompatActivity {
                             document.getReference().update("nombre", nombreNuevo, "descripcion", descripcionNueva,"precio",precioNuevo)
                                     .addOnSuccessListener(aVoid -> {
                                         // La actualización se realizó exitosamente
-                                        Toast.makeText(DetalleEditarPlatosBd.this, "Los datos se actualizaron correctamente", Toast.LENGTH_SHORT).show();
                                         personaId = document.getReference().getId();
                                         subirImagenPlato(personaId, uriCapturada);
                                     })

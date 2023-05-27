@@ -83,7 +83,6 @@ public class DetalleEditarRestaurantesBd extends AppCompatActivity {
                             document.getReference().update("nombreRestaurante", nombreNuevo)
                                     .addOnSuccessListener(aVoid -> {
                                         // La actualización se realizó exitosamente
-                                        Toast.makeText(DetalleEditarRestaurantesBd.this, "Los datos se actualizaron correctamente", Toast.LENGTH_SHORT).show();
                                         // Actualizar las referencias en la colección "Platos"
                                         actualizarReferencias(nombreAntiguo, nombreNuevo);
                                     })

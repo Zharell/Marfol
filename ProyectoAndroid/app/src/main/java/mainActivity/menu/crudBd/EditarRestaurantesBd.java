@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,6 +38,7 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
     private Restaurantes restaurante;
     private ActivityResultLauncher rLauncherRestaurantes;
     private Handler handler;
+    private ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,13 +48,19 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
         //Laucher Result recibe el ArrayList con los restaurantes actualizados y los inserta en el adapter
         rLauncherRestaurantes = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-                    //si no hago que se espere un poco, va mas rapida la petición que la actualización
+                    // Si no hago que se espere un poco, va más rápida la petición que la actualización
+                    progressDialog = ProgressDialog.show(this, "", "Actualización en curso...", true);
                     handler = new Handler();
-                    handler.postDelayed(() -> cargarRestaurantesBd(), 2000);
-
-
+                    handler.postDelayed(() -> {
+                        cargarRestaurantesBd();
+                        // Quitar el ProgressDialog después de 1 segundos adicionales
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                    }, 500);
                 }
         );
+
     }
 
     private void asignarId() {

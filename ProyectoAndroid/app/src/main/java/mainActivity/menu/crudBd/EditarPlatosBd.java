@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,6 +42,7 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
     private Intent intentDetalle;
     private ActivityResultLauncher rLauncherPlatos;
     private Handler handler;
+    private ProgressDialog progressDialog;
 
 
     @Override
@@ -52,12 +54,18 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
         //Laucher Result recibe el ArrayList con los nuevos comensales y los inserta en el adapter
         rLauncherPlatos = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-                    //si no hago que se espere un poco, va mas rapida la petición que la actualización
+                    // Si no hago que se espere un poco, la petición va más rápida que la actualización
+                    progressDialog = ProgressDialog.show(this, "", "Actualización en curso...", true);
                     handler = new Handler();
-                    handler.postDelayed(() -> cargarDatosBd(), 2000);
+                    handler.postDelayed(() -> {
+                        cargarDatosBd();
+                        // Quitar el ProgressDialog después de 1 segundo adicional
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                    }, 1000);
                 }
         );
-
 
     }
 

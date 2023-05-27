@@ -4,6 +4,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,6 +36,7 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
     private Query consulta;
     private Persona persona;
     private Handler handler;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +53,16 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
         //Laucher Result recibe el ArrayList con los nuevos comensales y los inserta en el adapter
         rLauncherPersonas = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-                    //si no hago que se espere un poco, va mas rapida la petición que la actualización
+                    // Si no hago que se espere un poco, la petición va más rápida que la actualización
+                    progressDialog = ProgressDialog.show(this, "", "Actualización en curso...", true);
                     handler = new Handler();
-                    handler.postDelayed(() -> cargarDatosBd(), 2000);
+                    handler.postDelayed(() -> {
+                        cargarDatosBd();
+                        // Quitar el ProgressDialog después de 500 milisegundos adicionales
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                    }, 1000);
                 }
         );
 

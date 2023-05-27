@@ -214,7 +214,6 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
                             document.getReference().update("nombre", nombreNuevo, "descripcion", descripcionNueva)
                                     .addOnSuccessListener(aVoid -> {
                                         // La actualización se realizó exitosamente
-                                        Toast.makeText(DetalleEditarPersonaBd.this, "Los datos se actualizaron correctamente", Toast.LENGTH_SHORT).show();
                                         personaId = document.getReference().getId();
                                         subirImagenPersona(personaId, uriCapturada);
                                     })
