@@ -77,9 +77,11 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
         //Recibe la lista de comensales para empezar a añadir
         intent = getIntent();
         platos = (ArrayList<Plato>) intent.getSerializableExtra("arrayListPlatos");
+
         //Recibo desde Editar o Añadir
         nombreCompartir = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComenComp");
         personaCode = intent.getIntExtra("comensalCode",0);
+
         //Método que asigna IDs a los elementos
         asignarId();
 

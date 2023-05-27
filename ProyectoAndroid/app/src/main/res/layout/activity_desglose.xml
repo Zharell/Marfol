@@ -8,65 +8,61 @@ android:background="@drawable/background_style"
 tools:context="mainActivity.DesgloseActivity">
 
 <!-- Title Actividad -->
-<TextView
-    android:id="@+id/tvTitleDesglose"
-    android:layout_width="wrap_content"
-    android:layout_height="40dp"
-    android:fontFamily="serif"
-    android:gravity="center"
-    android:text="@string/tvdesglose"
-    android:textColor="@color/redBorder"
-    android:textSize="30sp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.5"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.02"
+    <TextView
+        android:id="@+id/tvTitleDesglose"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:fontFamily="serif"
+        android:gravity="center"
+        android:text="@string/tvdesglose"
+        android:textColor="@color/redBorder"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.02"
 
-    />
+        />
 
 <!-- Menu APP -->
 
     <!-- Login App -->
-<ImageView
 
-    android:id="@+id/ivDesgloseImagen"
-    android:layout_width="50dp"
-    android:layout_height="50dp"
-    android:background="@drawable/login_style"
-    android:src="@drawable/nologinimg"
-    android:scaleType="fitCenter"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.96"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.02"
+    <ImageView
+
+        android:id="@+id/ivDesgloseImagen"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/login_style"
+        android:scaleType="fitCenter"
+        android:src="@drawable/nologinimg"
+        app:layout_constraintEnd_toEndOf="parent"
 
 
+        app:layout_constraintHorizontal_bias="0.826"
+        app:layout_constraintStart_toEndOf="@+id/tvTitleDesglose"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPersonaDesglose"
+        android:layout_width="350dp"
+        android:layout_height="555dp"
+        android:layout_marginTop="34dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.85"
 
-<androidx.recyclerview.widget.RecyclerView
-    android:id="@+id/rvPersonaDesglose"
-    android:layout_width="350dp"
-    android:layout_height="555dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.85"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.5"
-
-    />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitleDesglose" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnGuardarRestauranteDes"
         android:layout_width="200dp"
         android:layout_height="55dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/button_index"
+        android:background="@drawable/platorow_styledes"
         android:text="@string/btnguardar_restaurante"
         android:textColor="@color/redTitle"
         android:textSize="22dp"

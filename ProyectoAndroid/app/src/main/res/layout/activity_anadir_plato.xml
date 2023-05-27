@@ -18,12 +18,10 @@
         android:textColor="@color/redBorder"
         android:textSize="30sp"
 
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
 
         />
 
@@ -140,17 +138,16 @@
         android:id="@+id/btnPlatosAnadirPlato"
         android:layout_width="200dp"
         android:layout_height="55dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/button_index"
+        android:background="@drawable/platorow_styledes"
         android:text="@string/continuar_platos"
         android:textColor="@color/redTitle"
         android:textSize="22dp"
 
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rvPlatosAnadirPlato"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/rvPlatosAnadirPlato" />
 
     <Switch
         android:id="@+id/swCompartirAnadirPlato"

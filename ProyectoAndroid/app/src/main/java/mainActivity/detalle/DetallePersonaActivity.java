@@ -64,11 +64,10 @@ import mainActivity.crud.RecordarPlatoActivity;
 public class DetallePersonaActivity extends AppCompatActivity implements PersonaDetalleAdapter.onItemClickListener {
 
     private Persona comensal, comensalBd;
-    private ImageView ivLoginDetalle, ivMenuDetalle, ivFotoDetalle;
+    private ImageView ivLoginDetalle, ivFotoDetalle;
     private EditText etTitleDetalle, etDescripcionDetalle;
     private RecyclerView rvAnadirPlatoDetalle;
     private Dialog puElegirAccion;
-    private ActivityResultLauncher<Intent> galeriaLauncher;
     private Button btnUpCamara, btnUpGaleria;
     private static final int GALLERY_PERMISSION_CODE = 1001;
     private PersonaDetalleAdapter adapterDetalle;
@@ -474,7 +473,6 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         }
         btnBorrarDetalle = findViewById(R.id.btnBorrarDetalle);
         ivLoginDetalle = findViewById(R.id.ivLoginDetallePersona);
-        ivMenuDetalle = findViewById(R.id.ivMenuDetallePersona);
         ivFotoDetalle = findViewById(R.id.ivFotoPersonaDetalle);
         etTitleDetalle = findViewById(R.id.etTitleDetallePersona);
         etDescripcionDetalle = findViewById(R.id.etDescripcionDetallePersona);

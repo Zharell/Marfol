@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -27,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -58,6 +60,9 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
     private ArrayList<Persona> comensalesTotales;
     private ImageView ivDetalleFotoEditarPersona;
     private EditText etDetalleNombreEditarPersona, etDetalleDescripcionEditarPersona;
+    private Dialog puElegirAccion;
+    private Button btnUpCamara, btnUpGaleria;
+    private static final int GALLERY_PERMISSION_CODE = 1001;
     private static final int CAMERA_PERMISSION_CODE = 100;
     private ActivityResultLauncher<Intent> camaraLauncher;
     private Button btnBorrarDetalleEditarPersona, btnEditarDetalleEditarPersona;
@@ -83,6 +88,7 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
         comensalBd = (Persona) intent.getSerializableExtra("comensalDetalle");
         comensalesTotales = (ArrayList<Persona>) intent.getSerializableExtra("comensalesTotales");
         mostrarDatos();
+
         //Añadimos onClick en el ImageView para activar la imagen
         ivDetalleFotoEditarPersona.setOnClickListener(view -> {
             // Solicitar permiso para acceder a la cámara
@@ -104,6 +110,33 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
         btnBorrarDetalleEditarPersona.setOnClickListener(view -> {
             borrarComensal();
             finish();
+        });
+
+        //Convocamos el PopUp para mostrar las acciones ( Galería, Cámara )
+        ivDetalleFotoEditarPersona.setOnClickListener(view -> { puElegirAccion.show(); });
+
+        //Añadimos onClick en el ImageView para activar la imagen
+        btnUpCamara.setOnClickListener(view -> {
+            // Solicitar permiso para acceder a la cámara
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+                //Si no tenemos los permisos los obtenemos
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+            } else {
+                // Si ya se tienen los permisos, abrir la cámara
+                abrirCamara();
+            }
+        });
+
+        //Añadimos onClick en el ImageView para activar la imagen
+        btnUpGaleria.setOnClickListener(view -> {
+            // Solicitar permiso para acceder a la galería
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                // Si no tenemos los permisos, los solicitamos
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY_PERMISSION_CODE);
+            } else {
+                // Si ya se tienen los permisos, abrir la galería
+                abrirGaleria();
+            }
         });
 
         // Registrar el launcher para la cámara
@@ -133,9 +166,58 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
             }
         });
 
-
     }
 
+    // Método para abrir la galería
+    private void abrirGaleria() {
+        //Librería que accede a la galería del dispositivo (OBLIGATORIO USAR LIBRERÍAS MIUI BLOQUEA LO DEMÁS)
+        ImagePicker.with(this)
+                .galleryOnly()
+                .start();
+    }
+
+    // Método para manejar la respuesta de la solicitud de permisos
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Si se conceden los permisos, abrir la cámara
+                abrirCamara();
+            } else {
+                // Si se deniegan los permisos, mostrar un mensaje al usuario
+                Toast.makeText(this, "Para almacenar la imagen debe otorgar los permisos", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if (requestCode == GALLERY_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Si se conceden los permisos, abrir la galería
+                abrirGaleria();
+            } else {
+                // Si se deniegan los permisos, mostrar un mensaje al usuario
+                Toast.makeText(this, "Para acceder a la galería debe otorgar los permisos", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    //Método que accede a la galería sin que los permisos restrictivos MIUI afecten
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            // La Uri de la imagen no será nula para RESULT_OK
+            Uri uri = data.getData();
+            if (uri != null) {
+                Uri selectedImageUri = data.getData();
+                uriCapturada = selectedImageUri.toString();
+
+                //Cargar imagen seleccionada
+                ivDetalleFotoEditarPersona.setBackground(null);
+                Glide.with(this).load(selectedImageUri).circleCrop().into(ivDetalleFotoEditarPersona);
+            }
+            puElegirAccion.dismiss();
+        }
+    }
 
     public void asignarId() {
         auth = FirebaseAuth.getInstance();
@@ -147,6 +229,12 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
         btnBorrarDetalleEditarPersona = findViewById(R.id.btnBorrarDetalleEditarPersona);
         btnEditarDetalleEditarPersona = findViewById(R.id.btnEditarDetalleEditarPersona);
         ivDetalleFotoEditarPersona = findViewById(R.id.ivDetalleFotoEditarPersona);
+
+        //Asigna IDs de los elementos del popup
+        puElegirAccion = new Dialog(this);
+        puElegirAccion.setContentView(R.layout.popup_accion);
+        btnUpCamara = puElegirAccion.findViewById(R.id.btnCancelarPopup);
+        btnUpGaleria = puElegirAccion.findViewById(R.id.btnConfirmarPopup);
 
     }
 
@@ -168,21 +256,6 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
     private void abrirCamara() {
         cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         camaraLauncher.launch(cameraIntent);
-    }
-
-    // Método para manejar la respuesta de la solicitud de permisos
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CAMERA_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Si se conceden los permisos, abrir la cámara
-                abrirCamara();
-            } else {
-                // Si se deniegan los permisos, mostrar un mensaje al usuario
-                Toast.makeText(this, "Para almacenar la imagen debe otorgar los permisos", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     private void editarComensal() {

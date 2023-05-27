@@ -8,83 +8,79 @@
     tools:context="mainActivity.IndexActivity">
 
     <!-- Title Actividad -->
+
+    <!-- Menu APP -->
+
+    <!-- Login App -->
+
     <TextView
         android:id="@+id/tvTitleAnadirPlato"
         android:layout_width="120dp"
         android:layout_height="40dp"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="70dp"
         android:fontFamily="serif"
         android:gravity="center"
         android:text="@string/app_name"
+        app:layout_constraintHorizontal_bias="0.8"
         android:textColor="@color/redBorder"
         android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02"
+        app:layout_constraintEnd_toStartOf="@+id/ivImagenLogin"
+        app:layout_constraintStart_toEndOf="@+id/ivMenuAnadirPlato"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        />
-
-    <!-- Menu APP -->
     <ImageView
         android:id="@+id/ivMenuAnadirPlato"
         android:layout_width="60dp"
         android:layout_height="40dp"
-        android:src="@android:drawable/ic_menu_sort_by_size"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:onClick="showPopupMenu"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
+        android:src="@android:drawable/ic_menu_sort_by_size"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02" />
-
-    <!-- Login App -->
+        />
 
     <ImageView
 
         android:id="@+id/ivImagenLogin"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="20dp"
         android:background="@drawable/login_style"
-        android:scaleType="fitCenter"
+
+
         android:clickable="true"
+        android:scaleType="fitCenter"
         android:src="@drawable/nologinimg"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.958"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023"
-
-
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnApIndex"
         android:layout_width="280dp"
         android:layout_height="250dp"
-        android:background="@drawable/button_index"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/platorow_styledes"
         android:fontFamily="serif"
         android:text="@string/button_intro"
         android:textAlignment="center"
         android:textColor="@color/redBorder"
         android:textSize="55sp"
         android:textStyle="bold|italic"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
 
-        app:layout_constraintVertical_bias="0.32" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitleAnadirPlato" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnAPIndex"
         android:layout_width="200dp"
         android:layout_height="60dp"
-        android:background="@drawable/button_index"
+        android:background="@drawable/platorow_styledes"
         android:fontFamily="serif"
         android:text="@string/API"
         android:textAlignment="center"
@@ -97,21 +93,20 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rvRestaurantesUsuario"
-        app:layout_constraintVertical_bias="0.616" />
+        app:layout_constraintVertical_bias="0.898" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvRestaurantesUsuario"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="35dp"
         android:layout_marginEnd="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
 
-        app:layout_constraintVertical_bias="0.668" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnApIndex" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

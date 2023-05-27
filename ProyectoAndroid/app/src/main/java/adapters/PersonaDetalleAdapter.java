@@ -29,7 +29,7 @@ public class PersonaDetalleAdapter extends RecyclerView.Adapter<adapters.Persona
     @Override
     public adapters.PersonaDetalleAdapter.PersonaDetalleAdapterResultHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.row_platoanadirpersona, parent, false);
+                .inflate(R.layout.row_platoanadirpersona_new, parent, false);
 
         return new adapters.PersonaDetalleAdapter.PersonaDetalleAdapterResultHolder(itemView);
     }

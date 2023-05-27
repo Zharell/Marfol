@@ -31,7 +31,7 @@ public class AnadirPersonaAdapter extends RecyclerView.Adapter<AnadirPersonaAdap
     @Override
     public AnadirPersonaAdapter.AnadirPersonaAdapterResultHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.row_platoanadirpersona, parent, false);
+                .inflate(R.layout.row_platoanadirpersona_new, parent, false);
 
         return new AnadirPersonaAdapter.AnadirPersonaAdapterResultHolder(itemView);
     }
