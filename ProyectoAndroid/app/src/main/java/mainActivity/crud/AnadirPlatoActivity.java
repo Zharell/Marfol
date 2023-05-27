@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.tfg.marfol.R;
 
@@ -284,7 +285,11 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
 
                 //Cargar imagen seleccionada
                 ivPlatoAnadirP.setBackground(null);
-                Glide.with(this).load(selectedImageUri).circleCrop().into(ivPlatoAnadirP);
+                Glide.with(this)
+                        .load(selectedImageUri)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .circleCrop()
+                        .into(ivPlatoAnadirP);
             }
             puElegirAccion.dismiss();
         }

@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.tfg.marfol.R;
 
 import java.text.NumberFormat;
@@ -46,7 +47,10 @@ public class DesgloseAdapter extends RecyclerView.Adapter<DesgloseAdapter.Desglo
 
         //Insertamos para cada persona en el Recycler su imagen
         if (resultsPersona.get(position).getUrlImage() != null && !resultsPersona.get(position).getUrlImage().equalsIgnoreCase("")) {
-            Glide.with(holder.itemView).load(resultsPersona.get(position).getUrlImage()).into(holder.ivPersonaRow);
+            Glide.with(holder.itemView)
+                    .load(resultsPersona.get(position).getUrlImage())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.ivPersonaRow);
         }
 
         //Insertamos el total de los precios del comensal

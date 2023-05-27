@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -165,7 +166,11 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
                     ivFotoDetalle.setBackground(null);
-                    Glide.with(this).load(uriCapturada).circleCrop().into(ivFotoDetalle);
+                    Glide.with(this)
+                            .load(uriCapturada)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .circleCrop()
+                            .into(ivFotoDetalle);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -251,7 +256,11 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
 
                 //Cargar imagen seleccionada
                 ivFotoDetalle.setBackground(null);
-                Glide.with(this).load(selectedImageUri).circleCrop().into(ivFotoDetalle);
+                Glide.with(this)
+                        .load(selectedImageUri)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .circleCrop()
+                        .into(ivFotoDetalle);
             }
             puElegirAccion.dismiss();
         }
@@ -456,7 +465,10 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         etDescripcionDetalle.setText(comensal.getDescripcion());
         uriCapturada = comensal.getUrlImage();
         if (comensal.getUrlImage() != null) {
-            Glide.with(this).load(comensal.getUrlImage()).circleCrop().into(ivFotoDetalle);
+            Glide.with(this)
+                    .load(comensal.getUrlImage()).circleCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(ivFotoDetalle);
         } else {
             //Inserta Imagen photo
             ivFotoDetalle.setImageURI(Uri.parse("android.resource://com.tfg.marfol/" + R.drawable.camera));

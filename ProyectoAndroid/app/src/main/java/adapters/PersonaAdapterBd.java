@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.tfg.marfol.R;
 
 import java.util.ArrayList;
@@ -42,7 +43,10 @@ public class PersonaAdapterBd extends RecyclerView.Adapter<PersonaAdapterBd.Pers
 
         //holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
         if(resultsPersonaBd.get(position).getUrlImage()!=null) {
-            Glide.with(holder.itemView).load(Uri.parse(resultsPersonaBd.get(position).getUrlImage())).circleCrop().into(holder.ivPersonaRow);
+            Glide.with(holder.itemView)
+                    .load(Uri.parse(resultsPersonaBd.get(position).getUrlImage()))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop().into(holder.ivPersonaRow);
         }
 
         //Método onclick

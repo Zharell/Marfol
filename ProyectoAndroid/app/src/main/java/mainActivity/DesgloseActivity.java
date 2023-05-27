@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -277,7 +278,10 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
             currentUser = mAuth.getCurrentUser();
             botonImagenLogueado();
         } else {
-            Glide.with(this).load(R.drawable.nologinimg).into(ivDesgloseImagen);
+            Glide.with(this)
+                    .load(R.drawable.nologinimg)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(ivDesgloseImagen);
             botonImagenNoLogueado();
         }
     }

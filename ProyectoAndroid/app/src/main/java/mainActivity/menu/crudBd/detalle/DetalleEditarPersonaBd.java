@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -159,7 +160,11 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
                     ivDetalleFotoEditarPersona.setBackground(null);
-                    Glide.with(this).load(uriCapturada).circleCrop().into(ivDetalleFotoEditarPersona);
+                    Glide.with(this)
+                            .load(uriCapturada)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .circleCrop()
+                            .into(ivDetalleFotoEditarPersona);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -213,7 +218,11 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
 
                 //Cargar imagen seleccionada
                 ivDetalleFotoEditarPersona.setBackground(null);
-                Glide.with(this).load(selectedImageUri).circleCrop().into(ivDetalleFotoEditarPersona);
+                Glide.with(this)
+                        .load(selectedImageUri)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .circleCrop()
+                        .into(ivDetalleFotoEditarPersona);
             }
             puElegirAccion.dismiss();
         }
@@ -244,10 +253,18 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
         imagen = comensalBd.getUrlImage();
         if (imagen != null && !imagen.equalsIgnoreCase("")) {
             ivDetalleFotoEditarPersona.setBackground(null);
-            Glide.with(DetalleEditarPersonaBd.this).load(imagen).circleCrop().into(ivDetalleFotoEditarPersona);
+            Glide.with(DetalleEditarPersonaBd.this)
+                    .load(imagen)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
+                    .into(ivDetalleFotoEditarPersona);
 
         } else {
-            Glide.with(DetalleEditarPersonaBd.this).load(R.drawable.camera).circleCrop().into(ivDetalleFotoEditarPersona);
+            Glide.with(DetalleEditarPersonaBd.this)
+                    .load(R.drawable.camera)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
+                    .into(ivDetalleFotoEditarPersona);
         }
 
     }

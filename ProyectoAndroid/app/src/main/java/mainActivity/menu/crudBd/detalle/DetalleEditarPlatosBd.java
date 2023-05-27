@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -148,7 +149,11 @@ public class DetalleEditarPlatosBd extends AppCompatActivity {
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
                     ivDetalleFotoEditarPlato.setBackground(null);
-                    Glide.with(this).load(uriCapturada).circleCrop().into(ivDetalleFotoEditarPlato);
+                    Glide.with(this)
+                            .load(uriCapturada)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .circleCrop()
+                            .into(ivDetalleFotoEditarPlato);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -296,7 +301,11 @@ public class DetalleEditarPlatosBd extends AppCompatActivity {
 
                 //Cargar imagen seleccionada
                 ivDetalleFotoEditarPlato.setBackground(null);
-                Glide.with(this).load(selectedImageUri).circleCrop().into(ivDetalleFotoEditarPlato);
+                Glide.with(this)
+                        .load(selectedImageUri)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .circleCrop()
+                        .into(ivDetalleFotoEditarPlato);
             }
             puElegirAccion.dismiss();
         }
@@ -331,9 +340,17 @@ public class DetalleEditarPlatosBd extends AppCompatActivity {
         imagen = platoBd.getUrlImage();
         if (imagen != null && !imagen.equalsIgnoreCase("")) {
             ivDetalleFotoEditarPlato.setBackground(null);
-            Glide.with(DetalleEditarPlatosBd.this).load(imagen).circleCrop().into(ivDetalleFotoEditarPlato);
+            Glide.with(DetalleEditarPlatosBd.this)
+                    .load(imagen)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
+                    .into(ivDetalleFotoEditarPlato);
         } else {
-            Glide.with(DetalleEditarPlatosBd.this).load(R.drawable.camera).circleCrop().into(ivDetalleFotoEditarPlato);
+            Glide.with(DetalleEditarPlatosBd.this)
+                    .load(R.drawable.camera)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
+                    .into(ivDetalleFotoEditarPlato);
         }
     }
 

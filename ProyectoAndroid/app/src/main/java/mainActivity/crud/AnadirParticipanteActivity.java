@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -178,7 +179,10 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
                     ivPlatoAnadirP.setBackground(null);
-                    Glide.with(this).load(uriCapturada).into(ivPlatoAnadirP);
+                    Glide.with(this)
+                            .load(uriCapturada)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(ivPlatoAnadirP);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -234,7 +238,10 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             etNombreAnadirP.setText(personaBd.getNombre());
             etDescAnadirP.setText(personaBd.getDescripcion());
             if (personaBd.getUrlImage() != null) {
-                Glide.with(this).load(personaBd.getUrlImage()).into(ivPlatoAnadirP);
+                Glide.with(this)
+                        .load(personaBd.getUrlImage())
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(ivPlatoAnadirP);
                 uriCapturada = personaBd.getUrlImage();
             }
         }
@@ -245,7 +252,10 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             currentUser = mAuth.getCurrentUser();
             botonImagenLogueado();
         } else {
-            Glide.with(this).load(R.drawable.nologinimg).into(ivAnadirPlatoImagen);
+            Glide.with(this)
+                    .load(R.drawable.nologinimg)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(ivAnadirPlatoImagen);
             botonImagenNoLogueado();
         }
     }
@@ -320,7 +330,11 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
                 //Cargar imagen seleccionada
                 ivPlatoAnadirP.setBackground(null);
-                Glide.with(this).load(selectedImageUri).circleCrop().into(ivPlatoAnadirP);
+                Glide.with(this)
+                        .load(selectedImageUri)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .circleCrop()
+                        .into(ivPlatoAnadirP);
             }
             puElegirAccion.dismiss();
         }

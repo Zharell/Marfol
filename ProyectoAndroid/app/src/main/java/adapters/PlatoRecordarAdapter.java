@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.tfg.marfol.R;
 
 import java.text.NumberFormat;
@@ -51,9 +52,12 @@ public class PlatoRecordarAdapter extends RecyclerView.Adapter<PlatoRecordarAdap
             holder.tvPrecioRow.setText(String.valueOf(euroFormat.format(resultsPlato.get(position).getPrecio())));
         }
 
-        //Insertamos para cada persona en el Recycler su imagen
+        //Insertamos para cada plato en el Recycler su imagen
         if (resultsPlato.get(position).getUrlImage() != null && !resultsPlato.get(position).getUrlImage().equalsIgnoreCase("")) {
-            Glide.with(holder.itemView).load(resultsPlato.get(position).getUrlImage()).into(holder.ivPlatoRow);
+            Glide.with(holder.itemView)
+                    .load(resultsPlato.get(position).getUrlImage())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.ivPlatoRow);
         }
 
         //Método onclick

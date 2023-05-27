@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.tfg.marfol.R;
 
 import java.util.ArrayList;
@@ -43,7 +44,10 @@ public class AnadirPersonaAdapter extends RecyclerView.Adapter<AnadirPersonaAdap
 
         //Únicamente insertará la imagén del primer Plato ya que se encarga de añadir
         if (position==0) {
-            Glide.with(holder.itemView).load(resultsPlato.get(0).getUrlImage()).into(holder.ivPlatoRow);
+            Glide.with(holder.itemView)
+                    .load(resultsPlato.get(0).getUrlImage())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.ivPlatoRow);
         } else {
             asignarColores(holder, position);
             //Se deben limpiar las imágenes insertadas erroneamente (Fallos del propio onBindViewHolder)

@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.tfg.marfol.R;
 
 import java.text.NumberFormat;
@@ -44,7 +45,10 @@ public class PlatoRecordarAdapterBd extends RecyclerView.Adapter<PlatoRecordarAd
 
         //Insertamos para cada persona en el Recycler su imagen
         if (resultsPlatoBd.get(position).getUrlImage() != null && !resultsPlatoBd.get(position).getUrlImage().equalsIgnoreCase("")) {
-            Glide.with(holder.itemView).load(resultsPlatoBd.get(position).getUrlImage()).into(holder.ivPlatoRow);
+            Glide.with(holder.itemView)
+                    .load(resultsPlatoBd.get(position).getUrlImage())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.ivPlatoRow);
         }
         //Método onclick
         holder.itemView.setOnClickListener(view -> {

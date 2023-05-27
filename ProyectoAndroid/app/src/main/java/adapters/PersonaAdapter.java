@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.tfg.marfol.R;
 
@@ -46,6 +47,7 @@ public class PersonaAdapter extends RecyclerView.Adapter<PersonaAdapter.PersonaA
         if (resultsPersona.get(position).getUrlImage() != null && !resultsPersona.get(position).getUrlImage().equalsIgnoreCase("")) {
             Glide.with(holder.itemView)
                     .load(resultsPersona.get(position).getUrlImage())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .circleCrop()
                     .into(holder.ivPersonaRow);
         }

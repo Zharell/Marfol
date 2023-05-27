@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.tfg.marfol.R;
 
@@ -154,7 +155,10 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
                     //Obtenemos la ruta URI de la imagen seleccionada
                     uriCapturada = uri.toString();
                     ivFotoDetalle.setBackground(null);
-                    Glide.with(this).load(uriCapturada).into(ivFotoDetalle);
+                    Glide.with(this)
+                            .load(uriCapturada)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(ivFotoDetalle);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -356,7 +360,11 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
 
                 //Cargar imagen seleccionada
                 ivFotoDetalle.setBackground(null);
-                Glide.with(this).load(selectedImageUri).circleCrop().into(ivFotoDetalle);
+                Glide.with(this)
+                        .load(selectedImageUri)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .circleCrop()
+                        .into(ivFotoDetalle);
             }
             puElegirAccion.dismiss();
         }
