@@ -36,6 +36,7 @@ public class HomeActivity extends AppCompatActivity {
         if (MetodosGlobales.comprobarLogueado(this, ivFotoPersonaHome)) {
             cargarDatosEnHomeSiLogueado(tvEmailHome, tvNombreUsuario, tvTelefonoUsuario);
             setup();
+
         } else {
             finish();
         }

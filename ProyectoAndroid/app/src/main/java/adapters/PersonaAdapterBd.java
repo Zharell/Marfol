@@ -42,7 +42,7 @@ public class PersonaAdapterBd extends RecyclerView.Adapter<PersonaAdapterBd.Pers
         holder.tvPersonaRow.setText(resultsPersonaBd.get(position).getNombre());
 
         //holder.ivPersonaRow.setImageURI(Uri.parse(resultsPersona.get(position).getUrlImage()));
-        if(resultsPersonaBd.get(position).getUrlImage()!=null) {
+        if(resultsPersonaBd.get(position).getUrlImage()!=null && !resultsPersonaBd.get(position).getUrlImage().equalsIgnoreCase("")) {
             Glide.with(holder.itemView)
                     .load(Uri.parse(resultsPersonaBd.get(position).getUrlImage()))
                     .diskCacheStrategy(DiskCacheStrategy.ALL)

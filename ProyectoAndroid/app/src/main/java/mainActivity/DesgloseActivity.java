@@ -114,6 +114,7 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                 //Método cancelar para no guardar en la bd
                 btnNoGuardarDesglose.setOnClickListener(v1 -> {
                     Toast.makeText(this, "Gracias por utilizar marfol", Toast.LENGTH_SHORT).show();
+                    puGuardarDesglose.dismiss();
                     finish();
                 });
                 //Guarda el restaurante en la BD :)
@@ -125,6 +126,7 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                         copiarPlatosEnNuevoArray();
                         guardarRestaurante(nombreRestaurante, email);
                         Toast.makeText(this, "Se han guardado los platos", Toast.LENGTH_SHORT).show();
+                        puGuardarDesglose.dismiss();
                         finish();
                     } else {
                         //si el nombre está vacío no va a dejar hacer nada
@@ -165,17 +167,21 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                     restauranteRef.set(restauranteData).addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Restaurante guardado correctamente", Toast.LENGTH_SHORT).show();
                         guardarPlatos(nombreRestaurante); // Llamar al método para guardar los platos
+                        puGuardarDesglose.dismiss();
                         finish();
                     }).addOnFailureListener(e -> {
+                        puGuardarDesglose.dismiss();
                         finish();
                     });
                 } else {
                     guardarPlatos(nombreRestaurante); // Llamar al método para guardar los platos
+                    puGuardarDesglose.dismiss();
                     finish();
                 }
             } else {
                 // Error al realizar la consulta
                 Toast.makeText(this, "Error al consultar el restaurante existente", Toast.LENGTH_SHORT).show();
+                puGuardarDesglose.dismiss();
                 finish();
             }
         });

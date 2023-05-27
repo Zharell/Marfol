@@ -7,11 +7,6 @@
     android:background="@drawable/background_style"
     tools:context="mainActivity.IndexActivity">
 
-    <!-- Title Actividad -->
-
-    <!-- Menu APP -->
-
-    <!-- Login App -->
 
     <TextView
         android:id="@+id/tvTitleAnadirPlato"
@@ -30,24 +25,6 @@
         app:layout_constraintStart_toEndOf="@+id/ivMenuAnadirPlato"
         app:layout_constraintTop_toTopOf="parent" />
 
-<<<<<<< HEAD
-    <ImageView
-        android:id="@+id/ivMenuAnadirPlato"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:onClick="showPopupMenu"
-        android:src="@android:drawable/ic_menu_sort_by_size"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-=======
-        />
-
-    <!-- Menu APP -->
-
-    <!-- Login App -->
 
     <ImageView
         android:id="@+id/ivMenuAnadirPlato"
@@ -61,7 +38,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.02" />
->>>>>>> ab8d7a0bcd70e54fb1fd2be66a4f9089cfb5bd96
 
     <ImageView
 
@@ -71,26 +47,14 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="20dp"
         android:background="@drawable/login_style"
-<<<<<<< HEAD
 
 
-=======
->>>>>>> ab8d7a0bcd70e54fb1fd2be66a4f9089cfb5bd96
+
         android:clickable="true"
         android:scaleType="fitCenter"
         android:src="@drawable/nologinimg"
         app:layout_constraintEnd_toEndOf="parent"
-<<<<<<< HEAD
         app:layout_constraintTop_toTopOf="parent" />
-=======
-        app:layout_constraintHorizontal_bias="0.958"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02"
-
-
-        />
->>>>>>> ab8d7a0bcd70e54fb1fd2be66a4f9089cfb5bd96
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnApIndex"

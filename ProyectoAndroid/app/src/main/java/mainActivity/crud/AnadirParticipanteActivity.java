@@ -64,7 +64,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
     private ActivityResultLauncher rLauncherDetallePlato;
     private ActivityResultLauncher rLauncherRecordarPlato;
     private static final int CAMERA_PERMISSION_CODE = 100;
-    private String uriCapturada = "";
+    private String uriCapturada ="android.resource://com.tfg.marfol/"+R.drawable.logo_marfol;
     private ArrayList<Persona> comensales;
     private boolean borrarPlato;
     private boolean nuevoPlato;

@@ -67,7 +67,7 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
     private PersonaCompartirAdapter anadirPAdapter;
     private boolean esCompartido;
     private Button btnEditarDetalle, btnBorrarDetalle;
-    private String uriCapturada = "";
+    private String uriCapturada  ="android.resource://com.tfg.marfol/"+R.drawable.logo_marfol_azul;
     private Plato plato;
     private Intent intent;
     private String nombre,descripcion;
@@ -258,8 +258,14 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
         etDescripcionDetalle.setText(plato.getDescripcion());
         etPrecioDetalle.setText(String.valueOf(plato.getPrecio()));
         uriCapturada = plato.getUrlImage();
-        if (!plato.getUrlImage().equalsIgnoreCase("")) {
-            ivFotoDetalle.setImageURI(Uri.parse(plato.getUrlImage()));
+
+        //Comprobamos que el plato no es nulo
+        if (plato.getUrlImage() != null && !plato.getUrlImage().equalsIgnoreCase("")) {
+            Glide.with(this)
+                    .load(Uri.parse(plato.getUrlImage()))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
+                    .into(ivFotoDetalle);
         } else {
             //Inserta Imagen photo
             ivFotoDetalle.setImageURI(Uri.parse("android.resource://com.tfg.marfol/" + R.drawable.camera));
