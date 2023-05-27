@@ -27,20 +27,21 @@
         />
 
     <!-- Menu APP -->
+
+    <!-- Login App -->
+
     <ImageView
         android:id="@+id/ivMenuAnadirPlato"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
-        android:src="@android:drawable/ic_menu_sort_by_size"
+        android:layout_width="50dp"
+        android:layout_height="35dp"
+        android:background="@drawable/botones_menu"
         android:onClick="showPopupMenu"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
+        app:layout_constraintHorizontal_bias="0.044"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.02" />
-
-    <!-- Login App -->
 
     <ImageView
 
@@ -48,15 +49,15 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="@drawable/login_style"
-        android:scaleType="fitCenter"
         android:clickable="true"
+        android:scaleType="fitCenter"
         android:src="@drawable/nologinimg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.958"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023"
+        app:layout_constraintVertical_bias="0.02"
 
 
         />
