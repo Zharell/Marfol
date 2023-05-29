@@ -22,9 +22,7 @@ import com.tfg.marfol.R;
 import java.util.ArrayList;
 
 import adapters.CrudPlatosAdapter;
-import adapters.CrudRestaurantesAdapter;
 import entities.Plato;
-import mainActivity.menu.crudBd.detalle.DetalleEditarPersonaBd;
 import mainActivity.menu.crudBd.detalle.DetalleEditarPlatosBd;
 
 public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapter.onItemClickListener  {
@@ -63,7 +61,7 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
                         if (progressDialog != null && progressDialog.isShowing()) {
                             progressDialog.dismiss();
                         }
-                    }, 1000);
+                    }, 2000);
                 }
         );
 

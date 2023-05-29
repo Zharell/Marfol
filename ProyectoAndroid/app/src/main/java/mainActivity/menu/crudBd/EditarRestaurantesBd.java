@@ -57,7 +57,7 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
                         if (progressDialog != null && progressDialog.isShowing()) {
                             progressDialog.dismiss();
                         }
-                    }, 500);
+                    }, 2000);
                 }
         );
 

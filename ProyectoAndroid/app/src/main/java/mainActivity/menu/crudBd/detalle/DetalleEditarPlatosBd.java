@@ -14,7 +14,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -40,9 +39,7 @@ import com.tfg.marfol.R;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Map;
 
-import entities.Persona;
 import entities.Plato;
 
 public class DetalleEditarPlatosBd extends AppCompatActivity {

@@ -17,7 +17,6 @@ import com.tfg.marfol.R;
 
 import java.util.ArrayList;
 
-import entities.Persona;
 import entities.Restaurantes;
 
 public class DetalleEditarRestaurantesBd extends AppCompatActivity {

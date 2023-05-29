@@ -32,6 +32,7 @@ import com.tfg.marfol.R;
 import java.util.ArrayList;
 import adapters.RestaurantesAdapter;
 import entities.Restaurantes;
+import mainActivity.menu.crudBd.Seleccion;
 import mainActivity.menu.AboutUs;
 import mainActivity.menu.ContactUs;
 import mainActivity.menu.Preferences;
@@ -269,7 +270,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
                 finish();
             });
             tvEditarDatosIndex.setOnClickListener(v2 -> {
-                intent = new Intent(this, mainActivity.menu.crudBd.Seleccion.class);
+                intent = new Intent(this, Seleccion.class);
                 startActivity(intent);
                 popupWindow.dismiss();
             });

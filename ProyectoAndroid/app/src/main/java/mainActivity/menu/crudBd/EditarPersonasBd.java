@@ -62,7 +62,7 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
                         if (progressDialog != null && progressDialog.isShowing()) {
                             progressDialog.dismiss();
                         }
-                    }, 1000);
+                    }, 2000);
                 }
         );
 
