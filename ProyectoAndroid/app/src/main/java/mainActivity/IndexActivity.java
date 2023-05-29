@@ -5,7 +5,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -33,7 +32,6 @@ import com.tfg.marfol.R;
 import java.util.ArrayList;
 import adapters.RestaurantesAdapter;
 import entities.Restaurantes;
-import mainActivity.API.API;
 import mainActivity.menu.AboutUs;
 import mainActivity.menu.ContactUs;
 import mainActivity.menu.Preferences;
@@ -96,11 +94,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
             finish();
         });
 
-        btnApIndex2.setOnClickListener(view -> {
-            intent = new Intent(this, API.class);
-            startActivity(intent);
-        });
-
         //Botones para el popup de confirmación
         //Confirmar cierra la APP
         btnConfirmarIndex.setOnClickListener(view -> {
@@ -131,7 +124,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     public void asignarId() {
         //Asigna Ids a los elementos de la actividad
         btnApIndex = findViewById(R.id.btnApIndex);
-        btnApIndex2 = findViewById(R.id.btnAPIndex);
         ivImagenLogin = findViewById(R.id.ivImagenLogin);
         Glide.with(this)
                 .load(R.drawable.nologinimg)
@@ -173,7 +165,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
         tvTitleIndex.getPaint().setShader(gradient);
         btnApIndex.getPaint().setShader(gradient);
-        btnApIndex2.getPaint().setShader(gradient);
         btnConfirmarIndex.getPaint().setShader(gradient);
         btnCancelarIndex.getPaint().setShader(gradient);
 
