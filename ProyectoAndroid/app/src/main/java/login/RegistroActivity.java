@@ -71,18 +71,11 @@ public class RegistroActivity extends AppCompatActivity {
                 showAlert("La contraseña debe tener al menos 8 caracteres, un número y un carácter especial");
                 return;
             }
-            cbAcuerdoUsuario.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) {
-                    // Mostrar cuadro de diálogo con los acuerdos
-                    showAgreementDialog(cbAcuerdoUsuario);
-                } else {
-                    // CheckBox no marcado
-                }
-            });
             if (!cbAcuerdoUsuario.isChecked()) {
                 // Mostrar mensaje de error
                 showAlert("Debes aceptar los acuerdos de usuario");
-                cbAcuerdoUsuario.setChecked(false);
+                // Mostrar cuadro de diálogo con los acuerdos
+                showAgreementDialog(cbAcuerdoUsuario);
                 return;
             }
 
@@ -110,6 +103,9 @@ public class RegistroActivity extends AppCompatActivity {
                             showAlert("El correo no coincide con el formato 'x'+'@'+'.'+'x'.");
                         }
                     });
+        });
+        cbAcuerdoUsuario.setOnClickListener(vb ->{
+            showAgreementDialog(cbAcuerdoUsuario);
         });
     }
 
@@ -151,14 +147,15 @@ public class RegistroActivity extends AppCompatActivity {
         });
 
         builder.setNegativeButton("Cancelar", (dialog, which) -> {
-            // No hacer nada si se hace clic en "Cancelar"
+            // Poner el CheckBox en false cuando se hace clic en "Cancelar"
             checkBox.setChecked(false);
         });
 
         builder.setOnCancelListener(dialog -> {
-            // No hacer nada si se cancela el cuadro de diálogo
+            // Poner el CheckBox en false cuando se cancela el cuadro de diálogo
             checkBox.setChecked(false);
         });
+
 
         builder.show();
     }

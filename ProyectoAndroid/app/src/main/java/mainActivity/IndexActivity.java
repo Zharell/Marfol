@@ -34,17 +34,14 @@ import adapters.RestaurantesAdapter;
 import entities.Restaurantes;
 import mainActivity.menu.crudBd.Seleccion;
 import mainActivity.menu.AboutUs;
-import mainActivity.menu.ContactUs;
-import mainActivity.menu.Preferences;
 
 public class IndexActivity extends AppCompatActivity implements RestaurantesAdapter.onItemClickListenerRestaurantes {
     private Button btnApIndex;
-    private Button btnApIndex2;
-    private ImageView ivImagenLogin, ivMenuIndex;
+    private ImageView ivImagenLogin;
     private RecyclerView rvRestaurantesUsuario;
     private Dialog puVolverIndex;
     private Button btnCancelarIndex, btnConfirmarIndex;
-    private TextView tvMessage1Popup, tvMessage2Popup, tvTitlePopup, btnAPIndex, tvTitleIndex;
+    private TextView tvMessage1Popup, tvMessage2Popup, tvTitlePopup, tvTitleIndex;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
@@ -130,7 +127,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
                 .load(R.drawable.nologinimg)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(ivImagenLogin);
-        ivMenuIndex = findViewById(R.id.ivMenuAnadirPlato);
         rvRestaurantesUsuario = findViewById(R.id.rvRestaurantesUsuario);
         tvTitleIndex = findViewById(R.id.tvTitleAnadirPlato);
         //Asigna IDs de los elementos del popup
@@ -192,9 +188,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
     public void showPopupMenu(View view) {
         View popupView = getLayoutInflater().inflate(R.layout.popup_menu, null);
-        menuItemPreferencias = popupView.findViewById(R.id.menu_item2);
-        menuItemAboutUs = popupView.findViewById(R.id.menu_item3);
-        menuItemContactUs = popupView.findViewById(R.id.menu_item4);
+        menuItemAboutUs = popupView.findViewById(R.id.pvAboutUs);
         tvEditarDatosIndex = popupView.findViewById(R.id.tvEditarDatosIndex);
         tvEditarDatosIndex.setVisibility(View.INVISIBLE);
         tvOcultar1 = popupView.findViewById(R.id.tvOcultar1);
@@ -236,22 +230,9 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
             popupWindow.dismiss();
         });
 
-        menuItemContactUs.setOnClickListener(v -> {
-            // Acción al hacer clic en "ContactUs"
-            intent = new Intent(IndexActivity.this, ContactUs.class);
-            startActivity(intent);
 
-            // Cerrar el menú emergente
-            popupWindow.dismiss();
-        });
 
-        menuItemPreferencias.setOnClickListener(v -> {
-            // Acción al hacer clic en "Preferences"
-            intent = new Intent(IndexActivity.this, Preferences.class);
-            startActivity(intent);
-            // Cerrar el menú emergente
-            popupWindow.dismiss();
-        });
+
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null) {
             tvLogoutIndex.setVisibility(View.VISIBLE);

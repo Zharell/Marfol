@@ -18,30 +18,7 @@
         app:srcCompat="@drawable/logo_marfol" />
 
     <TextView
-        android:id="@+id/menu_item2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="serif"
-        android:textColor="@color/redBorder"
-        android:textSize="30sp"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="@string/menu_preferences" />
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:background="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.82" />
-
-    <TextView
-        android:id="@+id/menu_item3"
+        android:id="@+id/pvAboutUs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="serif"
@@ -51,28 +28,6 @@
         android:gravity="center"
         android:padding="8dp"
         android:text="@string/menu_about_us"/>
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:background="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.82" />
-
-    <TextView
-        android:id="@+id/menu_item4"
-        android:layout_width="match_parent"
-        android:layout_height="57dp"
-        android:fontFamily="serif"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="@string/menu_contact_us"
-        android:textColor="@color/redBorder"
-        android:textSize="30sp" />
 
     <TextView
         android:id="@+id/tvOcultar1"
