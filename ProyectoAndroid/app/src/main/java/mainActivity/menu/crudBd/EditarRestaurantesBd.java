@@ -42,8 +42,8 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
     private Query consulta;
     private Restaurantes restaurante;
     private ActivityResultLauncher rLauncherRestaurantes;
-    private int susCont = 0;
     private ImageView logo2;
+    private int susCont=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,9 +129,6 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
                             .load(R.drawable.easter_egg_3)
                             .circleCrop()
                             .into(logo2);
-                    handler.postDelayed(() -> {
-                        finish();
-                    }, 2500);
                 }, 3500);
 
         }

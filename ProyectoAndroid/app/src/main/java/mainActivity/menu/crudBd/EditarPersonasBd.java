@@ -86,10 +86,6 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
                             .circleCrop()
                             .into(logo1);
                     Toast.makeText(this,"Gracias por utilizar Marfol :D",Toast.LENGTH_SHORT).show();
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.postDelayed(() -> {
-                        finish();
-                    }, 2500);
                 }
             }
         }

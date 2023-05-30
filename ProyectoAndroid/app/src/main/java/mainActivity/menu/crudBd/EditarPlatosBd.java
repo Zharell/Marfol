@@ -98,10 +98,6 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
                             .circleCrop()
                             .into(logo3);
                     Toast.makeText(this,"Gracias por utilizar Marfol :D",Toast.LENGTH_SHORT).show();
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.postDelayed(() -> {
-                        finish();
-                    }, 2500);
                 }
             }
         }
