@@ -10,7 +10,11 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -39,8 +43,8 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
     private Plato plato;
     private Intent intentDetalle;
     private ActivityResultLauncher rLauncherPlatos;
-    private Handler handler;
-    private ProgressDialog progressDialog;
+    private int susCont=0;
+    private ImageView logo3;
 
 
     @Override
@@ -55,6 +59,9 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
                     cargarDatosBd();
                 }
         );
+        logo3.setOnClickListener(v ->{
+            easterEgg3();
+        } );
 
     }
 
@@ -63,7 +70,7 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         rvCrudPlatos = findViewById(R.id.rvCrudPlatos);
-
+        logo3 = findViewById(R.id.logo3);
     }
 
     private void mostrarAdapterPlatos() {
@@ -75,7 +82,26 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
             cargarDatosBd();
         }
     }
-
+    public void easterEgg3() {
+        susCont++;
+        if (susCont==10) {
+            Toast.makeText(this,"Esta imagen no hace nada.",Toast.LENGTH_SHORT).show();
+        } else {
+            if (susCont==20) {
+                Toast.makeText(this,"Por que sigues? He dicho que esta imagen no hace nada.",Toast.LENGTH_SHORT).show();
+            } else {
+                if (susCont==30) {
+                    logo3.setBackground(null);
+                    Glide.with(this)
+                            .asGif()
+                            .load(R.drawable.easter_egg_1)
+                            .circleCrop()
+                            .into(logo3);
+                    Toast.makeText(this,"Gracias por utilizar Marfol :D",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
     private void cargarDatosBd() {
 
         if (currentUser != null) {

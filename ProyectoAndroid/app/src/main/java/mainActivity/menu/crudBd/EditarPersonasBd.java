@@ -6,11 +6,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -24,6 +28,7 @@ import java.util.ArrayList;
 import adapters.CrudPersonaAdapter;
 import entities.Persona;
 import mainActivity.menu.crudBd.detalle.DetalleEditarPersonaBd;
+import pl.droidsonroids.gif.GifImageView;
 
 public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAdapter.onItemClickListenerCrudPersona {
     private FirebaseFirestore db;
@@ -37,9 +42,9 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
     private String email, nombre, descripcion, imagen;
     private CollectionReference personasRef;
     private Query consulta;
+    private ImageView logo1;
     private Persona persona;
-    private Handler handler;
-    private ProgressDialog progressDialog;
+    private int susCont = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +65,39 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
                     cargarDatosBd();
                 }
         );
+        logo1.setOnClickListener(v->{
+            easterEgg1();
+        });
 
     }
+    public void easterEgg1() {
+        susCont++;
+        if (susCont==10) {
+            Toast.makeText(this,"Nada que pulsar, esta imagen no hace nada",Toast.LENGTH_SHORT).show();
+        } else {
+            if (susCont==20) {
+                Toast.makeText(this,"Por que sigues? Esta imagen no hace nada.",Toast.LENGTH_SHORT).show();
+            } else {
+                if (susCont==30) {
+                    logo1.setBackground(null);
+                    Glide.with(this)
+                            .asGif()
+                            .load(R.drawable.easter_egg_2)
+                            .circleCrop()
+                            .into(logo1);
+                    Toast.makeText(this,"Gracias por utilizar Marfol :D",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
 
     private void asignarId() {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         rvCrudPersonas = findViewById(R.id.rvCrudPersonas);
-
+        logo1 = findViewById(R.id.logo1);
     }
 
     private void cargarDatosBd() {

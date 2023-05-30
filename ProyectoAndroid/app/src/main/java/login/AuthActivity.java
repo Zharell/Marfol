@@ -48,6 +48,7 @@ public class AuthActivity extends AppCompatActivity {
                 if (susCont==30) {
                     imagenLogoAuth.setBackground(null);
                     imagenLogoAuth.setImageDrawable(getDrawable(R.drawable.verysusyitem));
+
                 }
             }
         }
