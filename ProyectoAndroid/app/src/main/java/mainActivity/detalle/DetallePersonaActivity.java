@@ -168,7 +168,6 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
                     ivFotoDetalle.setBackground(null);
                     Glide.with(this)
                             .load(uriCapturada)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .circleCrop()
                             .into(ivFotoDetalle);
 
@@ -258,7 +257,6 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
                 ivFotoDetalle.setBackground(null);
                 Glide.with(this)
                         .load(selectedImageUri)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .circleCrop()
                         .into(ivFotoDetalle);
             }
@@ -292,8 +290,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         }
         //Comprueba si ha validado, añade la persona, envía al padre el ArrayList y cierra la actividad
         if (esValidado) {
-            //AÑADIR A BD
-            editarComensalBd();
+
             //Añado a la lista la persona creada
             Persona personaEditada = new Persona(comensal.getComensalCode(), nombre, descripcion, uriCapturada, platos, 0);
             Intent intentComensal = new Intent();
@@ -301,95 +298,6 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
             setResult(Activity.RESULT_OK, intentComensal);
             finish();
         }
-    }
-
-    private void editarComensalBd() {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = auth.getCurrentUser();
-        if (currentUser == null) {
-            Toast.makeText(DetallePersonaActivity.this, "Los datos no se guardarán en bd", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        String usuarioId = currentUser.getEmail();
-        String nombreNuevo = String.valueOf(etTitleDetalle.getText());
-        String descripcionNueva = String.valueOf(etDescripcionDetalle.getText());
-        String nombreAntiguo = comensalBd.getNombre();
-        String imagenAntigua = comensalBd.getUrlImage();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference personasRef = db.collection("personas");
-        Query query = personasRef.whereEqualTo("nombre", nombreNuevo);
-
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    if (task.getResult().isEmpty()) {
-                        // No existe ninguna persona con el mismo nombre, procede a actualizar los datos
-                        personasRef.whereEqualTo("usuarioId", usuarioId)
-                                .whereEqualTo("nombre", nombreAntiguo)
-                                .get()
-                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                String personaId = document.getId(); // Obtiene el ID del documento de la persona
-                                                DocumentReference personaRef = personasRef.document(personaId);
-                                                personaRef.update("nombre", nombreNuevo, "descripcion", descripcionNueva, "imagen", uriCapturada)
-                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                            @Override
-                                                            public void onSuccess(Void aVoid) {
-                                                                // La actualización se realizó exitosamente
-                                                                Toast.makeText(DetallePersonaActivity.this, "Los datos se actualizaron correctamente", Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        })
-                                                        .addOnFailureListener(new OnFailureListener() {
-                                                            @Override
-                                                            public void onFailure(@NonNull Exception e) {
-                                                                // Ocurrió un error al actualizar los datos
-                                                                Toast.makeText(DetallePersonaActivity.this, "Error al actualizar los datos", Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        });
-
-                                                break; // Si se encuentra una persona, se actualiza solo el primer documento y se sale del bucle
-                                            }
-                                        } else {
-                                            // Ocurrió un error al obtener los documentos
-                                            Toast.makeText(DetallePersonaActivity.this, "Error al obtener los documentos", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
-                    } else {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            String personaId = document.getId(); // Obtiene el ID del documento de la persona
-                            DocumentReference personaRef = personasRef.document(personaId);
-                            personaRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            // La actualización se realizó exitosamente
-                                            anadirPersonaABd(nombreNuevo, descripcionNueva, uriCapturada);
-                                            Toast.makeText(DetallePersonaActivity.this, "Se actualizaron nuevos datos", Toast.LENGTH_SHORT).show();
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            // Ocurrió un error al actualizar los datos
-                                            Toast.makeText(DetallePersonaActivity.this, "No se borró", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                            ;
-                        }
-                        // Ya existe una persona con el mismo nombre, no se realiza ninguna acción
-                        Toast.makeText(DetallePersonaActivity.this, "Ya existe una persona con el mismo nombre", Toast.LENGTH_SHORT).show();
-
-                    }
-                } else {
-                    // Ocurrió un error al obtener los documentos
-                    Toast.makeText(DetallePersonaActivity.this, "Error al obtener los documentos", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
     // Método para manejar la respuesta de la solicitud de permisos
@@ -464,10 +372,11 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         etTitleDetalle.setText(comensal.getNombre());
         etDescripcionDetalle.setText(comensal.getDescripcion());
         uriCapturada = comensal.getUrlImage();
-        if (comensal.getUrlImage() != null) {
+
+        if (comensal.getUrlImage() != null && !comensal.getUrlImage().equalsIgnoreCase("")) {
             Glide.with(this)
-                    .load(comensal.getUrlImage()).circleCrop()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .load(comensal.getUrlImage())
+                    .circleCrop()
                     .into(ivFotoDetalle);
         } else {
             //Inserta Imagen photo

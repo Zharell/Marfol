@@ -47,9 +47,12 @@ public class PlatoRecordarAdapterBd extends RecyclerView.Adapter<PlatoRecordarAd
         if (resultsPlatoBd.get(position).getUrlImage() != null && !resultsPlatoBd.get(position).getUrlImage().equalsIgnoreCase("")) {
             Glide.with(holder.itemView)
                     .load(resultsPlatoBd.get(position).getUrlImage())
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
                     .into(holder.ivPlatoRow);
+        } else {
+            Glide.with(holder.itemView).clear(holder.ivPlatoRow);
         }
+
         //Método onclick
         holder.itemView.setOnClickListener(view -> {
             if (mListenerBd != null) {

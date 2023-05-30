@@ -74,7 +74,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private CollectionReference personasRef;
     private Query consulta;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +96,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         } else {
             Glide.with(this)
                     .load(R.drawable.nologinimg)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
                     .into(ivLoginParticipantes);
             botonImagenNoLogueado();
         }
@@ -109,9 +108,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                         Intent data = result.getData();
                         comensales = (ArrayList<Persona>) data.getSerializableExtra("arrayListComensales");
                         personaAdapter.setResultsPersona(comensales);
-                        comprobarLauncher();
-                    } else {
-                        comprobarLauncher();
                     }
                 }
         );
@@ -146,12 +142,14 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         rLauncherDesglose = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
+                        Toast.makeText(this,"paso",Toast.LENGTH_SHORT).show();
                         comprobarLauncher();
                         intent = result.getData();
                         comensales = (ArrayList<Persona>) intent.getSerializableExtra("arrayListDesglose");
                         personaAdapter.setResultsPersona(comensales);
                     } else {
                         comprobarLauncher();
+                        personaAdapter.setResultsPersona(comensales);
                     }
                 }
         );
@@ -392,7 +390,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         } else {
             Glide.with(this)
                     .load(R.drawable.nologinimg)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
                     .into(ivLoginParticipantes);
             botonImagenNoLogueado();
         }

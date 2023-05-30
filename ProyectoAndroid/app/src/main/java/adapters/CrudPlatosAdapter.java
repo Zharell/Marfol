@@ -34,13 +34,14 @@ public class CrudPlatosAdapter extends RecyclerView.Adapter<CrudPlatosAdapter.Cr
         if(resultsPlato.get(position).getUrlImage()!=null) {
             Glide.with(holder.itemView)
                     .load(Uri.parse(resultsPlato.get(position).getUrlImage()))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .circleCrop() // Especifica el radio de redondeo en píxeles
                     .into(holder.ivPlatoRow);
             if(!resultsPlato.get(position).getUrlImage().equalsIgnoreCase("")){
                 holder.ivPlatoRow.setBackground(null);
             }
 
+        } else {
+            Glide.with(holder.itemView).clear(holder.ivPlatoRow);
         }
 
         //Método onclick

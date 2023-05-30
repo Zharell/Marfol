@@ -46,7 +46,6 @@ public class AnadirPersonaAdapter extends RecyclerView.Adapter<AnadirPersonaAdap
         if (position==0) {
             Glide.with(holder.itemView)
                     .load(resultsPlato.get(0).getUrlImage())
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.ivPlatoRow);
         } else {
             asignarColores(holder, position);

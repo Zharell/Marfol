@@ -49,8 +49,10 @@ public class DesgloseAdapter extends RecyclerView.Adapter<DesgloseAdapter.Desglo
         if (resultsPersona.get(position).getUrlImage() != null && !resultsPersona.get(position).getUrlImage().equalsIgnoreCase("")) {
             Glide.with(holder.itemView)
                     .load(resultsPersona.get(position).getUrlImage())
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
                     .into(holder.ivPersonaRow);
+        } else {
+            Glide.with(holder.itemView).clear(holder.itemView);
         }
 
         //Insertamos el total de los precios del comensal

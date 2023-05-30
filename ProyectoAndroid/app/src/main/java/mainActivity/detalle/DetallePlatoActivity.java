@@ -157,7 +157,7 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
                     ivFotoDetalle.setBackground(null);
                     Glide.with(this)
                             .load(uriCapturada)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .circleCrop()
                             .into(ivFotoDetalle);
 
                 } catch (IOException e) {
@@ -263,7 +263,6 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
         if (plato.getUrlImage() != null && !plato.getUrlImage().equalsIgnoreCase("")) {
             Glide.with(this)
                     .load(Uri.parse(plato.getUrlImage()))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .circleCrop()
                     .into(ivFotoDetalle);
         } else {
@@ -368,7 +367,6 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
                 ivFotoDetalle.setBackground(null);
                 Glide.with(this)
                         .load(selectedImageUri)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .circleCrop()
                         .into(ivFotoDetalle);
             }

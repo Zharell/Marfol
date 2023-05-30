@@ -287,7 +287,6 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
                 ivPlatoAnadirP.setBackground(null);
                 Glide.with(this)
                         .load(selectedImageUri)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .circleCrop()
                         .into(ivPlatoAnadirP);
             }

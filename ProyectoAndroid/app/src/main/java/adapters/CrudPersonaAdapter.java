@@ -45,13 +45,14 @@ public class CrudPersonaAdapter extends RecyclerView.Adapter<CrudPersonaAdapter.
         if(resultsCrudPersona.get(position).getUrlImage()!=null) {
             Glide.with(holder.itemView)
                     .load(Uri.parse(resultsCrudPersona.get(position).getUrlImage()))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .circleCrop() // Especifica el radio de redondeo en píxeles
                     .into(holder.ivPersonaRow);
             if(!resultsCrudPersona.get(position).getUrlImage().equalsIgnoreCase("")){
                 holder.ivPersonaRow.setBackground(null);
             }
 
+        } else {
+            Glide.with(holder.itemView).clear(holder.ivPersonaRow);
         }
 
         //Método onclick
