@@ -146,12 +146,14 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         rLauncherDesglose = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
+                        Toast.makeText(this,"paso",Toast.LENGTH_SHORT).show();
                         comprobarLauncher();
                         intent = result.getData();
                         comensales = (ArrayList<Persona>) intent.getSerializableExtra("arrayListDesglose");
                         personaAdapter.setResultsPersona(comensales);
                     } else {
                         comprobarLauncher();
+                        personaAdapter.setResultsPersona(comensales);
                     }
                 }
         );

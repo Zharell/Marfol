@@ -43,8 +43,10 @@ public class ListaCompartirAdapter extends RecyclerView.Adapter<ListaCompartirAd
         if (resultsListCompartir.get(position).getUrlImage() != null && !resultsListCompartir.get(position).getUrlImage().equalsIgnoreCase("")) {
             Glide.with(holder.itemView)
                     .load(resultsListCompartir.get(position).getUrlImage())
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
                     .into(holder.ivPersonaRow);
+        } else {
+            Glide.with(holder.itemView).clear(holder.ivPersonaRow);
         }
 
         //Método onclick
