@@ -97,7 +97,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         } else {
             Glide.with(this)
                     .load(R.drawable.nologinimg)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
                     .into(ivLoginParticipantes);
             botonImagenNoLogueado();
         }
@@ -109,9 +109,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                         Intent data = result.getData();
                         comensales = (ArrayList<Persona>) data.getSerializableExtra("arrayListComensales");
                         personaAdapter.setResultsPersona(comensales);
-                        comprobarLauncher();
-                    } else {
-                        comprobarLauncher();
                     }
                 }
         );
@@ -394,7 +391,7 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         } else {
             Glide.with(this)
                     .load(R.drawable.nologinimg)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
                     .into(ivLoginParticipantes);
             botonImagenNoLogueado();
         }

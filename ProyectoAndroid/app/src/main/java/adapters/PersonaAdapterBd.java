@@ -45,7 +45,8 @@ public class PersonaAdapterBd extends RecyclerView.Adapter<PersonaAdapterBd.Pers
         if(resultsPersonaBd.get(position).getUrlImage()!=null && !resultsPersonaBd.get(position).getUrlImage().equalsIgnoreCase("")) {
             Glide.with(holder.itemView)
                     .load(Uri.parse(resultsPersonaBd.get(position).getUrlImage()))
-                    .circleCrop().into(holder.ivPersonaRow);
+                    .circleCrop()
+                    .into(holder.ivPersonaRow);
         } else {
             //Limpia en el caso de que no haya cargado la imagen
             Glide.with(holder.itemView).clear(holder.ivPersonaRow);

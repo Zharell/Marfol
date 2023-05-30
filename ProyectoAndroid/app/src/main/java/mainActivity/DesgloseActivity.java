@@ -286,7 +286,7 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
         } else {
             Glide.with(this)
                     .load(R.drawable.nologinimg)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
                     .into(ivDesgloseImagen);
             botonImagenNoLogueado();
         }

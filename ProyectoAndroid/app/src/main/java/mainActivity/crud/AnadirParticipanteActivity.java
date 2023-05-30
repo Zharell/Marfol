@@ -181,7 +181,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                     ivPlatoAnadirP.setBackground(null);
                     Glide.with(this)
                             .load(uriCapturada)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .circleCrop()
                             .into(ivPlatoAnadirP);
 
                 } catch (IOException e) {
@@ -240,7 +240,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             if (personaBd.getUrlImage() != null) {
                 Glide.with(this)
                         .load(personaBd.getUrlImage())
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .circleCrop()
                         .into(ivPlatoAnadirP);
                 uriCapturada = personaBd.getUrlImage();
             }
@@ -254,7 +254,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         } else {
             Glide.with(this)
                     .load(R.drawable.nologinimg)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
                     .into(ivAnadirPlatoImagen);
             botonImagenNoLogueado();
         }
@@ -332,7 +332,6 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                 ivPlatoAnadirP.setBackground(null);
                 Glide.with(this)
                         .load(selectedImageUri)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .circleCrop()
                         .into(ivPlatoAnadirP);
             }

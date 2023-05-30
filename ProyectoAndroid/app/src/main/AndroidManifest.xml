@@ -57,9 +57,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyC1JbQNg7WkFD4zGdVr1Y-RkaWtluXStKE" />
 
-        <activity android:name="mainActivity.menu.ContactUs" />
         <activity android:name="mainActivity.menu.AboutUs" />
-        <activity android:name="mainActivity.menu.Preferences" />
         <activity android:name="mainActivity.API.API" />
         <activity
             android:name="mainActivity.detalle.DetallePlatoActivity"

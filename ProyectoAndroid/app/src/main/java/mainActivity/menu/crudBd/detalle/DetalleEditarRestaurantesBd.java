@@ -2,8 +2,10 @@ package mainActivity.menu.crudBd.detalle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -17,7 +19,6 @@ import com.tfg.marfol.R;
 
 import java.util.ArrayList;
 
-import entities.Persona;
 import entities.Restaurantes;
 
 public class DetalleEditarRestaurantesBd extends AppCompatActivity {
@@ -33,6 +34,8 @@ public class DetalleEditarRestaurantesBd extends AppCompatActivity {
     private CollectionReference restaurantesRef;
     private DocumentSnapshot document;
     private boolean comprobarNombre = true;
+    private ProgressDialog progressDialog;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +48,27 @@ public class DetalleEditarRestaurantesBd extends AppCompatActivity {
         mostrarDatos();
         btnEditarDetalleRestaurantes.setOnClickListener(view -> {
             editarRestaurante();
-            finish();
+            progressDialog = ProgressDialog.show(this, "", "Actualización en curso...", true);
+            handler = new Handler();
+            handler.postDelayed(() -> {
+                // Quitar el ProgressDialog después de 1 segundos adicionales
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                finish();
+            }, 2000);
         });
         btnBorrarDetalleRestaurantes.setOnClickListener(view -> {
             borrarRestaurante();
-            finish();
+            progressDialog = ProgressDialog.show(this, "", "Actualización en curso...", true);
+            handler = new Handler();
+            handler.postDelayed(() -> {
+                // Quitar el ProgressDialog después de 1 segundos adicionales
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                finish();
+            }, 2000);
         });
     }
 
@@ -90,7 +109,7 @@ public class DetalleEditarRestaurantesBd extends AppCompatActivity {
                                         // Ocurrió un error al actualizar los datos
                                         Toast.makeText(DetalleEditarRestaurantesBd.this, "Error al actualizar los datos", Toast.LENGTH_SHORT).show();
                                     });
-                        }else{
+                        } else {
                             Toast.makeText(DetalleEditarRestaurantesBd.this, "Ya existe un restaurante con ese nombre, no se realizaron los cambios.", Toast.LENGTH_SHORT).show();
                         }
                     }

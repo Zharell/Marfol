@@ -63,7 +63,7 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
     private ArrayList <Persona> noRepCompartirList;
     private boolean esCompartido=false;
     private ActivityResultLauncher rLauncherComp;
-    private String uriCapturada ="android.resource://com.tfg.marfol/"+R.drawable.logo_marfol_azul;
+    private String uriCapturada ="android.resource://com.tfg.marfol/"+R.drawable.logo_marfol_rosa;
     private int personaCode;
     private ActivityResultLauncher<Intent> camaraLauncher;
     private Intent intent;
@@ -287,7 +287,6 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
                 ivPlatoAnadirP.setBackground(null);
                 Glide.with(this)
                         .load(selectedImageUri)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .circleCrop()
                         .into(ivPlatoAnadirP);
             }
