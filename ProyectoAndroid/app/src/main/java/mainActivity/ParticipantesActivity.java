@@ -74,7 +74,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
     private CollectionReference personasRef;
     private Query consulta;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
