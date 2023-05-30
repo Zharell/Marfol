@@ -94,6 +94,7 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
         //Botón que vuelve a comensales y además devuelve el comensal modificado
         btnEditarDetalleEditarPersona.setOnClickListener(view -> {
             editarComensal();
+            //espero dos segundos para que se realicen bien los cambios
             progressDialog = ProgressDialog.show(this, "", "Actualización en curso...", true);
             handler = new Handler();
             handler.postDelayed(() -> {
@@ -321,8 +322,6 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
                                         // Ocurrió un error al actualizar los datos
                                         Toast.makeText(DetalleEditarPersonaBd.this, "Error al actualizar los datos", Toast.LENGTH_SHORT).show();
                                     });
-                        } else {
-                            Toast.makeText(DetalleEditarPersonaBd.this, "Ya existe una persona con ese nombre, no se realizaron los cambios.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
@@ -347,7 +346,6 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
                         document.getReference().delete()
                                 .addOnSuccessListener(aVoid -> {
                                     // La eliminación se realizó exitosamente
-                                    Toast.makeText(DetalleEditarPersonaBd.this, "El comensal se eliminó correctamente", Toast.LENGTH_SHORT).show();
                                 })
                                 .addOnFailureListener(e -> {
                                     // Ocurrió un error al eliminar el comensal

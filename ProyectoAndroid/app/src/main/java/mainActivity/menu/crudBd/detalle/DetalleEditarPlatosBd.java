@@ -94,7 +94,7 @@ public class DetalleEditarPlatosBd extends AppCompatActivity {
         });
         //Botón que vuelve a platos y además devuelve el plato modificado
         btnEditarDetallePlatos.setOnClickListener(view -> {
-            // Si no hago que se espere un poco, la petición va más rápida que la actualización
+            //espero dos segundos para que se realicen bien los cambios
             editarPlato();
             progressDialog = ProgressDialog.show(this, "", "Actualización en curso...", true);
             handler = new Handler();
@@ -111,7 +111,7 @@ public class DetalleEditarPlatosBd extends AppCompatActivity {
         //Botón de borrar, llama a un método que a además de borrar
         btnBorrarDetallePlatos.setOnClickListener(view -> {
             borrarPlato();
-            progressDialog = ProgressDialog.show(this, "", "Actualización en curso...", true);
+            progressDialog = ProgressDialog.show(this, "", "Borrado en curso...", true);
             handler = new Handler();
             handler.postDelayed(() -> {
                 // Quitar el ProgressDialog después de 1 segundo adicional

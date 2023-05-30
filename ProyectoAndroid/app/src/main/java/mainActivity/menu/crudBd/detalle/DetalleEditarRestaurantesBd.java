@@ -31,7 +31,7 @@ public class DetalleEditarRestaurantesBd extends AppCompatActivity {
     private Restaurantes restaurantesBd;
     private Intent intent;
     private ArrayList<Restaurantes> restaurantesTotales;
-    private CollectionReference restaurantesRef;
+    private CollectionReference restaurantesRef, platosRef;
     private DocumentSnapshot document;
     private boolean comprobarNombre = true;
     private ProgressDialog progressDialog;
@@ -47,6 +47,7 @@ public class DetalleEditarRestaurantesBd extends AppCompatActivity {
         restaurantesTotales = (ArrayList<Restaurantes>) intent.getSerializableExtra("restaurantesTotales");
         mostrarDatos();
         btnEditarDetalleRestaurantes.setOnClickListener(view -> {
+            //espero dos segundos para que se realicen bien los cambios
             editarRestaurante();
             progressDialog = ProgressDialog.show(this, "", "Actualización en curso...", true);
             handler = new Handler();
@@ -60,10 +61,9 @@ public class DetalleEditarRestaurantesBd extends AppCompatActivity {
         });
         btnBorrarDetalleRestaurantes.setOnClickListener(view -> {
             borrarRestaurante();
-            progressDialog = ProgressDialog.show(this, "", "Actualización en curso...", true);
+            progressDialog = ProgressDialog.show(this, "", "Borrado en curso...", true);
             handler = new Handler();
             handler.postDelayed(() -> {
-                // Quitar el ProgressDialog después de 1 segundos adicionales
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
@@ -93,91 +93,87 @@ public class DetalleEditarRestaurantesBd extends AppCompatActivity {
 
         // Realizar la actualización sin verificar si existe previamente en la base de datos
         restaurantesRef = db.collection("restaurantes");
-        restaurantesRef.whereEqualTo("usuarioId", email)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    DocumentSnapshot document = querySnapshot.getDocuments().get(0);
-                    if (document != null) {
-                        if (comprobarNombre) {
-                            document.getReference().update("nombreRestaurante", nombreNuevo)
-                                    .addOnSuccessListener(aVoid -> {
-                                        // La actualización se realizó exitosamente
-                                        // Actualizar las referencias en la colección "Platos"
-                                        actualizarReferencias(nombreAntiguo, nombreNuevo);
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        // Ocurrió un error al actualizar los datos
-                                        Toast.makeText(DetalleEditarRestaurantesBd.this, "Error al actualizar los datos", Toast.LENGTH_SHORT).show();
-                                    });
-                        } else {
-                            Toast.makeText(DetalleEditarRestaurantesBd.this, "Ya existe un restaurante con ese nombre, no se realizaron los cambios.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    // Ocurrió un error al buscar el restaurante en la base de datos
-                    Toast.makeText(DetalleEditarRestaurantesBd.this, "Error al buscar el restaurante en la base de datos", Toast.LENGTH_SHORT).show();
-                });
+        restaurantesRef.whereEqualTo("usuarioId", email).get().addOnSuccessListener(querySnapshot -> {
+            DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+            if (document != null) {
+                if (comprobarNombre) {
+                    document.getReference().update("nombreRestaurante", nombreNuevo).addOnSuccessListener(aVoid -> {
+                        // La actualización se realizó exitosamente
+                        // Actualizar las referencias en la colección "Platos"
+                        actualizarReferencias(nombreAntiguo, nombreNuevo);
+                    }).addOnFailureListener(e -> {
+                        // Ocurrió un error al actualizar los datos
+                        Toast.makeText(DetalleEditarRestaurantesBd.this, "Error al actualizar los datos", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+        }).addOnFailureListener(e -> {
+            // Ocurrió un error al buscar el restaurante en la base de datos
+            Toast.makeText(DetalleEditarRestaurantesBd.this, "Error al buscar el restaurante en la base de datos", Toast.LENGTH_SHORT).show();
+        });
     }
 
 
     private void actualizarReferencias(String nombreAntiguo, String nombreNuevo) {
         // Obtener la referencia a la colección "Platos"
-        CollectionReference platosRef = db.collection("platos");
-
+        platosRef = db.collection("platos");
         // Realizar una consulta para obtener los platos con el nombre antiguo
-        platosRef.whereEqualTo("restaurante", nombreAntiguo)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    if (!querySnapshot.isEmpty()) {
-                        // Actualizar cada documento que coincida con el nombre antiguo
-                        for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                            document.getReference().update("restaurante", nombreNuevo)
-                                    .addOnSuccessListener(aVoid -> {
-                                        // La actualización se realizó exitosamente para el documento actual
-                                        // Puedes realizar alguna acción adicional si es necesario
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        // Ocurrió un error al actualizar el documento
-                                        // Puedes manejar el error según tus necesidades
-                                    });
-                        }
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    // Ocurrió un error al realizar la consulta
-                    // Puedes manejar el error según tus necesidades
-                });
+        platosRef.whereEqualTo("restaurante", nombreAntiguo).whereEqualTo("usuario", currentUser.getEmail()).get().addOnSuccessListener(querySnapshot -> {
+            if (!querySnapshot.isEmpty()) {
+                // Actualizar cada documento que coincida con el nombre antiguo
+                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                    document.getReference().update("restaurante", nombreNuevo).addOnSuccessListener(aVoid -> {
+                        // La actualización se realizó exitosamente para el documento actual
+                    }).addOnFailureListener(e -> {
+                        // Ocurrió un error al actualizar el documento
+
+                    });
+                }
+            }
+        }).addOnFailureListener(e -> {
+            // Ocurrió un error al realizar la consulta
+        });
+    }
+
+    private void borrarReferencias(String nombreRestaurante) {
+        // Obtener la referencia a la colección "Platos"
+        platosRef = db.collection("platos");
+        // Realizar una consulta para obtener los platos con el nombre del restaurante
+        platosRef.whereEqualTo("restaurante", nombreRestaurante).whereEqualTo("usuario", currentUser.getEmail()).get().addOnSuccessListener(querySnapshot -> {
+            if (!querySnapshot.isEmpty()) {
+                // Eliminar cada documento que coincida con el nombre del restaurante
+                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                    document.getReference().delete().addOnSuccessListener(aVoid -> {
+                        // La eliminación se realizó exitosamente para el documento actual
+                    }).addOnFailureListener(e -> {
+                        // Ocurrió un error al eliminar el documento
+                    });
+                }
+            }
+        }).addOnFailureListener(e -> {
+            // Ocurrió un error al realizar la consulta
+        });
     }
 
     private void borrarRestaurante() {
         // Eliminar el comensal de la base de datos
         restaurantesRef = db.collection("restaurantes");
 
-        restaurantesRef.whereEqualTo("nombreRestaurante", restaurantesBd.getNombreRestaurante())
-                .whereEqualTo("usuarioId", email)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    if (!querySnapshot.isEmpty()) {
-                        document = querySnapshot.getDocuments().get(0);
-                        document.getReference().delete()
-                                .addOnSuccessListener(aVoid -> {
-                                    // La eliminación se realizó exitosamente
-                                    Toast.makeText(DetalleEditarRestaurantesBd.this, "El restaurante se eliminó correctamente", Toast.LENGTH_SHORT).show();
-                                })
-                                .addOnFailureListener(e -> {
-                                    // Ocurrió un error al eliminar el comensal
-                                    Toast.makeText(DetalleEditarRestaurantesBd.this, "Error al eliminar el comensal", Toast.LENGTH_SHORT).show();
-                                });
-                    } else {
-                        // No se encontró el comensal en la base de datos
-                        Toast.makeText(DetalleEditarRestaurantesBd.this, "El comensal no existe en la base de datos", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    // Ocurrió un error al buscar el comensal en la base de datos
-                    Toast.makeText(DetalleEditarRestaurantesBd.this, "Error al buscar el comensal en la base de datos", Toast.LENGTH_SHORT).show();
+        restaurantesRef.whereEqualTo("nombreRestaurante", restaurantesBd.getNombreRestaurante()).whereEqualTo("usuarioId", email).get().addOnSuccessListener(querySnapshot -> {
+            if (!querySnapshot.isEmpty()) {
+                document = querySnapshot.getDocuments().get(0);
+                document.getReference().delete().addOnSuccessListener(aVoid -> {
+                    // La eliminación se realizó exitosamente
+                    borrarReferencias(restaurantesBd.getNombreRestaurante());
+                }).addOnFailureListener(e -> {
+                    // Ocurrió un error al eliminar el comensal
+                    Toast.makeText(DetalleEditarRestaurantesBd.this, "Error al eliminar el restaurante", Toast.LENGTH_SHORT).show();
                 });
+            }
+        }).addOnFailureListener(e -> {
+            // Ocurrió un error al buscar el comensal en la base de datos
+            Toast.makeText(DetalleEditarRestaurantesBd.this, "Error al buscar el comensal en la base de datos", Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void mostrarDatos() {
