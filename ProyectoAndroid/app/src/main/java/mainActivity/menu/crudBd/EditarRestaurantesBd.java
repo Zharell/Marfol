@@ -10,8 +10,11 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -39,8 +42,8 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
     private Query consulta;
     private Restaurantes restaurante;
     private ActivityResultLauncher rLauncherRestaurantes;
-    private Handler handler;
-    private ProgressDialog progressDialog;
+    private int susCont = 0;
+    private ImageView logo2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,7 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
                     cargarRestaurantesBd();
                 }
         );
+        logo2.setOnClickListener(v-> easterEgg2());
 
     }
 
@@ -62,6 +66,7 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+        logo2 = findViewById(R.id.logo2);
     }
 
     private void mostrarAdapterRestaurantes() {
@@ -107,4 +112,30 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
         intent.putExtra("restaurantesTotales", restaurantesBd);
         rLauncherRestaurantes.launch(intent);
     }
+    public void easterEgg2() {
+        susCont++;
+        if (susCont == 10) {
+            Toast.makeText(this, "Esta imagen sí que no hace nada.", Toast.LENGTH_SHORT).show();
+        } else if (susCont == 20) {
+            Toast.makeText(this, "Te estoy diciendo que no hace nada.", Toast.LENGTH_SHORT).show();
+        } else if (susCont == 30) {
+            Toast.makeText(this, "Te dije que no hacía nada.", Toast.LENGTH_SHORT).show();
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(() -> {
+                    Toast.makeText(this, "Te mentí, gracias por utilizar Marfol :D", Toast.LENGTH_SHORT).show();
+                    logo2.setBackground(null);
+                    Glide.with(this)
+                            .asGif()
+                            .load(R.drawable.easter_egg_3)
+                            .circleCrop()
+                            .into(logo2);
+                    handler.postDelayed(() -> {
+                        finish();
+                    }, 2500);
+                }, 3500);
+
+        }
+    }
+
+
 }
