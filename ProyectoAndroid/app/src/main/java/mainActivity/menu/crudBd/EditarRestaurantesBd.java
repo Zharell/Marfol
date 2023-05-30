@@ -19,12 +19,14 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.tfg.marfol.R;
+
 import java.util.ArrayList;
+
 import adapters.CrudRestaurantesAdapter;
 import entities.Restaurantes;
 import mainActivity.menu.crudBd.detalle.DetalleEditarRestaurantesBd;
 
-public class EditarRestaurantesBd extends AppCompatActivity implements CrudRestaurantesAdapter.onItemClickListenerRestaurantes{
+public class EditarRestaurantesBd extends AppCompatActivity implements CrudRestaurantesAdapter.onItemClickListenerRestaurantes {
     private RecyclerView rvCrudRestaurantes;
     private CrudRestaurantesAdapter crudRestaurantesAdapter;
     private FirebaseAuth mAuth;
@@ -32,13 +34,14 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
     private FirebaseUser currentUser;
     private ArrayList<Restaurantes> restaurantesBd;
     private Intent intent;
-    private String email,nombreRestaurante;
+    private String email, nombreRestaurante;
     private CollectionReference restaurantesRef;
     private Query consulta;
     private Restaurantes restaurante;
     private ActivityResultLauncher rLauncherRestaurantes;
     private Handler handler;
     private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,16 +51,7 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
         //Laucher Result recibe el ArrayList con los restaurantes actualizados y los inserta en el adapter
         rLauncherRestaurantes = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-                    // Si no hago que se espere un poco, va más rápida la petición que la actualización
-                    progressDialog = ProgressDialog.show(this, "", "Actualización en curso...", true);
-                    handler = new Handler();
-                    handler.postDelayed(() -> {
-                        cargarRestaurantesBd();
-                        // Quitar el ProgressDialog después de 1 segundos adicionales
-                        if (progressDialog != null && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
-                    }, 2000);
+                    cargarRestaurantesBd();
                 }
         );
 
@@ -69,6 +63,7 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
     }
+
     private void mostrarAdapterRestaurantes() {
         rvCrudRestaurantes.setLayoutManager(new GridLayoutManager(this, 1));
         crudRestaurantesAdapter = new CrudRestaurantesAdapter();
@@ -104,12 +99,13 @@ public class EditarRestaurantesBd extends AppCompatActivity implements CrudResta
             });
         }
     }
+
     @Override
     public void onItemClick(int position) {
         Toast.makeText(this, String.valueOf(position), Toast.LENGTH_SHORT).show();
         intent = new Intent(this, DetalleEditarRestaurantesBd.class);
         intent.putExtra("restauranteDetalle", restaurantesBd.get(position));
-        intent.putExtra("restaurantesTotales",restaurantesBd);
+        intent.putExtra("restaurantesTotales", restaurantesBd);
         rLauncherRestaurantes.launch(intent);
     }
 }

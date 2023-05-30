@@ -1,4 +1,5 @@
 package mainActivity.menu.crudBd;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,7 +18,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.tfg.marfol.R;
+
 import java.util.ArrayList;
+
 import adapters.CrudPersonaAdapter;
 import entities.Persona;
 import mainActivity.menu.crudBd.detalle.DetalleEditarPersonaBd;
@@ -54,15 +57,7 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
         rLauncherPersonas = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     // Si no hago que se espere un poco, la petición va más rápida que la actualización
-                    progressDialog = ProgressDialog.show(this, "", "Actualización en curso...", true);
-                    handler = new Handler();
-                    handler.postDelayed(() -> {
-                        cargarDatosBd();
-                        // Quitar el ProgressDialog después de 500 milisegundos adicionales
-                        if (progressDialog != null && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
-                    }, 2000);
+                    cargarDatosBd();
                 }
         );
 
@@ -105,7 +100,7 @@ public class EditarPersonasBd extends AppCompatActivity implements CrudPersonaAd
     public void onItemClickCrudPersona(int position) {
         intentDetalle = new Intent(this, DetalleEditarPersonaBd.class);
         intentDetalle.putExtra("comensalDetalle", comensalesBd.get(position));
-        intentDetalle.putExtra("comensalesTotales",comensalesBd);
+        intentDetalle.putExtra("comensalesTotales", comensalesBd);
         rLauncherPersonas.launch(intentDetalle);
     }
 }

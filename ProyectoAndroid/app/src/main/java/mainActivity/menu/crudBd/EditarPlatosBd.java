@@ -25,14 +25,14 @@ import adapters.CrudPlatosAdapter;
 import entities.Plato;
 import mainActivity.menu.crudBd.detalle.DetalleEditarPlatosBd;
 
-public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapter.onItemClickListener  {
+public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapter.onItemClickListener {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private RecyclerView rvCrudPlatos;
     private CrudPlatosAdapter crudPlatosAdapter;
     private ArrayList<Plato> platosBd;
-    private String email, nombre, descripcion, imagen,restaurante;
+    private String email, nombre, descripcion, imagen, restaurante;
     private double precio;
     private CollectionReference platosRef;
     private Query consulta;
@@ -52,16 +52,7 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
         //Laucher Result recibe el ArrayList con los nuevos comensales y los inserta en el adapter
         rLauncherPlatos = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
-                    // Si no hago que se espere un poco, la petición va más rápida que la actualización
-                    progressDialog = ProgressDialog.show(this, "", "Actualización en curso...", true);
-                    handler = new Handler();
-                    handler.postDelayed(() -> {
-                        cargarDatosBd();
-                        // Quitar el ProgressDialog después de 1 segundo adicional
-                        if (progressDialog != null && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
-                    }, 2000);
+                    cargarDatosBd();
                 }
         );
 
@@ -74,15 +65,17 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
         rvCrudPlatos = findViewById(R.id.rvCrudPlatos);
 
     }
+
     private void mostrarAdapterPlatos() {
         rvCrudPlatos.setLayoutManager(new GridLayoutManager(this, 1));
         crudPlatosAdapter = new CrudPlatosAdapter();
         rvCrudPlatos.setAdapter(crudPlatosAdapter);
         crudPlatosAdapter.setmListener(this);
-        if (currentUser!=null){
+        if (currentUser != null) {
             cargarDatosBd();
         }
     }
+
     private void cargarDatosBd() {
 
         if (currentUser != null) {
@@ -101,7 +94,7 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
                         imagen = document.getString("imagen");
                         restaurante = document.getString("restaurante");
                         precio = document.getDouble("precio");
-                        plato = new Plato(nombre,descripcion,imagen,restaurante,precio);
+                        plato = new Plato(nombre, descripcion, imagen, restaurante, precio);
                         platosBd.add(plato);
                     }
                     // Notificar al adapter que los datos han cambiado
@@ -110,11 +103,12 @@ public class EditarPlatosBd extends AppCompatActivity implements CrudPlatosAdapt
             });
         }
     }
+
     @Override
     public void onItemClick(int position) {
         intentDetalle = new Intent(this, DetalleEditarPlatosBd.class);
         intentDetalle.putExtra("platoDetalle", platosBd.get(position));
-        intentDetalle.putExtra("platosTotales",platosBd);
+        intentDetalle.putExtra("platosTotales", platosBd);
         rLauncherPlatos.launch(intentDetalle);
     }
 }

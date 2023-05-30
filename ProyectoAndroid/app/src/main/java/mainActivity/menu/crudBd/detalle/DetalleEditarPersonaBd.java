@@ -10,12 +10,14 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.EditText;
@@ -64,6 +66,8 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
     private UploadTask uploadTask;
     private ContentValues values;
     private boolean comprobarNombre = true;
+    private ProgressDialog progressDialog;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,16 +94,37 @@ public class DetalleEditarPersonaBd extends AppCompatActivity {
         //Botón que vuelve a comensales y además devuelve el comensal modificado
         btnEditarDetalleEditarPersona.setOnClickListener(view -> {
             editarComensal();
-            finish();
+            progressDialog = ProgressDialog.show(this, "", "Actualización en curso...", true);
+            handler = new Handler();
+            handler.postDelayed(() -> {
+                // Quitar el ProgressDialog después de 500 milisegundos adicionales
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                finish();
+            }, 2000);
         });
+
         //Botón de borrar, llama a un método que a además de borrar
         btnBorrarDetalleEditarPersona.setOnClickListener(view -> {
             borrarComensal();
-            finish();
+            progressDialog = ProgressDialog.show(this, "", "Borrado en curso...", true);
+            handler = new Handler();
+            handler.postDelayed(() -> {
+                // Quitar el ProgressDialog después de 500 milisegundos adicionales
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                finish();
+            }, 2000);
+
+
         });
 
         //Convocamos el PopUp para mostrar las acciones ( Galería, Cámara )
-        ivDetalleFotoEditarPersona.setOnClickListener(view -> { puElegirAccion.show(); });
+        ivDetalleFotoEditarPersona.setOnClickListener(view -> {
+            puElegirAccion.show();
+        });
 
         //Añadimos onClick en el ImageView para activar la imagen
         btnUpCamara.setOnClickListener(view -> {

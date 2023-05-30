@@ -10,12 +10,14 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.EditText;
@@ -54,7 +56,7 @@ public class DetalleEditarPlatosBd extends AppCompatActivity {
     private Button btnEditarDetallePlatos, btnBorrarDetallePlatos;
     private static final int CAMERA_PERMISSION_CODE = 100;
     private ActivityResultLauncher<Intent> camaraLauncher;
-    private String uriCapturada = "", nombreNuevo, imagen, descripcionNueva, personaId, rutaImagen, imagenUrl, email,nombreExistente,restauranteExistente;
+    private String uriCapturada = "", nombreNuevo, imagen, descripcionNueva, personaId, rutaImagen, imagenUrl, email, nombreExistente, restauranteExistente;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
@@ -67,6 +69,8 @@ public class DetalleEditarPlatosBd extends AppCompatActivity {
     private ContentValues values;
     private boolean comprobarNombre = true;
     private double precioNuevo;
+    private ProgressDialog progressDialog;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,13 +94,32 @@ public class DetalleEditarPlatosBd extends AppCompatActivity {
         });
         //Botón que vuelve a platos y además devuelve el plato modificado
         btnEditarDetallePlatos.setOnClickListener(view -> {
+            // Si no hago que se espere un poco, la petición va más rápida que la actualización
             editarPlato();
-            finish();
+            progressDialog = ProgressDialog.show(this, "", "Actualización en curso...", true);
+            handler = new Handler();
+            handler.postDelayed(() -> {
+                // Quitar el ProgressDialog después de 1 segundo adicional
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                finish();
+            }, 2000);
+
+
         });
         //Botón de borrar, llama a un método que a además de borrar
         btnBorrarDetallePlatos.setOnClickListener(view -> {
             borrarPlato();
-            finish();
+            progressDialog = ProgressDialog.show(this, "", "Actualización en curso...", true);
+            handler = new Handler();
+            handler.postDelayed(() -> {
+                // Quitar el ProgressDialog después de 1 segundo adicional
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                finish();
+            }, 2000);
         });
 
         //Añadimos onClick en el ImageView para activar la imagen
@@ -124,7 +147,9 @@ public class DetalleEditarPlatosBd extends AppCompatActivity {
         });
 
         //Convocamos el PopUp para mostrar las acciones ( Galería, Cámara )
-        ivDetalleFotoEditarPlato.setOnClickListener(view -> { puElegirAccion.show(); });
+        ivDetalleFotoEditarPlato.setOnClickListener(view -> {
+            puElegirAccion.show();
+        });
 
         // Registrar el launcher para la cámara
         camaraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -197,8 +222,8 @@ public class DetalleEditarPlatosBd extends AppCompatActivity {
 
         // Comprobación del nombre y el restaurante del plato a editar
         for (int i = 0; i < platosTotales.size(); i++) {
-             nombreExistente = platosTotales.get(i).getNombre();
-             restauranteExistente = platosTotales.get(i).getRestaurante();
+            nombreExistente = platosTotales.get(i).getNombre();
+            restauranteExistente = platosTotales.get(i).getRestaurante();
 
             // Ignorar el elemento "nombre" enviado desde otra actividad
             if (!nombreExistente.equalsIgnoreCase(platoBd.getNombre()) ||
@@ -226,7 +251,7 @@ public class DetalleEditarPlatosBd extends AppCompatActivity {
                     if (!querySnapshot.isEmpty()) {
                         document = querySnapshot.getDocuments().get(0);
                         if (comprobarNombre) {
-                            document.getReference().update("nombre", nombreNuevo, "descripcion", descripcionNueva,"precio",precioNuevo)
+                            document.getReference().update("nombre", nombreNuevo, "descripcion", descripcionNueva, "precio", precioNuevo)
                                     .addOnSuccessListener(aVoid -> {
                                         // La actualización se realizó exitosamente
                                         personaId = document.getReference().getId();
