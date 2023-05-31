@@ -3,6 +3,7 @@ package mainActivity.detalle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -18,7 +19,9 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
+import android.graphics.PorterDuff;
 import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -27,12 +30,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.tfg.marfol.R;
 
@@ -51,6 +59,7 @@ import entities.Plato;
 public class DetallePlatoActivity extends AppCompatActivity implements PersonaCompartirAdapter.onItemClickListener {
 
     private Switch swCompartirPlato;
+    private ProgressBar progressBar;
     private ImageView ivFotoDetalle;
     private ActivityResultLauncher rLauncherComp;
     private TextView tvListaEditarPlato;
@@ -261,10 +270,33 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
 
         //Comprobamos que el plato no es nulo
         if (plato.getUrlImage() != null && !plato.getUrlImage().equalsIgnoreCase("")) {
+
+            //Asignamos un color rojizo característico de la APP
+            progressBar.getIndeterminateDrawable().setColorFilter(
+                    ContextCompat.getColor(this, R.color.redSLight),
+                    PorterDuff.Mode.SRC_IN
+            );
+
             Glide.with(this)
-                    .load(Uri.parse(plato.getUrlImage()))
+                    .load(plato.getUrlImage())
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .circleCrop()
+                    .error(uriCapturada)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
                     .into(ivFotoDetalle);
+
         } else {
             //Inserta Imagen photo
             ivFotoDetalle.setImageURI(Uri.parse("android.resource://com.tfg.marfol/" + R.drawable.camera));
@@ -390,6 +422,7 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
         etPrecioDetalle = findViewById(R.id.etPrecioEditarPlato);
         swCompartirPlato = findViewById(R.id.swCompartirEditarPlato);
         tvListaEditarPlato = findViewById(R.id.tvListaEditarPlato);
+        progressBar = findViewById(R.id.pgImagenDetalleP);
 
         //Asigna IDs de los elementos del popup
         puElegirAccion = new Dialog(this);

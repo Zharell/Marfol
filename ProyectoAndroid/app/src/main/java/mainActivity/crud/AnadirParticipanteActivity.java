@@ -2,13 +2,18 @@ package mainActivity.crud;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,13 +33,17 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
+import android.graphics.PorterDuff;
 import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.IOException;
@@ -49,6 +58,7 @@ import mainActivity.MetodosGlobales;
 import mainActivity.detalle.DetallePlatoActivity;
 
 public class AnadirParticipanteActivity extends AppCompatActivity implements AnadirPersonaAdapter.onItemClickListener {
+    private ProgressBar progressBar;
     private RecyclerView rvPlatosAnadirParticipante;
     private TextView tvTitleAnadirP, tvSubTitP;
     private EditText etNombreAnadirP, etDescAnadirP;
@@ -234,13 +244,34 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
 
     private void insertarDesdeBd() {
         if (importado) {
+            progressBar.setVisibility(View.VISIBLE);
             personaBd = (Persona) intent.getSerializableExtra("comensalesBd");
             etNombreAnadirP.setText(personaBd.getNombre());
             etDescAnadirP.setText(personaBd.getDescripcion());
             if (personaBd.getUrlImage() != null) {
+
+                //Asignamos un color rojizo característico de la APP
+                progressBar.getIndeterminateDrawable().setColorFilter(
+                        ContextCompat.getColor(this, R.color.redSLight),
+                        PorterDuff.Mode.SRC_IN
+                );
+
                 Glide.with(this)
                         .load(personaBd.getUrlImage())
                         .circleCrop()
+                        .error(uriCapturada) //Imagen que se añade si hay un error al cargar la imagen
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                progressBar.setVisibility(View.GONE);
+                                return false;
+                            }
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                progressBar.setVisibility(View.GONE);
+                                return false;
+                            }
+                        })
                         .into(ivPlatoAnadirP);
                 uriCapturada = personaBd.getUrlImage();
             }
@@ -399,6 +430,7 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         ivAnadirPlatoImagen = findViewById(R.id.ivAnadirPlatoImagen);
         btnContinuarAnadirP = findViewById(R.id.btnPlatosAnadirPlato);
         ivPlatoAnadirP = findViewById(R.id.ivPlatoAnadirPlato);
+        progressBar = findViewById(R.id.pgImagenAnadirPlato);
 
         //Asigna IDs de los elementos del popup
         puElegirAccion = new Dialog(this);

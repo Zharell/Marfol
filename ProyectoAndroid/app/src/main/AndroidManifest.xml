@@ -20,6 +20,12 @@
         android:theme="@style/Theme.Design.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
+        <!-- Google ADS -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713"/>
+
         <activity
             android:name="mainActivity.menu.crudBd.detalle.DetalleEditarPlatosBd"
             android:exported="false"
@@ -58,7 +64,6 @@
             android:value="AIzaSyC1JbQNg7WkFD4zGdVr1Y-RkaWtluXStKE" />
 
         <activity android:name="mainActivity.menu.AboutUs" />
-        <activity android:name="mainActivity.API.API" />
         <activity
             android:name="mainActivity.detalle.DetallePlatoActivity"
             android:exported="false"

@@ -45,7 +45,6 @@ import entities.Plato;
 import mainActivity.detalle.CompartirListaActivity;
 
 public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCompartirAdapter.onItemClickListener {
-
     private Switch swCompartirPlato;
     private RecyclerView rvPlatosAnadirPlato;
     private TextView tvTitleAnadirP, tvSubTitP;

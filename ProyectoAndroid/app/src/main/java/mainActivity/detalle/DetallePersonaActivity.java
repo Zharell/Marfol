@@ -3,6 +3,7 @@ package mainActivity.detalle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -20,17 +21,26 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
+import android.graphics.PorterDuff;
 import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -65,6 +75,7 @@ import mainActivity.crud.RecordarPlatoActivity;
 public class DetallePersonaActivity extends AppCompatActivity implements PersonaDetalleAdapter.onItemClickListener {
 
     private Persona comensal, comensalBd;
+    private ProgressBar progressBar;
     private ImageView ivLoginDetalle, ivFotoDetalle;
     private EditText etTitleDetalle, etDescripcionDetalle;
     private RecyclerView rvAnadirPlatoDetalle;
@@ -374,9 +385,31 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         uriCapturada = comensal.getUrlImage();
 
         if (comensal.getUrlImage() != null && !comensal.getUrlImage().equalsIgnoreCase("")) {
+
+            //Asignamos un color rojizo característico de la APP
+            progressBar.getIndeterminateDrawable().setColorFilter(
+                    ContextCompat.getColor(this, R.color.redSLight),
+                    PorterDuff.Mode.SRC_IN
+            );
+
             Glide.with(this)
                     .load(comensal.getUrlImage())
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .circleCrop()
+                    .error(uriCapturada)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
                     .into(ivFotoDetalle);
         } else {
             //Inserta Imagen photo
@@ -399,6 +432,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
         etDescripcionDetalle = findViewById(R.id.etDescripcionDetallePersona);
         rvAnadirPlatoDetalle = findViewById(R.id.rvAnadirPlatoDetalle);
         btnContinuarDetalle = findViewById(R.id.btnEditarDetalle);
+        progressBar = findViewById(R.id.pgImagenDetalle);
 
         //Asigna IDs de los elementos del popup
         puElegirAccion = new Dialog(this);

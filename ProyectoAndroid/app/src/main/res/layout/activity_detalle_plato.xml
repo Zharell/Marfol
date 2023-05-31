@@ -156,4 +156,14 @@ tools:context="mainActivity.detalle.DetallePlatoActivity">
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rvAnadirDetallePlato" />
 
+    <ProgressBar
+        android:id="@+id/pgImagenDetalleP"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="167dp"
+        android:layout_height="161dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ivFotoPersonaPlato"
+        app:layout_constraintEnd_toEndOf="@+id/ivFotoPersonaPlato"
+        app:layout_constraintStart_toStartOf="@+id/ivFotoPersonaPlato"
+        app:layout_constraintTop_toTopOf="@+id/ivFotoPersonaPlato" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
