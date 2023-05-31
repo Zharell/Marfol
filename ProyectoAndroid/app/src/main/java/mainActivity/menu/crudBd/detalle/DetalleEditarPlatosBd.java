@@ -220,7 +220,6 @@ public class DetalleEditarPlatosBd extends AppCompatActivity {
                     // Ocurrió un error al buscar el plato en la base de datos
                     Toast.makeText(DetalleEditarPlatosBd.this, "Error al buscar el comensal en la base de datos", Toast.LENGTH_SHORT).show();
                 });
-        finish();
     }
 
     private void editarPlato() {

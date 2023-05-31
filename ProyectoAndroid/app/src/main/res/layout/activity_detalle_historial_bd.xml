@@ -12,7 +12,7 @@
         android:layout_width="320dp"
         android:layout_height="50dp"
         android:layout_marginBottom="100dp"
-        android:background="@drawable/row_platos_bd"
+        android:background="@drawable/row_historial"
         android:fontFamily="serif"
         android:gravity="center"
         android:hint="Fecha"
@@ -25,7 +25,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ScrollView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="400dp"
         app:layout_constraintBottom_toTopOf="@+id/tvHistorialFecha"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,10 +37,12 @@
             android:id="@+id/tvHistorialFactura"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
+            android:background="@drawable/row_historial"
             android:fontFamily="fonts/myfont.ttf"
+            android:gravity="center"
             android:padding="16dp"
-            android:textColor="#000000" />
+            android:textColor="@color/redTitle"
+            android:textSize="24dp" />
     </ScrollView>
 
     <TextView
@@ -48,7 +50,7 @@
         android:layout_width="320dp"
         android:layout_height="50dp"
         android:layout_marginTop="50dp"
-        android:background="@drawable/row_platos_bd"
+        android:background="@drawable/row_historial"
         android:fontFamily="serif"
 
         android:gravity="center"

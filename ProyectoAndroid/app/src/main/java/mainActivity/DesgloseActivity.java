@@ -222,7 +222,7 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
 
     private void cargarHistorial() {
         for (int i = 0; i < listaComensales.size(); i++) {
-            historial+=listaComensales.get(i).getNombre()+"--"+listaComensales.get(i).getMonedero()+"*";
+            historial+=listaComensales.get(i).getNombre()+": "+listaComensales.get(i).getMonedero()+" € \n \n";
         }
     }
 
@@ -296,10 +296,7 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
             // Sube la imagen a Storage
             imagenUri = Uri.parse(imagen);
             uploadTask = imagenRef.putFile(imagenUri);
-
             uploadTask.addOnSuccessListener(taskSnapshot -> {
-                // La imagen se subió exitosamente
-                Toast.makeText(this, "Imagen subida exitosamente", Toast.LENGTH_SHORT).show();
 
                 // Obtiene la URL de descarga de la imagen
                 imagenRef.getDownloadUrl().addOnSuccessListener(uri -> {
@@ -315,8 +312,6 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                     });
                 });
             }).addOnFailureListener(e -> {
-                // Ocurrió un error al subir la imagen
-                Toast.makeText(this, "Error al subir la imagen", Toast.LENGTH_SHORT).show();
             });
         }
     }
