@@ -39,6 +39,7 @@ import entities.Persona;
 import entities.Restaurantes;
 import mainActivity.menu.crudBd.Seleccion;
 import mainActivity.menu.AboutUs;
+import mainActivity.menu.historial.HistorialBd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
@@ -59,11 +60,9 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     private ActivityResultLauncher rLauncherLogin;
     private Handler handler;
     private TextView menuItemAboutUs;
-    private TextView menuItemContactUs;
-    private TextView menuItemPreferencias;
     private TextView tvLogoutIndex;
-    private TextView tvEditarDatosIndex;
-    private TextView tvOcultar1, tvOcultar2;
+    private TextView tvEditarDatosIndex,tvHistorialIndex;
+    private TextView tvOcultar1, tvOcultar2,tvOcultar3;
     private PopupWindow popupWindow;
     private Intent intent;
     private RestaurantesAdapter restaurantesAdapter;
@@ -72,7 +71,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     private String email, nombreRestaurante;
     private Restaurantes restaurantes;
     private Query consulta;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -227,6 +225,10 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         tvLogoutIndex.setVisibility(View.INVISIBLE);
         tvOcultar2 = popupView.findViewById(R.id.tvOcultar2);
         tvOcultar2.setVisibility(View.INVISIBLE);
+        tvHistorialIndex = popupView.findViewById(R.id.tvHistorialIndex);
+        tvHistorialIndex.setVisibility(View.INVISIBLE);
+        tvOcultar3 = popupView.findViewById(R.id.tvOcultar3);
+        tvOcultar3.setVisibility(View.INVISIBLE);
 
         // Ajustar el tamaño del menú según tus preferencias
         int width = getResources().getDisplayMetrics().widthPixels * 7 / 10; // El 70% del ancho de la pantalla
@@ -264,8 +266,10 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         if (mAuth.getCurrentUser() != null) {
             tvLogoutIndex.setVisibility(View.VISIBLE);
             tvEditarDatosIndex.setVisibility(View.VISIBLE);
+            tvHistorialIndex.setVisibility(View.VISIBLE);
             tvOcultar1.setVisibility(View.VISIBLE);
             tvOcultar2.setVisibility(View.VISIBLE);
+            tvOcultar3.setVisibility(View.VISIBLE);
             tvLogoutIndex.setOnClickListener(v -> {
                 SharedPreferences prefAux = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
                 SharedPreferences.Editor prefs = prefAux.edit();
@@ -281,6 +285,11 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
                 intent = new Intent(this, Seleccion.class);
                 //startActivity(intent);
                 seleccionCrud.launch(intent);
+                popupWindow.dismiss();
+            });
+            tvHistorialIndex.setOnClickListener(v3->{
+                intent = new Intent(this, HistorialBd.class);
+                startActivity(intent);
                 popupWindow.dismiss();
             });
         }
