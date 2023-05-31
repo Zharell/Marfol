@@ -3,6 +3,7 @@ package mainActivity.menu.crudBd.detalle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -15,18 +16,26 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -45,6 +54,7 @@ import java.util.ArrayList;
 import entities.Plato;
 
 public class DetalleEditarPlatosBd extends AppCompatActivity {
+    private ProgressBar progressBar;
     private Plato platoBd;
     private ArrayList<Plato> platosTotales;
     private EditText etDetalleNombreEditarPlato, etDetalleDescripcionEditarPlato, etDetallePrecioEditarPlato;
@@ -173,7 +183,6 @@ public class DetalleEditarPlatosBd extends AppCompatActivity {
                     ivDetalleFotoEditarPlato.setBackground(null);
                     Glide.with(this)
                             .load(uriCapturada)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .circleCrop()
                             .into(ivDetalleFotoEditarPlato);
                 } catch (IOException e) {
@@ -324,7 +333,6 @@ public class DetalleEditarPlatosBd extends AppCompatActivity {
                 ivDetalleFotoEditarPlato.setBackground(null);
                 Glide.with(this)
                         .load(selectedImageUri)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .circleCrop()
                         .into(ivDetalleFotoEditarPlato);
             }
@@ -344,6 +352,7 @@ public class DetalleEditarPlatosBd extends AppCompatActivity {
         btnBorrarDetallePlatos = findViewById(R.id.btnBorrarDetallePlatos);
         btnEditarDetallePlatos = findViewById(R.id.btnEditarDetallePlatos);
         ivDetalleFotoEditarPlato = findViewById(R.id.ivDetalleFotoEditarPlato);
+        progressBar = findViewById(R.id.pgImagenEditarPersonaP);
 
         //Asigna IDs de los elementos del popup
         puElegirAccion = new Dialog(this);
@@ -360,16 +369,33 @@ public class DetalleEditarPlatosBd extends AppCompatActivity {
         tvNombreDeRestaurante.setText(platoBd.getRestaurante());
         imagen = platoBd.getUrlImage();
         if (imagen != null && !imagen.equalsIgnoreCase("")) {
+
+            progressBar.getIndeterminateDrawable().setColorFilter(
+                    ContextCompat.getColor(this, R.color.redSLight),
+                    PorterDuff.Mode.SRC_IN
+            );
+
             ivDetalleFotoEditarPlato.setBackground(null);
             Glide.with(DetalleEditarPlatosBd.this)
                     .load(imagen)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
                     .circleCrop()
                     .into(ivDetalleFotoEditarPlato);
         } else {
             Glide.with(DetalleEditarPlatosBd.this)
                     .load(R.drawable.camera)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .circleCrop()
                     .into(ivDetalleFotoEditarPlato);
         }

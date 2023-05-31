@@ -22,6 +22,8 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -35,9 +37,14 @@ import entities.Restaurantes;
 import mainActivity.menu.crudBd.Seleccion;
 import mainActivity.menu.AboutUs;
 import mainActivity.menu.historial.HistorialBd;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+
 
 public class IndexActivity extends AppCompatActivity implements RestaurantesAdapter.onItemClickListenerRestaurantes {
     private Button btnApIndex;
+    private AdView mAdView;
     private ImageView ivImagenLogin;
     private RecyclerView rvRestaurantesUsuario;
     private Dialog puVolverIndex;
@@ -60,7 +67,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     private String email, nombreRestaurante;
     private Restaurantes restaurantes;
     private Query consulta;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +79,9 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
         //si uno está logueado se comporta de una manera o otra
         comprobarLauncher();
+
+        //Método que añade publicidad al index
+        anadirAds();
 
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -100,6 +109,15 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
 
         //Cancela, desaparece el popup y continúa en la actividad
         btnCancelarIndex.setOnClickListener(view -> puVolverIndex.dismiss());
+    }
+
+    public void anadirAds(){
+        MobileAds.initialize(this, initializationStatus -> {
+            mAdView = findViewById(R.id.adViewIndex);
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mAdView.loadAd(adRequest);
+        });
+
     }
 
     private void botonImagenNoLogueado() {

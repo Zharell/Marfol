@@ -88,4 +88,21 @@
         app:layout_constraintTop_toBottomOf="@+id/btnApIndex" />
 
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adViewIndex"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="140dp"
+        app:adSize="BANNER"
+        app:adUnitId="ca-app-pub-3940256099942544/6300978111"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rvRestaurantesUsuario"
+        app:layout_constraintVertical_bias="0.813"></com.google.android.gms.ads.AdView>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
