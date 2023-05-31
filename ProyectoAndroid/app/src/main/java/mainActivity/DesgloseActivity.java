@@ -13,6 +13,7 @@ import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -34,7 +35,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tfg.marfol.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,9 +63,10 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private ActivityResultLauncher rLauncherLogin;
-    private String nombreRestaurante="", email, platoExistenteId, rutaImagen, imagenUrl;
+    private String nombreRestaurante="", email, platoExistenteId, rutaImagen, imagenUrl,historial="";
     private DocumentReference restauranteRef;
     private CollectionReference platosRef;
+    private CollectionReference historialRef;
     private Query query;
     private QuerySnapshot querySnapshot;
     private List<DocumentSnapshot> platosExistente;
@@ -167,6 +171,7 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                     restauranteRef.set(restauranteData).addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Restaurante guardado correctamente", Toast.LENGTH_SHORT).show();
                         guardarPlatos(nombreRestaurante); // Llamar al método para guardar los platos
+                        guardarHistorial(nombreRestaurante,email);// Llamar al método para guardar un historial de la transaccion
                         puGuardarDesglose.dismiss();
                         finish();
                     }).addOnFailureListener(e -> {
@@ -174,6 +179,7 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                         finish();
                     });
                 } else {
+                    guardarHistorial(nombreRestaurante,email);// Llamar al método para guardar un historial de la transaccion
                     guardarPlatos(nombreRestaurante); // Llamar al método para guardar los platos
                     puGuardarDesglose.dismiss();
                     finish();
@@ -186,6 +192,43 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
             }
         });
     }
+
+    private void guardarHistorial(String nombreRestaurante,String email) {
+            if (currentUser != null) {
+                // Obtén la colección "historial" en Firestore
+                historialRef = db.collection("historial");
+                cargarHistorial();
+                // Crea un objeto HashMap para almacenar los datos del nuevo historial
+                Map<String, Object> nuevoHistorial = new HashMap<>();
+                nuevoHistorial.put("historial", historial);
+                nuevoHistorial.put("restaurante",nombreRestaurante);
+                // Obtiene la fecha actual en el formato deseado ("dd/MM/yyyy HH:mm")
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                String fechaActual = sdf.format(new Date());
+                nuevoHistorial.put("fecha", fechaActual);
+
+                nuevoHistorial.put("usuario", email);
+
+                // Agrega el nuevo historial con un ID único generado automáticamente
+                historialRef.add(nuevoHistorial)
+                        .addOnSuccessListener(documentReference -> {
+                            // Éxito en la operación de guardado
+                        })
+                        .addOnFailureListener(e -> {
+                            // Error en la operación de guardado
+                        });
+            }
+        }
+
+    private void cargarHistorial() {
+        for (int i = 0; i < listaComensales.size(); i++) {
+            historial+=listaComensales.get(i).getNombre()+"--"+listaComensales.get(i).getMonedero()+"*";
+        }
+    }
+
+
+
+
 
     private void guardarPlatos(String restauranteNombre) {
         platosRef = db.collection("platos");

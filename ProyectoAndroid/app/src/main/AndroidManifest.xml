@@ -21,92 +21,99 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name="mainActivity.menu.historial.HistorialBd"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="mainActivity.menu.historial.detalle.DetalleHistorialBd"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name="mainActivity.menu.crudBd.detalle.DetalleEditarPlatosBd"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="mainActivity.crud.RecordarPlatoActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="mainActivity.menu.crudBd.detalle.DetalleEditarRestaurantesBd"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="mainActivity.menu.crudBd.EditarRestaurantesBd"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="mainActivity.menu.crudBd.EditarPersonasBd"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="mainActivity.menu.crudBd.EditarPlatosBd"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="mainActivity.menu.crudBd.detalle.DetalleEditarPersonaBd"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="mainActivity.menu.crudBd.Seleccion"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyC1JbQNg7WkFD4zGdVr1Y-RkaWtluXStKE" />
 
         <activity android:name="mainActivity.menu.AboutUs" />
-        <activity android:name="mainActivity.API.API" />
         <activity
             android:name="mainActivity.detalle.DetallePlatoActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="mainActivity.detalle.CompartirListaActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="mainActivity.DesgloseActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="mainActivity.detalle.DetallePersonaActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="login.EditarDatos"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="mainActivity.crud.AnadirPlatoActivity"
-            android:windowSoftInputMode="adjustPan"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name="mainActivity.crud.AnadirParticipanteActivity"
-            android:windowSoftInputMode="adjustPan"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name="login.RecoverActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="login.RegistroActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="mainActivity.ParticipantesActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="login.HomeActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="login.AuthActivity"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="mainActivity.IndexActivity"
             android:exported="true"
