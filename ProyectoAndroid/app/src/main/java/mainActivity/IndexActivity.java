@@ -5,6 +5,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +35,7 @@ import com.google.firebase.firestore.Query;
 import com.tfg.marfol.R;
 import java.util.ArrayList;
 import adapters.RestaurantesAdapter;
+import entities.Persona;
 import entities.Restaurantes;
 import mainActivity.menu.crudBd.Seleccion;
 import mainActivity.menu.AboutUs;
@@ -51,6 +54,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     private TextView tvMessage1Popup, tvMessage2Popup, tvTitlePopup, tvTitleIndex;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private ActivityResultLauncher seleccionCrud;
     private FirebaseUser currentUser;
     private ActivityResultLauncher rLauncherLogin;
     private Handler handler;
@@ -85,6 +89,14 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         //Método que añade publicidad al index
         anadirAds();
 
+        //Laucher Result que gestiona la vuelta desde el crud, mostrando o eliminando del recycler los restaurantes modificados
+        seleccionCrud = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                        currentUser = mAuth.getCurrentUser();
+                        comprobarLauncher();
+                }
+        );
+
         rLauncherLogin = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     currentUser = mAuth.getCurrentUser();
@@ -96,7 +108,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
         btnApIndex.setOnClickListener(view -> {
             intent = new Intent(this, ParticipantesActivity.class);
             startActivity(intent);
-
             //Aplica un efecto de desvanecimiento entre actividades y se cierra
             overridePendingTransition(androidx.navigation.ui.R.anim.nav_default_enter_anim, androidx.navigation.ui.R.anim.nav_default_exit_anim);
             finish();
@@ -249,9 +260,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
             popupWindow.dismiss();
         });
 
-
-
-
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null) {
             tvLogoutIndex.setVisibility(View.VISIBLE);
@@ -271,7 +279,8 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
             });
             tvEditarDatosIndex.setOnClickListener(v2 -> {
                 intent = new Intent(this, Seleccion.class);
-                startActivity(intent);
+                //startActivity(intent);
+                seleccionCrud.launch(intent);
                 popupWindow.dismiss();
             });
         }
