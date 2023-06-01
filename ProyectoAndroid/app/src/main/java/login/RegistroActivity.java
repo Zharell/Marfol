@@ -100,7 +100,7 @@ public class RegistroActivity extends AppCompatActivity {
                                         showAlert("Error al guardar los datos del usuario");
                                     });
                         } else {
-                            showAlert("El correo no coincide con el formato 'x'+'@'+'.'+'x'.");
+                            showAlert("Ocurrió un error a la hora del registro");
                         }
                     });
         });

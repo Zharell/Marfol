@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/logo_marfol_rosa" />
+        app:srcCompat="@drawable/logo_marfol_amarillo" />
 
     <ScrollView
         android:layout_width="0dp"
