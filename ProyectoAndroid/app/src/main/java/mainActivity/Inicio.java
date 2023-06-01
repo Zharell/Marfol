@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.tfg.marfol.R;
 
 public class Inicio extends AppCompatActivity {
@@ -16,11 +18,11 @@ public class Inicio extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio);
-
         ivImagenInicio = findViewById(R.id.ivImagenInicio);
         Glide.with(this)
                 .asGif()
                 .load(R.drawable.marfol_intro)
+                .centerInside()
                 .into(ivImagenInicio);
 
     // Mostrar el logotipo durante 3 segundos
