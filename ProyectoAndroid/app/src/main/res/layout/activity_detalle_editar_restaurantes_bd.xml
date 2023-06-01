@@ -16,6 +16,7 @@
         android:fontFamily="serif"
         android:gravity="center"
         android:hint="@string/nombre"
+        android:maxLength="20"
         android:textColor="@color/blueRestaurantes"
         android:textColorHint="@color/blueRestaurantes"
         android:textSize="30sp"

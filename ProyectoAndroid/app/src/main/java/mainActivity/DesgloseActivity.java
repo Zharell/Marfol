@@ -226,10 +226,6 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
         }
     }
 
-
-
-
-
     private void guardarPlatos(String restauranteNombre) {
         platosRef = db.collection("platos");
 

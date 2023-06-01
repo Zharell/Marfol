@@ -94,7 +94,7 @@ public class DetallePersonaActivity extends AppCompatActivity implements Persona
     private ActivityResultLauncher rLauncherDetallePlato;
     private ActivityResultLauncher rLauncherRecordarPlato;
     private Button btnContinuarDetalle, btnBorrarDetalle;
-    private String uriCapturada = "android.resource://com.tfg.marfol/"+R.drawable.logo_marfol;
+    private String uriCapturada = "android.resource://com.tfg.marfol/"+R.drawable.logo_marfol_amarillo;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private FirebaseUser currentUser;

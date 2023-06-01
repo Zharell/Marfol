@@ -29,7 +29,8 @@ public class Inicio extends AppCompatActivity {
             // Iniciar la siguiente actividad
             Intent intent = new Intent(Inicio.this, IndexActivity.class);
             startActivity(intent);
-
+            //Aplica un efecto de desvanecimiento entre actividades y se cierra
+            overridePendingTransition(androidx.navigation.ui.R.anim.nav_default_enter_anim, androidx.navigation.ui.R.anim.nav_default_exit_anim);
             // Cerrar la actividad actual
             finish();
         }, segundosDuracion);

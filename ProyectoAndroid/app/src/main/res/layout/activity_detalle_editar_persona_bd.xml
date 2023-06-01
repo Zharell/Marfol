@@ -16,6 +16,7 @@
         android:fontFamily="serif"
         android:gravity="center"
         android:hint="@string/nombre"
+        android:maxLength="16"
         android:textColor="@color/redBorder"
         android:textSize="30sp"
         android:textColorHint="@color/redSLight"

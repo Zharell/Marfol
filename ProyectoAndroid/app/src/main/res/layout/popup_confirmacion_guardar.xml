@@ -17,7 +17,9 @@
         android:textColor="@color/azulFuerte"
         android:textColorHint="@color/azulSuave"
         android:textSize="24sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:maxLength="20"
+        />
 
     <TextView
         android:id="@+id/tvMessage1Popup"
