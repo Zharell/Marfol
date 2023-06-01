@@ -35,7 +35,7 @@ public class RecoverActivity extends AppCompatActivity {
     }
     private void resetPassword() {
         //envía un correo al usuario de la caja de texto,(en caso de que el usuario esté registrado), y manda un reset de contraseña
-        mAuth.setLanguageCode("es");
+        mAuth.setLanguageCode("es");//determina el idioma del correo
         mAuth.sendPasswordResetEmail(email).addOnCompleteListener(l->{
             if(l.isSuccessful()){
                 Toast.makeText(this, "Se ha enviado un correo para restablecer la contraseña",Toast.LENGTH_SHORT).show();

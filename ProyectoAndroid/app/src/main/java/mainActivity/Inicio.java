@@ -18,17 +18,19 @@ public class Inicio extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio);
+        //busca la imagen en el xml
         ivImagenInicio = findViewById(R.id.ivImagenInicio);
+        //con glide seteamos el gif a la imagen
         Glide.with(this)
                 .asGif()
                 .load(R.drawable.marfol_intro)
                 .centerInside()
                 .into(ivImagenInicio);
 
-    // Mostrar el logotipo durante 3 segundos
+        // Mostrar la animación durante 3 segundos
         int segundosDuracion = 3000;
         new Handler().postDelayed(() -> {
-            // Iniciar la siguiente actividad
+            // Iniciar el index
             Intent intent = new Intent(Inicio.this, IndexActivity.class);
             startActivity(intent);
 
