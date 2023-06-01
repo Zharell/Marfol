@@ -78,8 +78,7 @@ public class RegistroActivity extends AppCompatActivity {
                 showAgreementDialog(cbAcuerdoUsuario);
                 return;
             }
-
-            // Resto del código para el registro exitoso
+            //Conexión a firebase, registro de usuarios con email y contraseña
             FirebaseAuth.getInstance()
                     .createUserWithEmailAndPassword(etRegistroEmailLogin.getText().toString(),
                             etRegistroPasswordLogin.getText().toString()).addOnCompleteListener(it -> {
