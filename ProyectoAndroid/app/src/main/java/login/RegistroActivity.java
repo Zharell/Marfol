@@ -53,24 +53,22 @@ public class RegistroActivity extends AppCompatActivity {
                 showAlert("El campo de correo electrónico está vacío");
                 return;
             }
-
             if (!password1.equals(password2)) {
                 // Validación de contraseñas distintas
                 showAlert("Las contraseñas no coinciden");
                 return;
             }
-
             if (password1.isEmpty()) {
                 // Validación de campo de contraseña vacío
                 showAlert("El campo de contraseña está vacío");
                 return;
             }
-
             // Validación de contraseña con expresión regular
             if (!password1.matches(REGEX)) {
                 showAlert("La contraseña debe tener al menos 8 caracteres, un número y un carácter especial");
                 return;
             }
+            // Validación de acuerdos
             if (!cbAcuerdoUsuario.isChecked()) {
                 // Mostrar mensaje de error
                 showAlert("Debes aceptar los acuerdos de usuario");

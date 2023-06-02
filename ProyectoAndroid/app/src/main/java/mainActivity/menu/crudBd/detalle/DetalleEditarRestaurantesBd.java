@@ -52,7 +52,7 @@ public class DetalleEditarRestaurantesBd extends AppCompatActivity {
             progressDialog = ProgressDialog.show(this, "", "Actualización en curso...", true);
             handler = new Handler();
             handler.postDelayed(() -> {
-                // Quitar el ProgressDialog después de 1 segundos adicionales
+                // Quitar el ProgressDialog después de 2 segundos adicionales
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
@@ -84,7 +84,6 @@ public class DetalleEditarRestaurantesBd extends AppCompatActivity {
                 }
             }
         }
-
         if (nombreNuevo.isEmpty()) {
             // El campo de texto está vacío, mostrar un mensaje de error
             Toast.makeText(DetalleEditarRestaurantesBd.this, "El campo nombre de restaurante no puede estar vacío, no se realizaron los cambios.", Toast.LENGTH_SHORT).show();
