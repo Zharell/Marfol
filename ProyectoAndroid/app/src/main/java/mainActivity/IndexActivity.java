@@ -132,7 +132,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     }
 
     private void botonImagenNoLogueado() {
-        //Puesto provisional para probar cosas
+        // El usuario no está logueado
         ivImagenLogin.setOnClickListener(view -> {
             intent = new Intent(this, login.AuthActivity.class);
             rLauncherLogin.launch(intent);
@@ -140,7 +140,7 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     }
 
     private void botonImagenLogueado() {
-        //Puesto provisional para probar cosas
+        //El usuario está logueado
         ivImagenLogin.setOnClickListener(view -> {
             intent = new Intent(this, login.HomeActivity.class);
             rLauncherLogin.launch(intent);
@@ -263,10 +263,6 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
             tvOcultar2.setVisibility(View.VISIBLE);
             tvOcultar3.setVisibility(View.VISIBLE);
             tvLogoutIndex.setOnClickListener(v -> {
-                SharedPreferences prefAux = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
-                SharedPreferences.Editor prefs = prefAux.edit();
-                prefs.clear();
-                prefs.apply();
                 FirebaseAuth.getInstance()
                         .signOut();
                 intent = new Intent(this, IndexActivity.class);
