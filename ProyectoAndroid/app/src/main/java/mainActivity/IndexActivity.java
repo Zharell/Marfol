@@ -171,37 +171,29 @@ public class IndexActivity extends AppCompatActivity implements RestaurantesAdap
     }
 
     public void asignarEfectos() {
-
         //Ajusta el tamaño de la imagen del login
         ivImagenLogin.setPadding(20, 20, 20, 20);
-
         //Asigna el degradado de colores a los textos
         int[] colors = {getResources().getColor(R.color.redBorder),
                 getResources().getColor(R.color.redTitle)
         };
-
         float[] positions = {0f, 0.2f};
-
         LinearGradient gradient = new LinearGradient(0, 0, 40,
                 tvTitleIndex.getPaint().getTextSize(),
                 colors,
                 positions,
                 Shader.TileMode.REPEAT);
-
         tvTitleIndex.getPaint().setShader(gradient);
         btnApIndex.getPaint().setShader(gradient);
         btnConfirmarIndex.getPaint().setShader(gradient);
         btnCancelarIndex.getPaint().setShader(gradient);
-
         // Asigna sombreado al texto
         float shadowRadius = 10f;
         float shadowDx = 0f;
         float shadowDy = 5f;
         int shadowColor = Color.BLACK;
-
         tvTitleIndex.getPaint().setShadowLayer(shadowRadius, shadowDx, shadowDy, shadowColor);
         btnApIndex.getPaint().setShadowLayer(shadowRadius, shadowDx, shadowDy, shadowColor);
-
     }
 
     //Método que al pulsar el botón de volver te pregunta si deseas cerrar la app

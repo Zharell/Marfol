@@ -82,11 +82,11 @@
 
         <activity android:name="mainActivity.menu.AboutUs" />
         <activity
-            android:name="mainActivity.detalle.DetallePlatoActivity"
+            android:name="mainActivity.menu.detalle.DetallePlatoActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name="mainActivity.detalle.CompartirListaActivity"
+            android:name="mainActivity.menu.detalle.CompartirListaActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
@@ -94,7 +94,7 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name="mainActivity.detalle.DetallePersonaActivity"
+            android:name="mainActivity.menu.detalle.DetallePersonaActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

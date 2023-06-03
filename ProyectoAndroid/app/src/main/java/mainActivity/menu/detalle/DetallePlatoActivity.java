@@ -1,4 +1,4 @@
-package mainActivity.detalle;
+package mainActivity.menu.detalle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -25,7 +25,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -44,15 +43,11 @@ import com.bumptech.glide.request.target.Target;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.tfg.marfol.R;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-import adapters.ListaCompartirAdapter;
 import adapters.PersonaCompartirAdapter;
-import adapters.PersonaDetalleAdapter;
 import entities.Persona;
 import entities.Plato;
 
@@ -94,10 +89,6 @@ public class DetallePlatoActivity extends AppCompatActivity implements PersonaCo
         nombreCompartir = (ArrayList<Persona>) intent.getSerializableExtra("arrayListComenComp");
         personaCode = intent.getIntExtra("comensalCode", 0);
         esCompartido = plato.isCompartido();
-
-        for (Persona e : nombreCompartir) {
-            Toast.makeText(this, String.valueOf(e.getNombre()), Toast.LENGTH_SHORT).show();
-        }
 
         //Método que asigna IDs a los elementos
         asignarId();

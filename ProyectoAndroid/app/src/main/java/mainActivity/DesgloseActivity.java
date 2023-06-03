@@ -14,6 +14,7 @@ import android.graphics.Shader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -55,7 +56,7 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
     private Button btnGuardarRestaurante;
     private RecyclerView rvPersonaDesglose;
     private TextView tvTitleDesglose;
-    private ImageView ivDesgloseImagen;
+    private ImageView ivDesgloseImagen, ivCompartirImagen;
     private DesgloseAdapter desgloseAdapter;
     private ArrayList<Persona> comensales, listaComensales;
     private ArrayList<Plato> platosABd;
@@ -147,6 +148,23 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
         //launcher para volver con datos desde el auth/home dependiendo si estoy logueado o no
         rLauncherLogin = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> comprobarLauncher());
 
+        //Método que da la opción a compartir en Whatsapp
+        ivCompartirImagen.setOnClickListener(view -> {
+            //Convierte la factura en un String
+            cargarHistorialWP();
+
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, historial);
+            intent.setPackage("com.whatsapp");
+
+            try {
+                startActivity(intent);
+            } catch (android.content.ActivityNotFoundException ex) {
+                // WhatsApp no está instalado en el dispositivo
+                Toast.makeText(this, "WhatsApp no está instalado.", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
@@ -221,8 +239,16 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
         }
 
     private void cargarHistorial() {
+        historial="";
         for (int i = 0; i < listaComensales.size(); i++) {
             historial+=listaComensales.get(i).getNombre()+": "+listaComensales.get(i).getMonedero()+" € \n \n";
+        }
+    }
+
+    private void cargarHistorialWP() {
+        historial="------ *FACTURA MARFOL* ------- \n \n";
+        for (int i = 0; i < listaComensales.size(); i++) {
+            historial+="*"+listaComensales.get(i).getNombre()+"* : "+listaComensales.get(i).getMonedero()+" € \n \n";
         }
     }
 
@@ -428,6 +454,8 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
         rvPersonaDesglose = findViewById(R.id.rvPersonaDesglose);
         tvTitleDesglose = findViewById(R.id.tvTitleDesglose);
         ivDesgloseImagen = findViewById(R.id.ivDesgloseImagen);
+        ivCompartirImagen = findViewById(R.id.ivCompartirImagen);
+
         //Asigna IDs de los elementos del popup
         puGuardarDesglose = new Dialog(this);
         puGuardarDesglose.setContentView(R.layout.popup_confirmacion_guardar);

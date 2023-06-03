@@ -74,4 +74,17 @@ tools:context="mainActivity.DesgloseActivity">
         app:layout_constraintTop_toBottomOf="@+id/rvPersonaDesglose"
         app:layout_constraintVertical_bias="0.0" />
 
+    <ImageView
+        android:id="@+id/ivCompartirImagen"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/wpp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.448"
+        app:layout_constraintStart_toEndOf="@+id/btnGuardarRestauranteDes"
+        app:layout_constraintTop_toBottomOf="@+id/rvPersonaDesglose" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,7 +14,6 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 
-import android.net.Uri;
 import android.os.Bundle;
 
 import android.widget.Button;
@@ -23,11 +22,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -42,7 +39,7 @@ import adapters.PersonaAdapterBd;
 import entities.Persona;
 import login.AuthActivity;
 import mainActivity.crud.AnadirParticipanteActivity;
-import mainActivity.detalle.DetallePersonaActivity;
+import mainActivity.menu.detalle.DetallePersonaActivity;
 
 public class ParticipantesActivity extends AppCompatActivity implements PersonaAdapter.onItemClickListener, PersonaAdapterBd.onItemClickListenerBd {
 
@@ -141,7 +138,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
         rLauncherDesglose = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        Toast.makeText(this,"paso",Toast.LENGTH_SHORT).show();
                         comprobarLauncher();
                         intent = result.getData();
                         comensales = (ArrayList<Persona>) intent.getSerializableExtra("arrayListDesglose");
@@ -341,9 +337,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
                     personaAdapterBd.setResultsPersonaBd(comensalesBd);
                 }
             });
-        } else {
-            // El usuario no está autenticado, muestra un mensaje o inicia sesión automáticamente
-            Toast.makeText(this, "Inicia sesión para cargar los datos", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -371,7 +364,6 @@ public class ParticipantesActivity extends AppCompatActivity implements PersonaA
 
     @Override
     public void onItemClickBd(int position) {
-        Toast.makeText(this, String.valueOf(position), Toast.LENGTH_SHORT).show();
         Intent i = new Intent(this, AnadirParticipanteActivity.class);
         i.putExtra("importado", true);
         i.putExtra("arrayListComensales", comensales);

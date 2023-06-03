@@ -61,7 +61,6 @@ public class MetodosGlobales {
             });
             return true;
         } else {
-            Toast.makeText(context, "No estás logueado", Toast.LENGTH_SHORT).show();
             Glide.with(context)
                     .load(R.drawable.camera)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)

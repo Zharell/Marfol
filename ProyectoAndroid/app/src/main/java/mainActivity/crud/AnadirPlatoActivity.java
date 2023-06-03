@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.tfg.marfol.R;
 
@@ -42,7 +41,7 @@ import java.util.ArrayList;
 import adapters.PersonaCompartirAdapter;
 import entities.Persona;
 import entities.Plato;
-import mainActivity.detalle.CompartirListaActivity;
+import mainActivity.menu.detalle.CompartirListaActivity;
 
 public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCompartirAdapter.onItemClickListener {
     private Switch swCompartirPlato;

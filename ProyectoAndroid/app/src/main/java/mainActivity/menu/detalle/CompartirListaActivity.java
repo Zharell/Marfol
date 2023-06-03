@@ -1,4 +1,4 @@
-package mainActivity.detalle;
+package mainActivity.menu.detalle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;

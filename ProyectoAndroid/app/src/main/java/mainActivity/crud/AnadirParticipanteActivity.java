@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -55,7 +54,7 @@ import adapters.AnadirPersonaAdapter;
 import entities.Persona;
 import entities.Plato;
 import mainActivity.MetodosGlobales;
-import mainActivity.detalle.DetallePlatoActivity;
+import mainActivity.menu.detalle.DetallePlatoActivity;
 
 public class AnadirParticipanteActivity extends AppCompatActivity implements AnadirPersonaAdapter.onItemClickListener {
     private ProgressBar progressBar;
