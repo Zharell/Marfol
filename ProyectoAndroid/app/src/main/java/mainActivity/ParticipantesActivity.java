@@ -39,7 +39,7 @@ import adapters.PersonaAdapterBd;
 import entities.Persona;
 import login.AuthActivity;
 import mainActivity.crud.AnadirParticipanteActivity;
-import mainActivity.menu.detalle.DetallePersonaActivity;
+import mainActivity.detalle.DetallePersonaActivity;
 
 public class ParticipantesActivity extends AppCompatActivity implements PersonaAdapter.onItemClickListener, PersonaAdapterBd.onItemClickListenerBd {
 

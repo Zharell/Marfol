@@ -54,7 +54,7 @@ import adapters.AnadirPersonaAdapter;
 import entities.Persona;
 import entities.Plato;
 import mainActivity.MetodosGlobales;
-import mainActivity.menu.detalle.DetallePlatoActivity;
+import mainActivity.detalle.DetallePlatoActivity;
 
 public class AnadirParticipanteActivity extends AppCompatActivity implements AnadirPersonaAdapter.onItemClickListener {
     private ProgressBar progressBar;
@@ -175,7 +175,6 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             if (result.getResultCode() == RESULT_OK) {
                 // Si la foto se toma correctamente, mostrar la vista previa en el ImageView
                 Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
-
                 // Insertar la imagen en la galería y obtenemos la URI transformada en String para almacenar en la BD
                 ContentValues values = new ContentValues();
                 values.put(MediaStore.Images.Media.TITLE, "personaMarfol.jpg");
@@ -192,7 +191,6 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                             .load(uriCapturada)
                             .circleCrop()
                             .into(ivPlatoAnadirP);
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -247,14 +245,13 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
             personaBd = (Persona) intent.getSerializableExtra("comensalesBd");
             etNombreAnadirP.setText(personaBd.getNombre());
             etDescAnadirP.setText(personaBd.getDescripcion());
-            if (personaBd.getUrlImage() != null) {
 
+            if (personaBd.getUrlImage() != null) {
                 //Asignamos un color rojizo característico de la APP
                 progressBar.getIndeterminateDrawable().setColorFilter(
                         ContextCompat.getColor(this, R.color.redSLight),
                         PorterDuff.Mode.SRC_IN
                 );
-
                 Glide.with(this)
                         .load(personaBd.getUrlImage())
                         .circleCrop()
@@ -479,7 +476,6 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
                         nuevaPersona.put("imagen", "");
                         nuevaPersona.put("descripcion", descripcion);
                         nuevaPersona.put("usuarioId", email);
-
                         // Agrega la nueva persona con un ID único generado automáticamente
                         personasRef.add(nuevaPersona)
                                 .addOnSuccessListener(documentReference -> {
@@ -499,16 +495,13 @@ public class AnadirParticipanteActivity extends AppCompatActivity implements Ana
         if (personaId != null && !personaId.isEmpty()) {
             // Obtiene una referencia al Storage de Firebase
             storageRef = FirebaseStorage.getInstance().getReference();
-
             // Define una referencia a la imagen en Storage utilizando el ID de la persona
             rutaImagen = "personas/" + personaId + ".jpg";
             imagenRef = storageRef.child(rutaImagen);
-
             // Sube la imagen a Storage
             if (!imagen.equalsIgnoreCase("")) {
                 Uri imagenUri = Uri.parse(imagen);
                 uploadTask = imagenRef.putFile(imagenUri);
-
                 uploadTask.addOnSuccessListener(taskSnapshot -> {
                     // Obtiene la URL de descarga de la imagen
                     imagenRef.getDownloadUrl().addOnSuccessListener(uri -> {

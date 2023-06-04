@@ -5,7 +5,7 @@ xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:background="@drawable/background_style"
-tools:context="mainActivity.menu.detalle.DetallePersonaActivity">
+tools:context="mainActivity.detalle.DetallePersonaActivity">
 
 <!-- Title Actividad -->
 
@@ -25,22 +25,6 @@ tools:context="mainActivity.menu.detalle.DetallePersonaActivity">
         app:layout_constraintStart_toStartOf="parent"
         android:maxLength="16"
 
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- Login App -->
-
-    <ImageView
-        android:id="@+id/ivLoginDetallePersona"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/login_style"
-        android:scaleType="fitCenter"
-        android:src="@drawable/nologinimg"
-
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.955"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText

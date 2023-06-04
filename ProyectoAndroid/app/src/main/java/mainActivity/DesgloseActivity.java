@@ -36,11 +36,13 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tfg.marfol.R;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import adapters.DesgloseAdapter;
@@ -49,6 +51,7 @@ import entities.Plato;
 
 public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapter.onItemClickListener {
 
+    private NumberFormat euroFormat = NumberFormat.getCurrencyInstance(Locale.GERMANY);
     private TextView tvMessage1Popup, tvMessage2Popup;
     private EditText etNombrePopup;
     private Dialog puGuardarDesglose;
@@ -94,7 +97,6 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
             etNombrePopup.setFocusable(false);
             Toast.makeText(this, nombreRestaurante, Toast.LENGTH_SHORT).show();
         }
-
 
         //Método que asigna los efectos a los elementos
         asignarEfectos();
@@ -171,7 +173,6 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
     private void guardarRestaurante(String nombreRestaurante, String correoUsuario) {
         // Consultar si ya existe un restaurante con el mismo nombre y usuario
         query = db.collection("restaurantes").whereEqualTo("nombreRestaurante", nombreRestaurante).whereEqualTo("usuarioId", correoUsuario);
-
         query.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 querySnapshot = task.getResult();
@@ -179,12 +180,10 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                     // No existe un restaurante con el mismo nombre y usuario, se guarda uno nuevo
                     // Crear un nuevo documento en la colección "restaurantes"
                     restauranteRef = db.collection("restaurantes").document();
-
                     // Crear un mapa con los datos del restaurante
                     Map<String, Object> restauranteData = new HashMap<>();
                     restauranteData.put("nombreRestaurante", nombreRestaurante);
                     restauranteData.put("usuarioId", correoUsuario);
-
                     // Guardar el restaurante en la base de datos
                     restauranteRef.set(restauranteData).addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Restaurante guardado correctamente", Toast.LENGTH_SHORT).show();
@@ -224,9 +223,7 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
                 String fechaActual = sdf.format(new Date());
                 nuevoHistorial.put("fecha", fechaActual);
-
                 nuevoHistorial.put("usuario", email);
-
                 // Agrega el nuevo historial con un ID único generado automáticamente
                 historialRef.add(nuevoHistorial)
                         .addOnSuccessListener(documentReference -> {
@@ -241,33 +238,29 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
     private void cargarHistorial() {
         historial="";
         for (int i = 0; i < listaComensales.size(); i++) {
-            historial+=listaComensales.get(i).getNombre()+": "+listaComensales.get(i).getMonedero()+" € \n \n";
+            historial+=listaComensales.get(i).getNombre()+": "+euroFormat.format(listaComensales.get(i).getMonedero())+" \n \n";
         }
     }
 
     private void cargarHistorialWP() {
         historial="------ *FACTURA MARFOL* ------- \n \n";
         for (int i = 0; i < listaComensales.size(); i++) {
-            historial+="*"+listaComensales.get(i).getNombre()+"* : "+listaComensales.get(i).getMonedero()+" € \n \n";
+            historial+=listaComensales.get(i).getNombre()+": "+euroFormat.format(listaComensales.get(i).getMonedero())+" \n \n";
         }
     }
 
     private void guardarPlatos(String restauranteNombre) {
         platosRef = db.collection("platos");
-
         // Consultar los platos existentes del restaurante
         platosQuery = platosRef.whereEqualTo("restaurante", restauranteNombre).whereEqualTo("usuario", email);
-
         platosQuery.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 querySnapshot = task.getResult();
                 platosExistente = querySnapshot.getDocuments();
-
                 // Guardar los nuevos platos y actualizar los existentes
                 for (Plato plato : platosABd) {
                     platoExistente = false;
                     platoExistenteId = "";
-
                     // Verificar si el plato ya existe en la base de datos
                     for (DocumentSnapshot platoSnapshot : platosExistente) {
                         if (plato.getNombre().equals(platoSnapshot.getString("nombre"))) {
@@ -276,7 +269,6 @@ public class DesgloseActivity extends AppCompatActivity implements DesgloseAdapt
                             break;
                         }
                     }
-
                     // Crear un mapa con los datos del plato
                     Map<String, Object> platoData = new HashMap<>();
                     platoData.put("nombre", plato.getNombre());

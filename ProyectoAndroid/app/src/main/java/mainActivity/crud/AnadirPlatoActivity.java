@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import adapters.PersonaCompartirAdapter;
 import entities.Persona;
 import entities.Plato;
-import mainActivity.menu.detalle.CompartirListaActivity;
+import mainActivity.detalle.CompartirListaActivity;
 
 public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCompartirAdapter.onItemClickListener {
     private Switch swCompartirPlato;
@@ -133,7 +133,6 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
                 abrirCamara();
             }
         });
-
         //Añadimos onClick en el ImageView para activar la imagen
         btnUpGaleria.setOnClickListener(view -> {
             // Solicitar permiso para acceder a la galería
@@ -214,32 +213,26 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
     }
 
     public void anadirPlato () {
-
         boolean esValidado=true;
         nombre = String.valueOf(etNombreAnadirP.getText());
         descripcion = String.valueOf(etDescAnadirP.getText());
         //Comprueba si el editText está vacío, de estarlo el programa lo entiende como un 0, además, remplaza <,> por <.> para evitar errores
         precio = etPrecioAnadirP.getText().toString().equalsIgnoreCase("") ? 0 : Double.parseDouble(etPrecioAnadirP.getText().toString().replace(",","."));
-
         //Comprueba si has añadido un nombre
         if (etNombreAnadirP.getText().toString().length() == 0) {
             Toast.makeText(this,"Debe introducir un nombre", Toast.LENGTH_SHORT).show();
             esValidado=false;
         }
-
         if (precio <= 0) {
             Toast.makeText(this,"Debe introducir un precio mayor a 0", Toast.LENGTH_SHORT).show();
             esValidado=false;
         }
-
         //Comprueba si ha validado, añade la persona, envía al padre el ArrayList de comensales, platos y cierra la actividad
         if (esValidado) {
-
             //Dependiendo si es compartido o no, sigue un
             if (esCompartido) {
                 //Eliminamos la posición 0 ya que es un botón
                 comensalCompartirList.remove(0);
-
                 //Hacemos una última comprobación si ha añadido personas en compartir, si no ha añadido se añade un plato NO compartido
                 if (comensalCompartirList.size()>0) {
                     //Añado a la lista la persona creada                                           - lista de personas que van a compartir el plato
@@ -257,9 +250,7 @@ public class AnadirPlatoActivity extends AppCompatActivity implements PersonaCom
             intent.putExtra("arrayListPlatos", platos);
             setResult(Activity.RESULT_OK, intent);
             finish();
-
         }
-
     }
 
     // Método para abrir la galería
