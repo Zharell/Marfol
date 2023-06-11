@@ -28,7 +28,8 @@ public class RegistroActivity extends AppCompatActivity {
     private String nombre, telefono, email, password1, password2,acuerdos;
     private AlertDialog alerta;
     private CheckBox cbAcuerdoUsuario;
-    private final String REGEX = "^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$";
+    private final String REGEX = "^(?=.*[0-9])(?=.*[!@#$%^&*{}¨ñ])[a-zA-Z0-9!@#$%^&*{}¨ñ]{8,}$";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
